@@ -1,0 +1,20 @@
+
+# compiled binary garbage
+/bin/
+/bin-engine/
+/bin-win/
+/bin-lin/
+
+# documentation output
+/engine/docs/html/
+
+# editor settings
+/.vscode/
+
+# VS garbage
+/out/
+/.vs/
+
+# my own unrelated garbage
+/sketches/
+

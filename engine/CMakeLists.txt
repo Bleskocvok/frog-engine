@@ -1,0 +1,233 @@
+cmake_minimum_required(VERSION 3.18)
+
+project(Engine)
+
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+
+
+function(print_list LST_NAME LST)
+    string(REPLACE
+        ";"
+        "\n        "
+        str
+        "\n        ${LST}"
+    )
+    string(REGEX REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/src/" "" str ${str})
+    string(REGEX REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" str ${str})
+    message(STATUS "${LST_NAME}:${str}")
+endfunction()
+
+
+
+# ################################################
+#
+# --------------- Libraries setup ----------------
+#
+# ################################################
+
+
+set(LIST_OF_LIBRARIES "")
+set(LIST_OF_INCLUDE_DIRS "")
+
+macro(add_lib_to_list VALUE)
+    list(APPEND LIST_OF_LIBRARIES "${VALUE}")
+endmacro()
+
+macro(add_dirs_to_includes VALUE)
+    list(APPEND LIST_OF_INCLUDE_DIRS "${VALUE}")
+endmacro()
+
+
+#
+# General settings
+#
+find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIRS})
+add_dirs_to_includes("${OPENGL_INCLUDE_DIRS}")
+add_lib_to_list("${OPENGL_LIBRARIES}")
+
+
+#
+# Glad
+#
+add_library(glad libraries/glad/src/glad.c)
+set(GLAD_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/libraries/glad/include")
+include_directories(${GLAD_INCLUDE_DIRS})
+add_dirs_to_includes("${GLAD_INCLUDE_DIRS}")
+# add_dirs_to_includes("${CMAKE_CURRENT_SOURCE_DIR}/libraries/glad/include")
+add_lib_to_list(glad)
+
+
+#
+# GLFW
+#
+add_subdirectory(libraries/glfw-3.3.2)
+add_dirs_to_includes("${CMAKE_CURRENT_SOURCE_DIR}/libraries/glfw-3.3.2/include")
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+add_lib_to_list(glfw)
+
+
+#
+# stb_image
+#
+include_directories(libraries/stb_image)
+add_dirs_to_includes("${CMAKE_CURRENT_SOURCE_DIR}/libraries/stb_image")
+add_library(stb_image libraries/stb_image/stb_image.c)
+add_lib_to_list(stb_image)
+
+
+#
+# tiny_obj_loader
+#
+include_directories(libraries/tiny_obj_loader)
+add_dirs_to_includes("${CMAKE_CURRENT_SOURCE_DIR}/libraries/tiny_obj_loader")
+add_library(tiny_obj_loader libraries/tiny_obj_loader/tiny_obj_loader.cpp)
+add_lib_to_list(tiny_obj_loader)
+
+
+#
+# Catch2
+#
+include_directories(libraries/catch2)
+
+
+
+# ################################################
+#
+# --------------- Source files -------------------
+#
+# ################################################
+
+
+file(GLOB
+    SRC_FILES
+    src/*.cpp
+    src/*/*.cpp
+    src/core/*.cpp
+    src/geometry/*.cpp
+    src/graphics/*.cpp
+    src/os/*.cpp
+    src/utils/*.cpp
+)
+
+message(STATUS "Engine src folder: \n        ${CMAKE_CURRENT_SOURCE_DIR}")
+
+print_list("Source files" "${SRC_FILES}")
+
+file(GLOB
+    SRC_TESTS
+    tests/tests_main.cpp
+    tests/tests_engine.cpp
+    src/geometry/*.cpp
+)
+
+set(SRC_WINDOW_TEST
+    tests/test_window.cpp
+)
+
+set(ENGINE_INCLUDE
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+    PARENT_SCOPE
+)
+
+set(DEBUG_HEADER
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/debug.hpp"
+)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/)
+
+
+
+# ################################################
+#
+# ---------------- The executable ----------------
+#
+# ################################################
+
+
+print_list("Engine libraries" "${LIST_OF_LIBRARIES}")
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED on)
+
+# normal compiler options
+if(NOT MSVC)
+    add_compile_options(-Wall -Wextra -pedantic -O2 -Wold-style-cast)
+else()
+    # custom options for MSVC
+    # because Microsoft is stupid
+    add_compile_options(/W4 /Wall)
+endif()
+
+# debug compiler options
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+    if(NOT MSVC)
+        add_compile_options(-g -D DEBUG)
+    else()
+        # add_compile_options(/FI ${DEBUG_HEADER})
+    endif()
+endif()
+
+# tests
+add_executable(tests ${SRC_TESTS})
+
+# window test
+add_executable(test_window WIN32 ${SRC_WINDOW_TEST})
+target_link_libraries(test_window ${LIST_OF_LIBRARIES})
+
+# the resulting library
+add_library(frog_lib ${SRC_FILES})
+target_link_libraries(frog_lib ${LIST_OF_LIBRARIES})
+
+
+
+# ################################################
+#
+# ------------- Export for outside use -----------
+#
+# ################################################
+
+
+set(FROG_INCLUDE_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${LIST_OF_INCLUDE_DIRS}
+    PARENT_SCOPE
+)
+set(FROG_LIBRARIES
+    ${LIST_OF_LIBRARIES}
+    frog_lib
+    PARENT_SCOPE
+)
+
+print_list("Includes" "${LIST_OF_INCLUDE_DIRS}")
+
+
+
+# ################################################
+#
+# ------------- Files configurations -------------
+#
+# ################################################
+
+
+function(asset FILENAME)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/${FILENAME}
+        ${CMAKE_CURRENT_BINARY_DIR}/${FILENAME}
+        COPYONLY
+    )
+endfunction()
+
+
+#
+# The file list
+#
+
+asset(assets/main.vert)
+asset(assets/main.frag)
+asset(assets/ui.vert)
+asset(assets/ui.frag)
+asset(assets/font.png)
+asset(assets/empty.png)
