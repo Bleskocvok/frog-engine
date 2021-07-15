@@ -1,7 +1,8 @@
-# pa199-project
+# frog-engine
 
+Simple game engine in C++. Originally made as a project assignment.
 
-Link to the [repository](https://gitlab.fi.muni.cz/xbrablik/pa199-project)
+Link to the original repository [pa199-project](https://gitlab.fi.muni.cz/xbrablik/pa199-project)
 
 ## Development tracking
 
