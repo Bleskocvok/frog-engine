@@ -1,7 +1,7 @@
-# LF line endings
-* text=auto
-
 # language detection
 # ignore all files in the engine/libraries/ folder
-engine/libraries/* linguist-vendored=false
+engine/libraries/* linguist-vendored
 
+
+# LF line endings
+* text=auto
