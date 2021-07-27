@@ -135,6 +135,11 @@ public:
         return buffer > 0;
     }
 
+    operator bool() const
+    {
+        return good();
+    }
+
     int count() const { return _count; }
 };
 

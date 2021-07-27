@@ -1,5 +1,5 @@
 
-#include "catch.hpp"
+#include "Catch2/catch.hpp"
 
 /**
  * Here go the tests.

@@ -1,6 +1,9 @@
 #include "mesh.hpp"
 
+#include "tiny_obj_loader.h"
+
 #include <cassert>
+#include <stdexcept>
 
 
 frog::gl::mesh::mesh(std::vector<float> vertices_buf
@@ -26,7 +29,7 @@ frog::gl::mesh::mesh(std::vector<float> vertices_buf
 void frog::gl::mesh::draw()
 {
     _vao.bind();
-    if (indices.good())
+    if (indices)
     {
         // draw with indices
         glDrawElements(Mode, indices.count(), GL_UNSIGNED_INT, nullptr);
@@ -38,3 +41,64 @@ void frog::gl::mesh::draw()
     }
 }
 
+// TODO finish this
+static void load_file(const std::string& filename)
+{
+    tinyobj::attrib_t attr;
+    std::vector<tinyobj::shape_t> shapes;
+    std::string errors;
+    bool ok = tinyobj::LoadObj(
+        &attr,
+        &shapes,
+        nullptr,            // materials (not needed)
+        &errors,
+        filename.c_str(),
+        nullptr,            // folder for materials (not needed)
+        true                // triangulate = true
+    );
+
+    if (!ok)
+    {
+        throw std::runtime_error("could not load model, file '" + filename
+                                 + "'; errors: " + errors);
+    }
+
+    //Meshes result;
+    for (const auto& shape : shapes)
+    {
+        std::vector<float> vertices;
+        std::vector<float> normals;
+        std::vector<float> tex_coords;
+
+        size_t size = shape.mesh.num_face_vertices.size();
+        size_t triangle = 3;  // a dumb constant to make the code more readable
+                              // 3 == number of points in a triangle
+
+        vertices.reserve(size * triangle * 3);
+        normals.reserve(size * triangle * 3);
+        tex_coords.reserve(size * triangle * 2);
+
+        for (size_t i = 0; i < size; ++i)
+        {
+            for (size_t j = 0; j < triangle; ++j)
+            {
+                tinyobj::index_t index = shape.mesh.indices[i * 3 + j];
+                // vertices
+                vertices.push_back(attr.vertices[3 * index.vertex_index + 0]);
+                vertices.push_back(attr.vertices[3 * index.vertex_index + 1]);
+                vertices.push_back(attr.vertices[3 * index.vertex_index + 2]);
+                // normals
+                normals.push_back(attr.normals[3 * index.normal_index + 0]);
+                normals.push_back(attr.normals[3 * index.normal_index + 1]);
+                normals.push_back(attr.normals[3 * index.normal_index + 2]);
+                // texture coords
+                tex_coords.push_back(attr.texcoords[2 * index.texcoord_index + 0]);
+                tex_coords.push_back(attr.texcoords[2 * index.texcoord_index + 1]);
+            }
+        }
+
+        //result.push_back(
+            //Mesh(vertices, normals, tex_coords, std::vector<uint32_t>{}));
+    }
+    //return result;
+}

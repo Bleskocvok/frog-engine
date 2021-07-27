@@ -1,9 +1,11 @@
 
-# compiled binary garbage
+# compiled binary executable
 /bin/
 /bin-engine/
 /bin-win/
+/bin-win-visual-studio/
 /bin-lin/
+/out/
 
 # documentation output
 /engine/docs/html/
@@ -12,7 +14,6 @@
 /.vscode/
 
 # VS garbage
-/out/
 /.vs/
 
 # my own unrelated garbage

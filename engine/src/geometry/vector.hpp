@@ -88,6 +88,25 @@ public:
     const T& w() const { return get<3>(); }
           T& w()       { return get<3>(); }
 
+    const T& r() const { return x(); }
+          T& r()       { return x(); }
+
+    const T& g() const { return y(); }
+          T& g()       { return y(); }
+
+    const T& b() const { return z(); }
+          T& b()       { return z(); }
+
+    const T& a() const { return w(); }
+          T& a()       { return w(); }
+
+
+    void is_color() const
+    {
+        static_assert(Dim == 3 || Dim == 4,
+                      "Correct dimensions for color vector");
+    }
+
     /**
      * Pretty printing
      */

@@ -107,7 +107,7 @@ struct ball_script : frog::script
     }
 
     // solve periodical speed increase
-    void update_speed(frog::game_object& obj, frog::engine& engine)
+    void update_speed(frog::game_object&, frog::engine& engine)
     {
         using namespace frog;
         float frame_time = engine.global->stable_frame_time();

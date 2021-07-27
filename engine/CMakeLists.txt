@@ -1,11 +1,30 @@
 cmake_minimum_required(VERSION 3.18)
 
-project(Engine)
+project(Frog)
 
-message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "Build type: '${CMAKE_BUILD_TYPE}'")
+
+message(STATUS "Engine src folder: \n        ${CMAKE_CURRENT_SOURCE_DIR}")
+
+message(STATUS
+"
+FROG
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⡆⠉⣔⡀⠀⡠⡀⢀⠄⠴⢶⢦⣴⣤⠄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⢀⠀⠃⠁⠀⠀⠐⢸⠸⠱⠈⣿⣿⣯⣉⣿⠃⠁⠂⡄⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠐⢤⣄⣀⣀⣀⡀⠈⠐⠒⠁⠈⢹⡟⠻⠿⢷⣒⠖⡅⡀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠙⠛⠛⢿⣴⡀⠀⠀⣠⡿⠃⠀⠀⠀⢻⡌⠚⠆⠚⠖⡀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⠙⠷⣿⣏⣀⡈⠐⠄⠀⡸⠧⠤⠤⠤⠀⠐⡀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⢀⣾⡿⠁⠀⠀⠙⠿⣿⣷⠀⢸⣿⠄⣀⡀⠀⠀⠀⠀⡇⠀⠀
+⠀⠀⠀⢀⣤⡴⢺⡿⡏⠀⠀⠀⠀⠀⣠⣾⡇⠀⡌⠁⠀⠈⠉⢱⣶⢀⠔⠁⠀⠀
+⠀⠀⠀⠀⠉⠺⠿⠀⢸⡄⠀⠀⠀⠀⢘⡿⠁⠘⠀⠀⠀⠠⡺⡣⠂⠁⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢆⡠⠘⡳⠔⠾⠀⠀⠀⠀⠈⠈⠂⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠨⠤⠀⡄⠢⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+")
 
 
-function(print_list LST_NAME LST)
+function(print_list LABEL LST)
     string(REPLACE
         ";"
         "\n        "
@@ -13,8 +32,8 @@ function(print_list LST_NAME LST)
         "\n        ${LST}"
     )
     string(REGEX REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/src/" "" str ${str})
-    string(REGEX REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" str ${str})
-    message(STATUS "${LST_NAME}:${str}")
+    string(REGEX REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/"     "" str ${str})
+    message(VERBOSE "${LABEL}:${str}")
 endfunction()
 
 
@@ -24,6 +43,9 @@ endfunction()
 # --------------- Libraries setup ----------------
 #
 # ################################################
+
+# needed for downloading the libraries
+include(FetchContent)
 
 
 set(LIST_OF_LIBRARIES "")
@@ -39,7 +61,7 @@ endmacro()
 
 
 #
-# General settings
+# OpenGL
 #
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
@@ -54,14 +76,14 @@ add_library(glad libraries/glad/src/glad.c)
 set(GLAD_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/libraries/glad/include")
 include_directories(${GLAD_INCLUDE_DIRS})
 add_dirs_to_includes("${GLAD_INCLUDE_DIRS}")
-# add_dirs_to_includes("${CMAKE_CURRENT_SOURCE_DIR}/libraries/glad/include")
 add_lib_to_list(glad)
 
 
 #
 # GLFW
 #
-add_subdirectory(libraries/glfw-3.3.2)
+add_subdirectory(libraries/glfw-3.3.2
+                 EXCLUDE_FROM_ALL)
 add_dirs_to_includes("${CMAKE_CURRENT_SOURCE_DIR}/libraries/glfw-3.3.2/include")
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
@@ -81,16 +103,24 @@ add_lib_to_list(stb_image)
 #
 # tiny_obj_loader
 #
-include_directories(libraries/tiny_obj_loader)
-add_dirs_to_includes("${CMAKE_CURRENT_SOURCE_DIR}/libraries/tiny_obj_loader")
-add_library(tiny_obj_loader libraries/tiny_obj_loader/tiny_obj_loader.cpp)
-add_lib_to_list(tiny_obj_loader)
+FetchContent_Declare(
+        tiny_obj_loader_git
+        GIT_REPOSITORY      https://github.com/tinyobjloader/tinyobjloader.git
+        GIT_TAG             v1.0.6)
+FetchContent_MakeAvailable(tiny_obj_loader_git)
+include_directories(${TINYOBJLOADER_INCLUDE_DIR})
+add_dirs_to_includes("${TINYOBJLOADER_INCLUDE_DIR}")
+add_lib_to_list(tinyobjloader)
 
 
 #
 # Catch2
 #
-include_directories(libraries/catch2)
+FetchContent_Declare(
+        Catch2
+        GIT_REPOSITORY      https://github.com/catchorg/Catch2.git
+        GIT_TAG             v2.13.6)
+FetchContent_MakeAvailable(Catch2)
 
 
 
@@ -112,8 +142,7 @@ file(GLOB
     src/utils/*.cpp
 )
 
-message(STATUS "Engine src folder: \n        ${CMAKE_CURRENT_SOURCE_DIR}")
-
+# verbose info
 print_list("Source files" "${SRC_FILES}")
 
 file(GLOB
@@ -147,8 +176,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/)
 # ################################################
 
 
-print_list("Engine libraries" "${LIST_OF_LIBRARIES}")
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED on)
 
@@ -172,14 +199,17 @@ endif()
 
 # tests
 add_executable(tests ${SRC_TESTS})
+target_link_libraries(tests PRIVATE Catch2::Catch2)
 
 # window test
 add_executable(test_window WIN32 ${SRC_WINDOW_TEST})
-target_link_libraries(test_window ${LIST_OF_LIBRARIES})
+target_link_libraries(test_window PRIVATE ${LIST_OF_LIBRARIES})
 
 # the resulting library
 add_library(frog_lib ${SRC_FILES})
 target_link_libraries(frog_lib ${LIST_OF_LIBRARIES})
+# alias, so that it games can link against Frog::Frog
+add_library(Frog::Frog ALIAS frog_lib)
 
 
 
@@ -201,7 +231,11 @@ set(FROG_LIBRARIES
     PARENT_SCOPE
 )
 
-print_list("Includes" "${LIST_OF_INCLUDE_DIRS}")
+# verbose info
+print_list("Frog engine libraries" "${LIST_OF_LIBRARIES}")
+
+# verbose info
+print_list("Frog engine includes" "${LIST_OF_INCLUDE_DIRS}")
 
 
 

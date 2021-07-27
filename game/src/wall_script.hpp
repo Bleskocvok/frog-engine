@@ -105,7 +105,7 @@ struct wall_script : frog::script
         }
     }
 
-    void wall_destroyed(frog::game_object& obj, int el, int lvl)
+    void wall_destroyed(frog::game_object&, int el, int lvl)
     {
         // check if the destroyed wall was below us
         if (el == element && lvl < level)

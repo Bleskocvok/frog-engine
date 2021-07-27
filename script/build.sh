@@ -4,5 +4,7 @@
 # (the folder where CMakeLists.txt is located)
 #     $ script/build.sh
 
-cmake -D CMAKE_BUILD_TYPE="$1" -S . -B bin-lin && cmake --build bin-lin -j4
+cmake -D CMAKE_BUILD_TYPE="$1"  \
+      -S game -B bin-lin        \
+    && cmake --build bin-lin -j4
 
