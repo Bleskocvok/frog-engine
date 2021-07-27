@@ -3,6 +3,10 @@
 
 ## Week 17
 
+- 7.7.
+    - I got an A! 🥳
+<br>
+
 - 4.7. (12h)
     - player lives
     - game over screen
