@@ -37,7 +37,7 @@ RECURSIVE              = YES
 PROJECT_NAME           = "Frog Engine"
 PROJECT_NUMBER         =
 PROJECT_BRIEF          = 
-PROJECT_LOGO           = ../../logo/logo_small.svg
+PROJECT_LOGO           = ../assets/logo_small.svg
 
 
 #
@@ -47,4 +47,4 @@ PROJECT_LOGO           = ../../logo/logo_small.svg
 GENERATE_LATEX         = NO
 GENERATE_HTML          = YES
 HTML_TIMESTAMP         = YES
-
+HTML_EXTRA_STYLESHEET  = docs_style.css
