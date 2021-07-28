@@ -25,8 +25,8 @@ else()
     add_compile_options(/W4 /Wall)
 endif()
 
-add_executable(Game ${SRC_FILES})
-target_link_libraries(Game PRIVATE Frog::Frog)
+add_executable(${PROJECT_NAME} ${SRC_FILES})
+target_link_libraries(${PROJECT_NAME} PRIVATE Frog::Frog)
 
 
 function(asset FILENAME)

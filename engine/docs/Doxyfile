@@ -1,8 +1,11 @@
 # Doxyfile 1.8.13
 
 
-INPUT = ../src
+#
+# input
+#
 
+INPUT = ../src
 FILE_PATTERNS          = *.c    \
                          *.cc   \
                          *.cxx  \
@@ -13,28 +16,35 @@ FILE_PATTERNS          = *.c    \
                          *.hxx  \
                          *.hpp  \
                          *.dox
-
 EXCLUDE                = ../libraries
-
 OUTPUT_DIRECTORY       = .
-
 DOXYFILE_ENCODING      = UTF-8
 
-PROJECT_NAME           = "Frog Engine"
+
+#
+# paths
+#
 
 FULL_PATH_NAMES        = YES
-
-PROJECT_NUMBER         =
-
-PROJECT_BRIEF          = 
-
-PROJECT_LOGO           = ../../logo/logo_small.svg
-
 STRIP_FROM_INC_PATH    = src
-
 RECURSIVE              = YES
 
+
+#
+# project
+#
+
+PROJECT_NAME           = "Frog Engine"
+PROJECT_NUMBER         =
+PROJECT_BRIEF          = 
+PROJECT_LOGO           = ../../logo/logo_small.svg
+
+
+#
+# output
+#
+
 GENERATE_LATEX         = NO
-
-
+GENERATE_HTML          = YES
+HTML_TIMESTAMP         = YES
 

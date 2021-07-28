@@ -7,8 +7,7 @@ message(STATUS "Build type: '${CMAKE_BUILD_TYPE}'")
 message(STATUS "Engine src folder: \n        ${CMAKE_CURRENT_SOURCE_DIR}")
 
 message(STATUS
-"
-FROG
+"FROG
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⡆⠉⣔⡀⠀⡠⡀⢀⠄⠴⢶⢦⣴⣤⠄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⢀⠀⠃⠁⠀⠀⠐⢸⠸⠱⠈⣿⣿⣯⣉⣿⠃⠁⠂⡄⠀⠀⠀⠀⠀⠀⠀
@@ -35,6 +34,18 @@ function(print_list LABEL LST)
     string(REGEX REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/"     "" str ${str})
     message(VERBOSE "${LABEL}:${str}")
 endfunction()
+
+
+
+# ################################################
+#
+# --------------- Options ------------------------
+#
+# ################################################
+
+option(FROG_GEN_DOCS "Generate documentation" ON)
+
+message(STATUS "Generate documentation: ${FROG_GEN_DOCS}")
 
 
 
@@ -171,7 +182,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/)
 
 # ################################################
 #
-# ---------------- The executable ----------------
+# ---------------- The executables ---------------
 #
 # ################################################
 
@@ -202,8 +213,8 @@ add_executable(tests ${SRC_TESTS})
 target_link_libraries(tests PRIVATE Catch2::Catch2)
 
 # window test
-add_executable(test_window WIN32 ${SRC_WINDOW_TEST})
-target_link_libraries(test_window PRIVATE ${LIST_OF_LIBRARIES})
+# add_executable(test_window WIN32 ${SRC_WINDOW_TEST})
+# target_link_libraries(test_window PRIVATE ${LIST_OF_LIBRARIES})
 
 # the resulting library
 add_library(frog_lib ${SRC_FILES})
@@ -265,3 +276,44 @@ asset(assets/ui.vert)
 asset(assets/ui.frag)
 asset(assets/font.png)
 asset(assets/empty.png)
+
+
+
+# ################################################
+#
+# ------------- Documentation --------------------
+#
+# ################################################
+
+
+if(FROG_GEN_DOCS)
+
+find_package(Doxygen
+             COMPONENTS dot)
+
+if(DOXYGEN_FOUND)
+    # print versions
+    message(STATUS "Doxygen found: ${DOXYGEN_VERSION}")
+
+    message(STATUS "DOT_PATH: ${DOT_PATH}")
+
+    if(DOXYGEN_HAVE_DOT)
+        message(STATUS " +  DOT found: ${DOXYGEN_DOT_VERSION}")
+    else()
+        message(STATUS " +  DOT not found")
+    endif(DOXYGEN_HAVE_DOT)
+
+    set(DOXYGEN_CONFIG ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile)
+
+    add_custom_target(documentation ALL
+                      COMMAND               Doxygen::doxygen ${DOXYGEN_CONFIG}
+                      WORKING_DIRECTORY     ${CMAKE_CURRENT_SOURCE_DIR}/docs
+                      COMMENT               "Target for documentation"
+                      VERBATIM)
+
+
+else()
+    message(STATUS "Doxygen not found - ignoring documentation generation")
+endif(DOXYGEN_FOUND)
+
+endif(FROG_GEN_DOCS)
