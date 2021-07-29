@@ -311,7 +311,6 @@ if(DOXYGEN_FOUND)
                       COMMENT               "Target for documentation"
                       VERBATIM)
 
-
 else()
     message(STATUS "Doxygen not found - ignoring documentation generation")
 endif(DOXYGEN_FOUND)
