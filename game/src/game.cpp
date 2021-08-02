@@ -7,6 +7,8 @@
 #include "utils/ptr.hpp"
 #include "utils/debug.hpp"
 
+#include "os/error_box.hpp"
+
 #include "constants.hpp"
 #include "paddle_script.hpp"
 #include "wall_script.hpp"
@@ -22,10 +24,10 @@
 #include <utility>      // move
 #include <iostream>     // cout
 #include <vector>
+#include <string>
 
 
 using namespace frog;
-
 
 void init_game(frog::engine& eng);
 void add_objects(frog::engine& eng);
@@ -33,6 +35,8 @@ void add_objects(frog::engine& eng);
 
 int main(int argc, char** argv)
 {
+    using namespace std::string_literals;
+
     auto engine = frog::ptr<frog::engine>{};
 
     auto path = frog::fs::path{ argc > 0 ? argv[0] : "./unknown" };
@@ -54,9 +58,8 @@ int main(int argc, char** argv)
     }
     catch (std::exception& ex)
     {
-        std::cerr << "FATAL ERROR: engine creation failed: "
-                  << ex.what()
-                  << std::endl;
+        frog::os::show_error_box("FATAL ERROR",
+                                 "engine creation failed : "s + ex.what());
         return 2;
     }
 
@@ -70,9 +73,8 @@ int main(int argc, char** argv)
     }
     catch (std::exception& ex)
     {
-        std::cerr << "ERROR: engine failed during loading: "
-                  << ex.what()
-                  << std::endl;
+        frog::os::show_error_box("ERROR",
+                                 "game failed during loading: "s + ex.what());
         return 2;
     }
 
@@ -85,7 +87,8 @@ int main(int argc, char** argv)
     }
     catch (std::exception& ex)
     {
-        std::cerr << "ERROR: engine crashed: " << ex.what() << std::endl;
+        frog::os::show_error_box("ERROR",
+                                 "game crashed: "s + ex.what());
         return 2;
     }
     return 0;

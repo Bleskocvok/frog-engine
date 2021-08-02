@@ -41,6 +41,15 @@ PROJECT_LOGO           = ../assets/logo_small.svg
 
 
 #
+# generator
+#
+
+HAVE_DOT               = YES
+CLASS_DIAGRAMS         = YES
+COLLABORATION_GRAPH    = YES
+
+
+#
 # output
 #
 
@@ -48,3 +57,4 @@ GENERATE_LATEX         = NO
 GENERATE_HTML          = YES
 HTML_TIMESTAMP         = YES
 HTML_EXTRA_STYLESHEET  = docs_style.css
+

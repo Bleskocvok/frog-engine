@@ -26,6 +26,12 @@ void frog::os::glfw::throw_error()
 }
 
 
+void frog::os::window::poll_events()
+{
+    glfwPollEvents();
+}
+
+
 struct callbacks
 {
     using type = frog::os::input;

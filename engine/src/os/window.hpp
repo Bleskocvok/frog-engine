@@ -91,6 +91,8 @@ public:
     }
 
     void set_callbacks(input* in);
+
+    void poll_events();
 };
 
 

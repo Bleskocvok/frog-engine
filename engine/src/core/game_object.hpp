@@ -88,7 +88,17 @@ public:
     }
 
     template<typename Script, typename Func>
-    void for_each_script_instanceof(Func func)
+    void for_single_script(Func func)
+    {
+        auto* ptr = get_script<Script>();
+        if (ptr)
+        {
+            func(*ptr);
+        }
+    }
+
+    template<typename Script, typename Func>
+    void for_each_script(Func func)
     {
         for (auto& sc : scripts)
         {

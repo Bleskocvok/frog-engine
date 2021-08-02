@@ -28,9 +28,9 @@ frog::engine::engine(settings set, ptr<state> _global)
     window.make_current_context();
 
     renderer.viewport(set.width, set.height);
-    renderer.clear_color(set.clear_color.r
-                        , set.clear_color.g
-                        , set.clear_color.b);
+    renderer.clear_color(set.clear_color.r,
+                         set.clear_color.g,
+                         set.clear_color.b);
 
     // so that no callbacks are missed
     // (actually not needed unless we use polling functions, e.g. getKeyState)
@@ -90,7 +90,7 @@ void frog::engine::init()
 void frog::engine::update_controls()
 {
     input->reset();
-    glfwPollEvents();
+    window.poll_events();
 
     // resize renderer if window has been resized
     if (input->has_resized())
