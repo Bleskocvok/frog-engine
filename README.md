@@ -1,6 +1,13 @@
 # frog-engine
 
-![Illustration](frog.png)
+<div align="center">
+    <a href="https://github.com/Bleskocvok/frog-engine">
+        <img width="275" height="227" src="frog.png" alt="frog illustration">
+    </a>
+    <!-- ![Illustration](frog.png) -->
+</div>
+
+
 
 Simple game engine in C++. Originally made as a project assignment.
 
