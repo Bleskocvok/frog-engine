@@ -25,13 +25,8 @@ namespace frog
 class engine
 {
     os::GLFW glfw{};
-    os::window window;
+    //os::window window;
     gl::renderer renderer;
-
-    void render(double between);
-
-    void draw3D(double between);
-    void drawUI(double between);
 
     void update_controls();
 
@@ -40,6 +35,11 @@ class engine
     void stable_update();
 
     void frame_update();
+
+    void render(double between);
+
+    void draw3D(double between);
+    void drawUI(double between);
 
     void draw_sprite(
         gl::program& ui,
@@ -73,7 +73,6 @@ public:
     engine(settings set, ptr<state> global);
 
     void play();
-
 };
 
 

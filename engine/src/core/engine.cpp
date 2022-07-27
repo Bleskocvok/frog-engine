@@ -45,8 +45,7 @@ frog::engine::engine(settings set, ptr<state> _global)
 void frog::engine::play()
 {
     os::timer timer;
-    // DO NOT MAKE THIS VARIABLE UNSIGNED!
-    int accum = 0;
+    int accum = 0;      // <- THIS VARIABLE MUST BE SIGNED!
     unsigned delta = global->physics_delta_us;
 
     init();
@@ -119,15 +118,17 @@ void frog::engine::render(double between)
 {
     renderer.clear();
 
-    renderer.prepare3D();
+    /*renderer.prepare3D();
 
     draw3D(between);
 
     renderer.prepare2D();
 
-    drawUI(between);
+    drawUI(between);*/
 
-    window.swap_buffers();
+
+
+    renderer.swap_buffers();
 }
 
 

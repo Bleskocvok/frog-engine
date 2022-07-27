@@ -11,7 +11,13 @@ namespace frog::gl
 
 class renderer
 {
+    os::window window;
+
     void gl_settings();
+
+    void prepare2D();
+
+    void prepare3D();
 
 public:
     renderer(int major, int minor, bool vsync = true);
@@ -22,9 +28,7 @@ public:
 
     void clear();
 
-    void prepare2D();
-
-    void prepare3D();
+    void swap_buffers();
 };
 
 
