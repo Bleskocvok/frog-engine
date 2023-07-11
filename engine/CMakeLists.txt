@@ -125,13 +125,9 @@ add_lib_to_list(tinyobjloader)
 
 
 #
-# Catch2
+# Doctest
 #
-FetchContent_Declare(
-        Catch2
-        GIT_REPOSITORY      https://github.com/catchorg/Catch2.git
-        GIT_TAG             v2.13.6)
-FetchContent_MakeAvailable(Catch2)
+include_directories(libraries/doctest)
 
 
 
@@ -158,7 +154,6 @@ print_list("Source files" "${SRC_FILES}")
 
 file(GLOB
     SRC_TESTS
-    tests/tests_main.cpp
     tests/tests_engine.cpp
     src/geometry/*.cpp
 )
@@ -210,7 +205,6 @@ endif()
 
 # tests
 add_executable(tests ${SRC_TESTS})
-target_link_libraries(tests PRIVATE Catch2::Catch2)
 
 # window test
 # add_executable(test_window WIN32 ${SRC_WINDOW_TEST})

@@ -3,6 +3,7 @@
 #include "element.hpp"
 
 #include <cassert>
+#include <vector>       // vector
 
 
 namespace frog::geo
@@ -243,9 +244,9 @@ public:
         }
         else if constexpr (Size == 3)
         {
-            using std::initializer_list, std::pair;
+            using std::vector, std::pair;
             static const auto coords
-                = initializer_list<initializer_list<pair<int, int>>>
+                = vector<vector<pair<int, int>>>
             {
                 { { 2, 2 }, { 2, 3 }, { 3, 2 }, { 3, 3 } },
                 { { 1, 3 }, { 1, 2 }, { 3, 3 }, { 3, 2 } },

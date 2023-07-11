@@ -5,7 +5,6 @@
 #include "mesh.hpp"
 
 #include <vector>
-#include <initializer_list>
 #include <array>
 #include <cmath>
 #include <cassert>
@@ -49,9 +48,9 @@ mesh frog::gl::shape::paddle(int sides,
         tex_coords.push_back(0.5);
     };
 
-    using std::initializer_list, std::array;
+    using std::vector, std::array;
 
-    static const auto triangles = array<initializer_list<initializer_list<int>>, 2>
+    static const auto triangles = array<vector<vector<int>>, 2>
     {
     // not sure why this level of brackets is necessary
     //  |
@@ -279,8 +278,8 @@ mesh frog::gl::shape::cuboid(vec3 size)
     auto tex_coords = std::vector<float>{};
     auto indices = std::vector<uint32_t>{};
 
-    using std::initializer_list, std::pair, std::array;
-    static const auto side = initializer_list<pair<int, int>>
+    using std::vector, std::pair, std::array;
+    static const auto side = std::vector<pair<int, int>>
     {
         { -1, -1 },
         {  1, -1 },
@@ -288,7 +287,7 @@ mesh frog::gl::shape::cuboid(vec3 size)
         {  1,  1 },
     };
 
-    static const auto triangles = array<initializer_list<initializer_list<int>>, 2>
+    static const auto triangles = array<vector<vector<int>>, 2>
     {
         {
             /* one side */

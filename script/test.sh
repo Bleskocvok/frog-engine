@@ -1,10 +1,10 @@
 #!/bin/bash
 
-bin/engine/tests
+bin-lin/engine/tests
 
 if [ $? ]; then
 
-    bin/engine/test_window &
+    bin-lin/engine/test_window &
     pid=$!
     sleep 1 && kill "$pid"
 

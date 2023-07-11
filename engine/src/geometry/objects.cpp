@@ -56,7 +56,7 @@ bool frog::geo::sphere::collides(aabb o) const
             return true;
     }
 
-    auto coords = std::initializer_list<std::pair<int, int>>
+    static const auto coords = std::vector<std::pair<int, int>>
     {
         { -1, -1 },
         {  1, -1 },

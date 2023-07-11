@@ -1,5 +1,8 @@
 
-#include "Catch2/catch.hpp"
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include <doctest.h>
+
+using doctest::Approx;
 
 /**
  * Here go the tests.
