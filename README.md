@@ -49,7 +49,7 @@ Link to the original repository [pa199-project](https://gitlab.fi.muni.cz/xbrabl
     - `glad/` (https://glad.dav1d.de/)
     - `stb_image/` (https://github.com/nothings/stb/blob/master/stb_image.h)
     - `tiny_obj_loader/` (https://github.com/tinyobjloader/tinyobjloader)
-    - `catch2/` (https://github.com/catchorg/Catch2)
+    - `doctest/` (https://github.com/doctest/doctest)
 <br>
 
 - `./engine/assets/`
