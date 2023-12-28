@@ -13,13 +13,6 @@ Simple game engine in C++. Originally made as a project assignment.
 
 Link to the original repository [pa199-project](https://gitlab.fi.muni.cz/xbrablik/pa199-project)
 
-## Development tracking
-
-- [Devlog](devlog.md)
-
-- [TODO](TODO.md)
-
-
 ## Table of contents
 
 [[_TOC_]]
@@ -135,3 +128,11 @@ Link to the original repository [pa199-project](https://gitlab.fi.muni.cz/xbrabl
 
 5. After it has finished you should be able to execute `bin-lin/Game`,
     which starts the game
+
+## Development tracking
+
+- [Devlog](devlog.md)
+
+- [TODO](TODO.md)
+
+
