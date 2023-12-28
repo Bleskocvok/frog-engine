@@ -5,6 +5,7 @@
 
 #include <memory>           // std:unique_ptr
 #include <cmath>            // std::log2
+#include <stdexcept>        // runtime_error
 
 
 namespace
@@ -21,9 +22,6 @@ using image = std::unique_ptr<unsigned char[], Deleter>;
 
 GLuint load_file(const std::string& filename)
 {
-    GLuint texture = 0;
-    glCreateTextures(GL_TEXTURE_2D, 1, &texture);
-
     int width = 0,
         height = 0,
         channels = 0,
@@ -37,6 +35,13 @@ GLuint load_file(const std::string& filename)
                   &channels,
                   desired_channels)
     };
+
+    if (!img)
+        throw std::runtime_error("Cannot load texture '" + filename + "': "
+                                 + stbi_failure_reason());
+
+    GLuint texture = 0;
+    glCreateTextures(GL_TEXTURE_2D, 1, &texture);
 
     glTextureStorage2D(texture,                     // the texture id
                        1,                           // num of LOD levels
