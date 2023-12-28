@@ -2,6 +2,9 @@
 
 #include <iostream>
 
+#define LOGX(x) frog::log_ln(#x, "→", x)
+#define LOG(x) frog::log_ln(x)
+
 namespace frog
 {
 
