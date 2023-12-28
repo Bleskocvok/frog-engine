@@ -19,8 +19,8 @@ struct settings
         float r = 0,
               g = 0,
               b = 0;
-    }
-    clear_color;
+
+    } clear_color;
 
     bool vsync = true;
 
@@ -40,7 +40,8 @@ struct settings
             return fs::canonical(p.parent_path());
         };
 
-        auto folder = parent(parent(executable));
+        // TODO make sure the correct directory is used
+        auto folder = parent(executable);
 
         // TODO this is kind of bad
         frog::fs::current_path(folder);
