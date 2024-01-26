@@ -1,10 +1,12 @@
 #pragma once
 
+#include "geometry/vector.hpp"
+
 #include <string>
 #include <optional>
 
 
-namespace frog::gl
+namespace frog::gx
 {
 
 
@@ -30,4 +32,4 @@ struct ui_element
 };
 
 
-} // namespace frog::gl
+} // namespace frog::gx

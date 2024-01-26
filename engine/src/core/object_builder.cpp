@@ -1,6 +1,8 @@
+#ifndef NOT_FROG_BUILD_3D
+
 #include "object_builder.hpp"
 
-#include "engine.hpp"
+#include "engine3d.hpp"
 
 
 using frog::ptr;
@@ -20,7 +22,7 @@ void frog::object_builder::add_texture(std::string texture)
 }
 
 
-frog::gl::ui_element* frog::object_builder::add_element(ptr<gl::ui_element> el)
+frog::gx::ui_element* frog::object_builder::add_element(ptr<gx::ui_element> el)
 {
     return result->add_element(std::move(el));
 }
@@ -75,3 +77,5 @@ void frog::object_builder::build_in(engine& eng)
 {
     eng.scenes->current().add(build());
 }
+
+#endif

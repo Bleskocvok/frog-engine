@@ -1,4 +1,7 @@
-#include"graphics/include.hpp"
+#ifndef NOT_FROG_BUILD_3D
+
+
+#include "gl/include.hpp"
 
 #include "input.hpp"
 
@@ -87,3 +90,4 @@ std::optional<std::pair<int, int>> input::has_resized() const
 std::pair<double, double> input::cursor_pos() const { return cursor; }
 
 
+#endif

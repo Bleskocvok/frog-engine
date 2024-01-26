@@ -1,3 +1,5 @@
+#ifndef NOT_FROG_BUILD_3D
+
 #pragma once
 
 #include <chrono>
@@ -47,7 +49,13 @@ public:
         auto time = T(value);
         std::this_thread::sleep_for(time);
     }
+
+    unsigned duration_us() const { return duration<os::us>(); }
+    unsigned reset_duration_us() { return reset_duration<os::us>(); }
 };
 
 
 } // namespace frog
+
+
+#endif

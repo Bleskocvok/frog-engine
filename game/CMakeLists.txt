@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.18)
 
 project(Game)
 
+set(FROG_BUILD_2D OFF)
+
 # use CMakeLists.txt from engine/
 add_subdirectory(../engine
                  # we also need to specify BINARY directory for it

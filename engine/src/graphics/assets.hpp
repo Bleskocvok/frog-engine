@@ -7,7 +7,7 @@
 #include <utility>          // move
 
 
-namespace frog::gl
+namespace frog::gx
 {
 
 
@@ -39,5 +39,5 @@ public:
 };
 
 
-} // namespace frog
+} // namespace frog::gx
 

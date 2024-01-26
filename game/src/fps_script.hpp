@@ -17,13 +17,13 @@ struct fps_script : frog::script
 {
     static constexpr float label_height = 0.03;
 
-    frog::gl::ui_element* display = nullptr;
+    frog::gx::ui_element* display = nullptr;
 
     void init(frog::game_object& object, frog::engine&) override
     {
         using namespace frog;
 
-        display = object.add_element(mk_ptr<gl::ui_element>());
+        display = object.add_element(mk_ptr<gx::ui_element>());
         display->label = { "fps: -", 1 };
         display->pos = { -1, 1 - label_height };
         display->size = { label_height };

@@ -17,19 +17,19 @@ struct game_over_script : frog::script
 {
     static constexpr float TextSize = 0.2;
 
-    frog::gl::ui_element* score = nullptr;
+    frog::gx::ui_element* score = nullptr;
 
     void init(frog::game_object& object, frog::engine&) override
     {
         using namespace frog;
 
-        auto* text = object.add_element(mk_ptr<gl::ui_element>());
+        auto* text = object.add_element(mk_ptr<gx::ui_element>());
         text->label = { "Game Over" };
         text->pos = { 0 };
         text->size = { TextSize };
         text->label->centered = true;
 
-        score = object.add_element(mk_ptr<gl::ui_element>());
+        score = object.add_element(mk_ptr<gx::ui_element>());
         score->label = { "score" };
         score->label->centered = true;
         score->pos = { 0, 0 - text->size.y() };

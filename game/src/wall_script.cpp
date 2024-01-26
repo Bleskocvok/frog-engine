@@ -1,6 +1,6 @@
 #include "wall_script.hpp"
 
-#include "core/engine.hpp"
+#include "core/engine3d.hpp"
 
 #include "player_script.hpp"
 

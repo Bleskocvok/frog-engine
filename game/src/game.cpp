@@ -1,7 +1,7 @@
 
-#include "core/engine.hpp"
+#include "core/engine3d.hpp"
 #include "core/object_builder.hpp"
-#include "graphics/shape.hpp"
+#include "gl/shape.hpp"
 
 #include "utils/load_file.hpp"
 #include "utils/ptr.hpp"
@@ -141,7 +141,7 @@ void init_game(frog::engine& eng)
 
     for (auto& name : scenes)
     {
-        eng.scenes->add(std::move(name), mk_ptr<scene>());
+        eng.scenes->add(std::move(name), mk_ptr<scene<game_object>>());
     }
 }
 

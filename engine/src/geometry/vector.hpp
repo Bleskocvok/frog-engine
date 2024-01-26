@@ -67,12 +67,12 @@ public:
 
     T& operator[](size_t i)
     {
-        assert(i >= 0 && i < Base::data.size());
+        assert(i < Base::data.size());
         return Base::data[i];
     }
     const T& operator[](size_t i) const
     {
-        assert(i >= 0 && i < Base::data.size());
+        assert(i < Base::data.size());
         return Base::data[i];
     }
 
@@ -137,7 +137,7 @@ public:
         {
             squared += std::pow(el, 2);
         }, Base::data);
-    
+
         return squared;
     }
 

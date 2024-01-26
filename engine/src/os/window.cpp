@@ -1,5 +1,7 @@
+#ifndef NOT_FROG_BUILD_3D
 
-#include"graphics/include.hpp"
+
+#include "gl/include.hpp"
 
 #include "window.hpp"
 
@@ -68,3 +70,6 @@ void frog::os::window::set_callbacks(input* in)
     glfwSetKeyCallback(         win, callbacks::key_press   );
     // glfwSetScrollCallback(_window.get(), callbacks::scroll);
 }
+
+
+#endif

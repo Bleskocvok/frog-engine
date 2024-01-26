@@ -5,6 +5,6 @@
 #     $ script/build.sh
 
 cmake -D CMAKE_BUILD_TYPE="$1"  \
-      -S game -B bin-lin        \
+      -S . -B bin-lin        \
     && cmake --build bin-lin -j4
 

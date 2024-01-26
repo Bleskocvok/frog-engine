@@ -1,30 +1,38 @@
 #pragma once
 
-#include "game_object.hpp"
-
-
-namespace frog
-{
+namespace frog {
 
 
 class game_object;
+class game_object2d;
 class engine;
+class engine2d;
 
+struct script;
+struct script2d;
 
-struct script
+template<typename GameObject, typename Engine>
+struct script_base;
+
+template<typename GameObject, typename Engine>
+struct script_base
 {
-    virtual ~script() = default;
+    virtual ~script_base() = default;
 
-    virtual void init(game_object&, engine&) {}
+    virtual void init(GameObject&, Engine&) {}
 
-    virtual void stable_update(game_object&, engine&) {}
+    virtual void stable_update(GameObject&, Engine&) {}
 
-    virtual void end_update(game_object&, engine&) {}
+    virtual void end_update(GameObject&, Engine&) {}
 
-    virtual void frame_update(game_object&, engine&) {}
+    virtual void frame_update(GameObject&, Engine&) {}
 
-    virtual void destroyed(game_object&, engine&) {}
+    virtual void destroyed(GameObject&, Engine&) {}
 };
+
+
+struct script : script_base<game_object, engine> {};
+struct script2d : script_base<game_object2d, engine2d> {};
 
 
 } // namespace frog

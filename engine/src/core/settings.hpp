@@ -32,6 +32,9 @@ struct settings
 
     std::string window_name;
 
+    std::string save_path;
+    std::string asset_path;
+
 
     void assign_path(const fs::path& executable)
     {

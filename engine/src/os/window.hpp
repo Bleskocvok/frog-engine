@@ -1,8 +1,11 @@
-#include"graphics/include.hpp"
+#ifndef NOT_FROG_BUILD_3D
+
+#include "gl/include.hpp"
 
 #pragma once
 
 #include "input.hpp"
+#include "window_base.hpp"
 
 #include <string>
 #include <memory>       // unique_ptr
@@ -50,10 +53,15 @@ struct GLFW
     {
         glfwTerminate();
     }
+
+    void poll_events()
+    {
+        glfwPollEvents();
+    }
 };
 
 
-class window
+class window : public window_base
 {
     glfw::window _window;
 
@@ -70,7 +78,7 @@ public:
         make_current_context();
     }
 
-    bool should_close() const
+    bool should_close() const override
     {
         return glfwWindowShouldClose(_window.get());
     }
@@ -80,7 +88,7 @@ public:
         glfwMakeContextCurrent(_window.get());
     }
 
-    void swap_buffers()
+    void swap_buffers() override
     {
         glfwSwapBuffers(_window.get());
     }
@@ -95,3 +103,6 @@ public:
 
 
 } // namespace frog::os
+
+
+#endif

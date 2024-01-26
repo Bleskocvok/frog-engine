@@ -30,7 +30,7 @@ public:
         add_script(mk_ptr<Script>(std::forward<Args>(args)...));
     }
 
-    gl::ui_element* add_element(ptr<gl::ui_element>);
+    gx::ui_element* add_element(ptr<gx::ui_element>);
 
     void set_tag(std::string tag);
 
