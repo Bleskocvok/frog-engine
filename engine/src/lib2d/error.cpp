@@ -2,6 +2,7 @@
 
 #include "core.hpp"
 
+#include "sdl_include.hpp"
 #include SDL_HEADER
 
 #include <iostream>     // cerr

@@ -5,7 +5,9 @@
 #include "graphics/renderer2d.hpp"
 #include "graphics/assets.hpp"
 
-#include "lib2d/core.hpp"
+// bits, please
+#include "lib2d/bits.hpp"
+
 // #include "wrap/window.hpp"
 // #include "wrap/input.hpp"
 // #include "wrap/timer.hpp"

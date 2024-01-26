@@ -17,7 +17,8 @@ class assets
     std::unordered_map<std::string, ptr<T>> data;
 
 public:
-    // TODO investigate why this segfaults
+    // TODO: investigate why this segfaults
+    // EDIT: apparently it doesn't, but keep an eye on this
     const std::string& add(const std::string& tag, T element)
     {
         return add(tag, mk_ptr<T>(std::move(element)));

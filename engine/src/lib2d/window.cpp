@@ -1,11 +1,12 @@
 #ifndef NOT_FROG_BUILD_2D
 
-#include "core.hpp"
+#include "window.hpp"
+
+#include "sdl_include.hpp"
+#include SDL_HEADER
 
 #include <stdexcept>    // runtime_error
 #include <string>       // ""s
-
-#include SDL_HEADER
 
 
 namespace frog::lib2d::gx
@@ -18,9 +19,9 @@ window::window( int width, int height, const char* title,
 {
     using namespace std::string_literals;
 
-    Uint32 win_flags = SDL_WINDOW_RESIZABLE;
-    Uint32 ren_flags = SDL_RENDERER_ACCELERATED;
-    Uint32 pos = SDL_WINDOWPOS_UNDEFINED;
+    std::uint32_t win_flags = SDL_WINDOW_RESIZABLE;
+    std::uint32_t ren_flags = SDL_RENDERER_ACCELERATED;
+    std::uint32_t pos = SDL_WINDOWPOS_UNDEFINED;
 
     if ( vsync == Vsync::On )
         ren_flags = ren_flags | SDL_RENDERER_PRESENTVSYNC;
@@ -64,6 +65,7 @@ window::window( int width, int height, const char* title,
         throw std::runtime_error( "Create Renderer: "s
                                     += SDL_GetError() );
 
+    // TODO: move somewhere else and give the option to use linear instead
     // nearest pixel sampling
     SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "0" );
 }
@@ -75,7 +77,7 @@ void window::update_size()
 }
 
 
-void window::clear_color( Uint8 r, Uint8 g, Uint8 b, Uint8 a )
+void window::clear_color( std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a )
 {
     SDL_SetRenderDrawColor( renderer.get(), r, g, b, a );
 }
@@ -149,7 +151,7 @@ void window::draw_rotated( const texture& tex, int u, int v,
 
 void window::draw_colored( const texture& tex, int u, int v,
         int cut_width, int cut_height, int x, int y,
-        int tex_width, int tex_height, Uint8 r, Uint8 g, Uint8 b, Uint8 a )
+        int tex_width, int tex_height, std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a )
 {
     if ( !tex.src() ) throw std::runtime_error( "draw empty texture" );
 
@@ -168,7 +170,7 @@ void window::draw_colored( const texture& tex, int u, int v,
 void window::draw_colored_rotated( const texture& tex, int u, int v,
                             int cut_width, int cut_height, int x, int y,
                             int tex_width, int tex_height,
-                            Uint8 r, Uint8 g, Uint8 b, Uint8 a,
+                            std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a,
                             int pivot_x, int pivot_y, float angle,
                             bool flipped )
 {

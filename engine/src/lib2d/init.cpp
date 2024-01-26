@@ -2,15 +2,19 @@
 
 #include "core.hpp"
 
+#include "sdl_include.hpp"
 #include SDL_HEADER
 #include SDL_IMAGE_HEADER
+
+#include <cstdint>      // uint32_t
+#include <stdexcept>    // runtime_error
 
 
 namespace frog::lib2d
 {
 
 
-init_core::init_core( Uint32 flags )
+init_core::init_core( std::uint32_t flags )
 {
     int ret = SDL_Init( flags );
     if ( ret != 0 )

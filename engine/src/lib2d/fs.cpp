@@ -2,6 +2,9 @@
 
 #include "core.hpp"
 
+#include "structs.hpp"
+
+#include "sdl_include.hpp"
 #include SDL_HEADER
 
 #include <stdexcept>    // runtime_error

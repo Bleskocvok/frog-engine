@@ -2,6 +2,9 @@
 
 #include "core.hpp"
 
+#include "sdl_include.hpp"
+#include SDL_HEADER
+
 #include <chrono>
 #include <thread>
 
@@ -18,14 +21,13 @@ void wait( long ms )
 
 void timer::reset()
 {
-    // point = SDL_GetTicks();
+    point = SDL_GetTicks();
 }
 
 
 std::uint64_t timer::get_ms() const
 {
-    // return SDL_GetTicks64() - point;
-    return 0;
+    return SDL_GetTicks64() - point;
 }
 
 

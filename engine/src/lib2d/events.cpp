@@ -1,7 +1,8 @@
 #ifndef NOT_FROG_BUILD_2D
 
-#include "core.hpp"
+#include "events.hpp"
 
+#include "sdl_include.hpp"
 #include SDL_HEADER
 
 #include <stdexcept>        // runtime_error

@@ -1,10 +1,11 @@
 #ifndef NOT_FROG_BUILD_2D
 
-#include "core.hpp"
+#include "texture.hpp"
 
 #include <stdexcept>    // runtime_error
 #include <string>       // ""s
 
+#include "sdl_include.hpp"
 #include SDL_HEADER
 #include SDL_IMAGE_HEADER
 
