@@ -6,12 +6,23 @@
 
 set -e
 
-[ "$#" -lt 2 ] && { echo "Usage: $0 [-o out_dir] [-b build_type] cmd dir"; exit 1; }
+usage() { echo "Usage: $0 [-o out_dir] [-b build_type] cmd dir"; }
+
+while getopts "hb:o:" op; do
+    case $op in
+        h) usage; exit 0;;
+        b) build_type="$OPTARG";;
+        o) out="$OPTARG";;
+    esac
+done
+shift $(( $OPTIND - 1 ))
 
 cmd="$1"
 dir="$2"
-build_type="$3"
-out="bin-${dir}-lin"
+[ -z "$out" ] && out="bin-${dir}-lin"
+[ -z "$build_type" ] && build_type="Debug"
+
+[ -z "$cmd" -o -z "$dir" ] && { usage; exit 1; }
 
 build()
 {
