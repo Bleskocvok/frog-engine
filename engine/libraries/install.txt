@@ -1,0 +1,3 @@
+Install SDL2 source libraries here.
+Make sure to use the correct versions.
+You can use the script in `script/libraries.sh`.

@@ -174,6 +174,7 @@ if(FROG_BUILD_3D)
     # Glad
     #
     add_library(glad libraries/glad/src/glad.c)
+    set_target_properties(glad PROPERTIES POSITION_INDEPENDENT_CODE ON)
     set(GLAD_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/libraries/glad/include")
     include_directories(${GLAD_INCLUDE_DIRS})
     add_dirs_to_includes("${GLAD_INCLUDE_DIRS}")
@@ -199,6 +200,7 @@ if(FROG_BUILD_3D)
     add_dirs_to_includes("${CMAKE_CURRENT_SOURCE_DIR}/libraries/stb_image")
     add_library(stb_image libraries/stb_image/stb_image.c)
     add_lib_to_list(stb_image)
+    set_target_properties(stb_image PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 
     #
@@ -218,8 +220,8 @@ endif(FROG_BUILD_3D)
 
 
 if(FROG_BUILD_2D)
-    # TODO: use a relative path, like libraries/
-    set(SDL_PREFIX     "/mnt/d/development/deps")
+    set(SDL_PREFIX     "${CMAKE_CURRENT_SOURCE_DIR}/libraries")
+
     set(SDL_PATH       "${SDL_PREFIX}/SDL2-2.28.5")
     set(SDL_NET_PATH   "${SDL_PREFIX}/SDL2_net-2.2.0")
     # set(SDL_TTF_PATH   "${SDL_PREFIX}/SDL2_ttf-2.20.2")
