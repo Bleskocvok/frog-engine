@@ -74,6 +74,7 @@ window::window( int width, int height, const char* title,
 void window::update_size()
 {
     SDL_GetRendererOutputSize( renderer.get(), &win_width, &win_height );
+    SDL_SetWindowSize( win.get(), win_width, win_height );
 }
 
 
@@ -150,8 +151,9 @@ void window::draw_rotated( const texture& tex, int u, int v,
 }
 
 void window::draw_colored( const texture& tex, int u, int v,
-        int cut_width, int cut_height, int x, int y,
-        int tex_width, int tex_height, std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a )
+                           int cut_width, int cut_height, int x, int y,
+                           int tex_width, int tex_height,
+                           std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a )
 {
     if ( !tex.src() ) throw std::runtime_error( "draw empty texture" );
 
@@ -176,7 +178,6 @@ void window::draw_colored_rotated( const texture& tex, int u, int v,
 {
     if ( !tex.src() ) throw std::runtime_error( "draw empty texture" );
 
-    // TODO: WHAT THE FUCK
     SDL_SetTextureColorMod( tex.src(), r, g, b );
     SDL_SetTextureAlphaMod( tex.src(), a );
 

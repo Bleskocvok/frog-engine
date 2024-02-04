@@ -14,9 +14,6 @@
 namespace frog {
 
 
-class engine;
-
-
 inline static auto all = [](const auto&){ return true; };
 
 inline static auto by_tag(std::string_view tag)

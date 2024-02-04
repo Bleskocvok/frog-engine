@@ -19,7 +19,7 @@ void add_objects(frog::engine2d& eng);
 
 int main(int argc, char** argv)
 {
-    auto engine = frog::ptr<frog::engine2d>{};
+    auto engine = frog::ptr<frog::engine2d>{ nullptr };
 
     auto path = frog::fs::path{ argc > 0 ? argv[0] : "./unknown" };
 
@@ -86,7 +86,35 @@ void init_game(frog::engine2d& eng)
 }
 
 
+
+
+
+struct ballsack : frog::script2d
+{
+    void init(frog::game_object2d&, frog::engine2d& engine) override
+    {
+        using namespace frog;
+
+        engine.win_raw->clear_color(124, 0, 123, 255);
+    }
+
+    void stable_update(frog::game_object2d&, frog::engine2d& engine) override
+    {
+        if (engine.input->k_at(SDL_SCANCODE_ESCAPE).released)
+            engine.global->quit = true;
+    }
+};
+
+
+
 void add_objects(frog::engine2d& eng)
 {
+    using namespace frog;
 
+    eng.scenes->add("main", mk_ptr<scene<game_object2d>>());
+
+    auto gobj = mk_ptr<game_object2d>();
+    gobj->add_script(mk_ptr<ballsack>());
+
+    eng.scenes->current().add(std::move(gobj));
 }

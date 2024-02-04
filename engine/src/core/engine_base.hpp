@@ -21,9 +21,13 @@
 namespace frog {
 
 
-template<typename GameObject, typename Timer>
+// Derived = CRTP
+template<typename Derived, typename GameObject, typename Timer>
 class engine_base
 {
+     const Derived& get() const  { return *static_cast<const Derived*>(this); }
+           Derived& get()        { return *static_cast<      Derived*>(this); }
+
 protected:
     ptr<os::window_base> window;
     ptr<gx::renderer_base> renderer;
@@ -34,21 +38,26 @@ protected:
     virtual void drawUI(double between) = 0;
 
     virtual void update_controls() = 0;
-    virtual void stable_update() = 0;
-    virtual void frame_update() = 0;
+    virtual void frame_update() { scenes->frame_update(get()); }
 
-    template<typename Engine>
-    static void stable_update_t(Engine& eng)
+    virtual void stable_update()
     {
-        eng.scenes->stable_update(eng);
-        eng.scenes->cleanup(eng);
+        scenes->stable_update(get());
+        scenes->cleanup(get());
     }
 
-    template<typename Engine>
-    static void frame_update_t(Engine& eng)
-    {
-        eng.scenes->frame_update(eng);
-    }
+    // template<typename Engine>
+    // static void stable_update_t(Engine& eng)
+    // {
+    //     eng.scenes->stable_update(eng);
+    //     eng.scenes->cleanup(eng);
+    // }
+
+    // template<typename Engine>
+    // static void frame_update_t(Engine& eng)
+    // {
+    //     eng.scenes->frame_update(eng);
+    // }
 
     virtual void render(double between)
     {

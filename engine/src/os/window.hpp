@@ -11,6 +11,7 @@
 #include <memory>       // unique_ptr
 #include <stdexcept>    // runtime_error
 
+#include "utils/debug.hpp"
 
 namespace frog::os
 {
@@ -76,6 +77,8 @@ public:
 
         // important; needs to be set before graphics extensions are loaded
         make_current_context();
+
+        LOG("window");
     }
 
     bool should_close() const override

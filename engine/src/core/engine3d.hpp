@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "gl/include.hpp"
+
 #include "graphics/renderer3d.hpp"
 #include "graphics/assets.hpp"
 #include "gl/texture.hpp"
@@ -25,7 +27,7 @@
 namespace frog {
 
 
-class engine : public engine_base<game_object, os::timer>
+class engine : public engine_base<engine, game_object, os::timer>
 {
     os::GLFW glfw{};
 

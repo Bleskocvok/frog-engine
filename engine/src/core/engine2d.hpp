@@ -27,7 +27,7 @@
 namespace frog {
 
 
-class engine2d : public engine_base<game_object2d, lib2d::os::timer>
+class engine2d : public engine_base<engine2d, game_object2d, lib2d::os::timer>
 {
     void draw3D(double between) override;
     void drawUI(double between) override;

@@ -7,6 +7,8 @@
 
 #include <map>          // map
 #include <array>        // array
+#include <optional>     // optional
+#include <utility>      // pair
 
 #include "sdl_include.hpp"
 #include SDL_HEADER
@@ -39,6 +41,8 @@ namespace frog::lib2d::gx
 
         std::map< SDL_FingerID, finger > m_fingers;
 
+        std::optional< std::pair< int, int > > resized;
+
     public:
         events() = default;
 
@@ -58,6 +62,12 @@ namespace frog::lib2d::gx
 
         // touch
         const decltype( m_fingers )& fingers() const { return m_fingers; }
+
+        decltype( resized ) has_resized() const
+        {
+            // TODO
+            return std::nullopt;
+        }
     };
 }
 

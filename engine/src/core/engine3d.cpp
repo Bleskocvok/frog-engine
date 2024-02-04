@@ -13,6 +13,8 @@
 #include "gl/material.hpp"
 #include "gl/model.hpp"
 
+#include "utils/debug.hpp"
+
 #include <utility>      // std::move
 #include <algorithm>    // std::find
 #include <iterator>     // std::distance
@@ -24,17 +26,27 @@ using namespace frog;
 
 
 frog::engine::engine(settings set, ptr<state> _global)
-    : engine_base( mk_ptr<os::window>(set.width, set.height, set.window_name.c_str()),
-                   mk_ptr<gl::renderer3d>(set.gl_major, set.gl_minor, set.vsync),
+    : engine_base( nullptr,
+                   nullptr,
                    std::move(_global) )
-    , win_raw(static_cast<os::window*>(window.get()))
 {
-    win_raw->make_current_context();
+    // TODO: Debug on WSL why this segfaults
+    // LOG("pre-win");
+    window = mk_ptr<os::window>(set.width, set.height, set.window_name.c_str());
+    // LOG("post-win");
+    win_raw = static_cast<os::window*>(window.get());
+    // LOG("post-win-raw");
+
+    renderer = mk_ptr<gl::renderer3d>(set.gl_major, set.gl_minor, set.vsync);
+
+    // LOG("viewport");
 
     renderer->viewport(set.width, set.height);
     renderer->clear_color(set.clear_color.r
                         , set.clear_color.g
                         , set.clear_color.b);
+
+    // LOG("post-view");
 
     // so that no callbacks are missed
     // (actually not needed unless we use polling functions, e.g. getKeyState)
@@ -42,7 +54,11 @@ frog::engine::engine(settings set, ptr<state> _global)
 
     win_raw->set_callbacks(input.get());
 
+    // LOG("win_raw");
+
     camera.screen_size(set.width, set.height);
+
+    // LOG("engine ok");
 }
 
 
@@ -64,13 +80,13 @@ void frog::engine::init()
 
 void frog::engine::stable_update()
 {
-    engine_base::stable_update_t(*this);
+    engine_base::stable_update();
 }
 
 
 void frog::engine::frame_update()
 {
-    engine_base::frame_update_t(*this);
+    engine_base::frame_update();
 }
 
 

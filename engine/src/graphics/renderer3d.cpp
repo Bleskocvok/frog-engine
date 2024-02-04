@@ -1,8 +1,10 @@
 #ifndef NOT_FROG_BUILD_3D
 
+#include "gl/include.hpp"
+
 #include "renderer3d.hpp"
 
-#include "gl/include.hpp"
+#include "utils/debug.hpp"
 
 
 void frog::gl::renderer3d::gl_settings()
@@ -13,6 +15,7 @@ void frog::gl::renderer3d::gl_settings()
 
 frog::gl::renderer3d::renderer3d(int major, int minor, bool vsync)
 {
+    LOGX("renderer");
     // using OpenGL version 'major.minor'
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor);
@@ -23,14 +26,20 @@ frog::gl::renderer3d::renderer3d(int major, int minor, bool vsync)
     // turn on forward compatibility for opengl
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
+    LOG("pre-glad");
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
     {
         throw std::runtime_error("could not initialize OpenGL extensions");
     }
+    LOG("post-glad");
 
     glfwSwapInterval(vsync ? 1 : 0);
 
+    LOG("post-swap-interval");
+
     gl_settings();
+
+    LOG("renderer3d-end");
 }
 
 
