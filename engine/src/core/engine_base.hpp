@@ -34,8 +34,8 @@ protected:
 
     virtual void init() = 0;
 
-    virtual void draw3D(double between) = 0;
-    virtual void drawUI(double between) = 0;
+    virtual void draw_objects(double between) = 0;
+    virtual void draw_ui(double between) = 0;
 
     virtual void update_controls() = 0;
     virtual void frame_update() { scenes->frame_update(get()); }
@@ -65,11 +65,11 @@ protected:
 
         renderer->prepare3D();
 
-        draw3D(between);
+        draw_objects(between);
 
         renderer->prepare2D();
 
-        drawUI(between);
+        draw_ui(between);
 
         window->swap_buffers();
     }

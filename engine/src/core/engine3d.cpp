@@ -107,7 +107,7 @@ void frog::engine::update_controls()
 
 
 // unused parameter, TODO use it for extrapolation of movement
-void frog::engine::draw3D(double /* between */)
+void frog::engine::draw_objects(double /* between */)
 {
     auto& main = programs.at("main");
     main.use();
@@ -133,7 +133,7 @@ void frog::engine::draw3D(double /* between */)
 }
 
 
-void frog::engine::drawUI(double)
+void frog::engine::draw_ui(double)
 {
     auto& ui = programs.at("ui");
     ui.use();

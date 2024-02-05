@@ -31,8 +31,8 @@ class engine : public engine_base<engine, game_object, os::timer>
 {
     os::GLFW glfw{};
 
-    void draw3D(double between) override;
-    void drawUI(double between) override;
+    void draw_objects(double between) override;
+    void draw_ui(double between) override;
 
     void update_controls() override;
 

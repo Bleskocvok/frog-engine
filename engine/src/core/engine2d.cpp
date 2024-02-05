@@ -60,7 +60,7 @@ void engine2d::frame_update()
 
 
 // unused parameter, TODO use it for extrapolation of movement
-void engine2d::draw3D(double /* between */)
+void engine2d::draw_objects(double /* between */)
 {
     geo::vec2 scale = { win_raw->w() / camera.size.x(),
                         win_raw->h() / camera.size.y() };
@@ -92,7 +92,7 @@ void engine2d::draw3D(double /* between */)
 }
 
 
-void engine2d::drawUI(double)
+void engine2d::draw_ui(double)
 {
     // TODO
 }

@@ -44,6 +44,7 @@ endfunction()
 # ################################################
 
 option(FROG_GEN_DOCS "Generate documentation" ON)
+option(FROG_TEST     "Build engine tests"     ON)
 
 option(FROG_BUILD_3D "Build engine for 3D game" ON)
 option(FROG_BUILD_2D "Build engine for 2D game" ON)
@@ -109,7 +110,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED on)
 
 # tests
-add_executable(test_engine ${SRC_TESTS})
+if (FROG_TEST)
+    add_executable(test_engine ${SRC_TESTS})
+endif(FROG_TEST)
 
 # window test
 # add_executable(test_window WIN32 ${SRC_WINDOW_TEST})
