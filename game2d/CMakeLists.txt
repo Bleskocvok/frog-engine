@@ -4,6 +4,7 @@ project(game_2d)
 
 set(FROG_BUILD_3D OFF)
 set(FROG_GEN_DOCS OFF)
+set(FROG_TEST     OFF)
 
 add_subdirectory(../engine ${CMAKE_CURRENT_BINARY_DIR}/engine)
 

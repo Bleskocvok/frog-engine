@@ -62,6 +62,7 @@ int main(int argc, char** argv)
         std::cerr << "ERROR: engine failed during loading: "
                   << ex.what()
                   << std::endl;
+        lib2d::os::error_box("ERROR: engine failed during loading", ex.what());
         return 2;
     }
 
@@ -75,6 +76,7 @@ int main(int argc, char** argv)
     catch (std::exception& ex)
     {
         std::cerr << "ERROR: engine crashed: " << ex.what() << std::endl;
+        lib2d::os::error_box("ERROR: engine crashed", ex.what());
         return 2;
     }
     return 0;
@@ -96,6 +98,13 @@ struct ballsack : frog::script2d
         using namespace frog;
 
         engine.win_raw->clear_color(124, 0, 123, 255);
+
+        resize(engine.win_raw->w(), engine.win_raw->h(), engine);
+    }
+
+    void resize(int w, int h, frog::engine2d& eng)
+    {
+        eng.camera.size = { w / float(h), 1 };
     }
 
     void stable_update(frog::game_object2d& obj, frog::engine2d& engine) override
@@ -103,9 +112,14 @@ struct ballsack : frog::script2d
         if (engine.input->k_at(SDL_SCANCODE_ESCAPE).released)
             engine.global->quit = true;
 
-        // if (engine.input->has_resized())
-        //     LOG(engine.input->has_resized()->first,
-        //         engine.input->has_resized()->second);
+        if (engine.input->k_at(SDL_SCANCODE_SPACE).released)
+            throw std::runtime_error("Spacebar pressed");
+
+        if (engine.input->has_resized())
+        {
+            auto [w, h] = engine.input->has_resized().value();
+            resize(w, h, engine);
+        }
 
         if (engine.input->k_at(SDL_SCANCODE_D).down) obj.model().rect.pos.x() += 0.01;
         if (engine.input->k_at(SDL_SCANCODE_A).down) obj.model().rect.pos.x() -= 0.01;
