@@ -39,7 +39,8 @@ void engine2d::update_controls()
     auto resized = input->has_resized();
     if (resized)
     {
-        // TODO
+        const auto& [w, h] = *resized;
+        renderer->viewport(w, h);
     }
 
     if (input->quit())
@@ -61,13 +62,54 @@ void engine2d::frame_update()
 // unused parameter, TODO use it for extrapolation of movement
 void engine2d::draw3D(double /* between */)
 {
+    geo::vec2 scale = { win_raw->w() / camera.size.x(),
+                        win_raw->h() / camera.size.y() };
+    geo::vec2 shift = { 0 };
+    shift.x() += win_raw->w() * 0.5;
+    shift.y() += win_raw->h() * 0.5;
+    shift.x() -= camera.pos.x();
+    shift.y() -= camera.pos.y();
 
+    scenes->for_each_object([&](auto& obj)
+        {
+            if (obj.model().image_tag.empty())
+                return;
+
+            const auto& model = obj.model();
+
+            auto rect = model.rect;
+            rect.pos.x() *= scale.x();
+            rect.pos.y() *= scale.y();
+            rect.pos += shift;
+
+            rect.size.x() *= scale.x();
+            rect.size.y() *= scale.y();
+            auto top_left = rect.top_left();
+
+            win_raw->draw(textures.at(model.image_tag), top_left.x(), top_left.y(),
+                          rect.size.x(), rect.size.y());
+        });
 }
 
 
 void engine2d::drawUI(double)
 {
+    // TODO
+}
 
+
+bool engine2d::add_texture(const std::string& tag, const std::string& path)
+{
+    bool has = textures.contains(tag);
+    auto full = global->asset_path() + "/" + path;
+    textures.add(tag, mk_ptr<lib2d::gx::texture>( win_raw->make_texture(full.c_str()) ));
+    return has;
+}
+
+
+bool engine2d::remove_texture(const std::string& tag)
+{
+    return textures.remove(tag);
 }
 
 

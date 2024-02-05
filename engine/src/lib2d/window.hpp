@@ -40,7 +40,7 @@ namespace frog::lib2d::gx
 
         void screenshot( const std::string& filename ) const;
 
-        void update_size();
+        void update_size( int w = -1, int h = -1 );
 
         void clear_color( std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a );
 

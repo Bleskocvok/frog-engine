@@ -35,6 +35,11 @@ public:
         return data.erase(tag) > 0;
     }
 
+    bool contains(const std::string& tag) const
+    {
+        return data.count(tag);
+    }
+
     const T& at(const std::string& tag) const { return *data.at(tag); }
           T& at(const std::string& tag)       { return *data.at(tag); }
 };

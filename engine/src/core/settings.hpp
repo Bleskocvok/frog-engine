@@ -12,6 +12,14 @@ namespace frog
 namespace fs = std::filesystem;
 
 
+inline std::string create_prog_relative_path(const std::string& argv0,
+    const std::string& relative_path)
+{
+    fs::path path = argv0;
+    return path.parent_path() / relative_path;
+}
+
+
 struct settings
 {
     struct color

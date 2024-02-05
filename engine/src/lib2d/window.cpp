@@ -8,7 +8,7 @@
 #include <stdexcept>    // runtime_error
 #include <string>       // ""s
 
-
+#include "utils/debug.hpp"
 namespace frog::lib2d::gx
 {
 
@@ -71,10 +71,17 @@ window::window( int width, int height, const char* title,
 }
 
 
-void window::update_size()
+void window::update_size( int w, int h )
 {
-    SDL_GetRendererOutputSize( renderer.get(), &win_width, &win_height );
-    SDL_SetWindowSize( win.get(), win_width, win_height );
+    if ( w == -1 || h == -1 )
+    {
+        SDL_GetWindowSize( win.get(), &win_width, &win_height );
+    }
+    else
+    {
+        win_width = w;
+        win_height = h;
+    }
 }
 
 

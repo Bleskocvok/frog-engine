@@ -23,15 +23,16 @@ int main(int argc, char** argv)
 
     auto path = frog::fs::path{ argc > 0 ? argv[0] : "./unknown" };
 
-    auto global = frog::mk_ptr<frog::state>();
+    // TODO:
+    auto asset_path = create_prog_relative_path(argv[0], "assets");
+    std::string save_path = "";
+
+    auto global = frog::mk_ptr<frog::state>(asset_path, save_path);
 
     auto set = frog::settings{};
     set.clear_color = { 0.5, 0.6, 0.3 };
     set.window_name = "gaaaaaame2d";
     set.vsync = true;
-    // TODO:
-    set.asset_path = "";
-    set.save_path = "";
 
     //
     // Engine creation
@@ -83,10 +84,9 @@ int main(int argc, char** argv)
 void init_game(frog::engine2d& eng)
 {
     using namespace frog;
+
+    eng.add_texture("heart", "heart.png");
 }
-
-
-
 
 
 struct ballsack : frog::script2d
@@ -98,13 +98,21 @@ struct ballsack : frog::script2d
         engine.win_raw->clear_color(124, 0, 123, 255);
     }
 
-    void stable_update(frog::game_object2d&, frog::engine2d& engine) override
+    void stable_update(frog::game_object2d& obj, frog::engine2d& engine) override
     {
         if (engine.input->k_at(SDL_SCANCODE_ESCAPE).released)
             engine.global->quit = true;
+
+        // if (engine.input->has_resized())
+        //     LOG(engine.input->has_resized()->first,
+        //         engine.input->has_resized()->second);
+
+        if (engine.input->k_at(SDL_SCANCODE_D).down) obj.model().rect.pos.x() += 0.01;
+        if (engine.input->k_at(SDL_SCANCODE_A).down) obj.model().rect.pos.x() -= 0.01;
+        if (engine.input->k_at(SDL_SCANCODE_S).down) obj.model().rect.pos.y() += 0.01;
+        if (engine.input->k_at(SDL_SCANCODE_W).down) obj.model().rect.pos.y() -= 0.01;
     }
 };
-
 
 
 void add_objects(frog::engine2d& eng)
@@ -115,6 +123,7 @@ void add_objects(frog::engine2d& eng)
 
     auto gobj = mk_ptr<game_object2d>();
     gobj->add_script(mk_ptr<ballsack>());
+    gobj->model().image_tag = "heart";
 
     eng.scenes->current().add(std::move(gobj));
 }

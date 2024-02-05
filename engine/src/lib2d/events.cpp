@@ -39,10 +39,17 @@ void events::f_reset()
 }
 
 
-void events::update()
+void events::reset()
 {
     k_reset();
     f_reset();
+    resized.reset();
+}
+
+
+void events::update()
+{
+    reset();
 
     SDL_Event event;
     while ( SDL_PollEvent( &event ) )
@@ -75,6 +82,16 @@ void events::update()
                 break;
 
             case SDL_FINGERMOTION:
+                m_fingers[ event.tfinger.fingerId ].x = event.tfinger.x;
+                m_fingers[ event.tfinger.fingerId ].y = event.tfinger.y;
+                m_fingers[ event.tfinger.fingerId ].dx = event.tfinger.dx;
+                m_fingers[ event.tfinger.fingerId ].dy = event.tfinger.dy;
+                m_fingers[ event.tfinger.fingerId ].pressure = event.tfinger.pressure;
+                break;
+
+            case SDL_WINDOWEVENT:
+                if ( event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED )
+                    resized = { event.window.data1, event.window.data2 };
                 break;
 
             default: break;

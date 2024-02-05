@@ -19,9 +19,9 @@ public:
         : win_ptr(window)
     { }
 
-    void viewport(int /* width */, int /* height */) override
+    void viewport(int width, int height) override
     {
-        win_ptr->update_size();
+        win_ptr->update_size(width, height);
     }
 
     void clear_color(float r, float g, float b) override

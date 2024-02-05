@@ -28,3 +28,8 @@ else()
     # because Microsoft is stupid
     add_compile_options(/W4 /Wall)
 endif()
+
+
+include(../engine/functions.cmake)
+
+asset(assets/heart.png)

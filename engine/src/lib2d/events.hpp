@@ -26,10 +26,11 @@ namespace frog::lib2d::gx
         struct finger { bool pressed=0, released=0;
                         float x=0, y=0, dx=0, dy=0, pressure=0; };
         struct mouse { std::int32_t x, y, xrel, yrel;
-                    std::uint32_t state; };
+                       std::uint32_t state; };
 
         void k_reset();
         void f_reset();
+        void reset();
 
     private:
         bool has_quit = false;
@@ -65,8 +66,7 @@ namespace frog::lib2d::gx
 
         decltype( resized ) has_resized() const
         {
-            // TODO
-            return std::nullopt;
+            return resized;
         }
     };
 }

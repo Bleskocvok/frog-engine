@@ -326,3 +326,30 @@ TEST_CASE("reflection")
     CHECK(reflect({ 0,   -0.4, 0.3 }, { 0,  1, 0 }).is_close({ 0,   0.4, 0.3 }));
     CHECK(reflect({ 0,   -0.4, 0.3 }, { 0, -1, 0 }).is_close({ 0,   0.4, 0.3 }));
 }
+
+
+#include "geometry/rectangle.hpp"
+#include "geometry/collision.hpp"
+
+TEST_CASE("rectangle collision")
+{
+    rect a = rect{ { 0 }, { 1, 2 } };
+    rect b = rect{ { 0.5, 0.5 }, { 1, 2 } };
+    CHECK(is_collision(a, a));
+    CHECK(is_collision(b, b));
+
+    CHECK(!is_collision(rect{ vec2{ 0, 0 },   vec2{ 100, 90 } },
+                        rect{ vec2{ 93, 93 }, vec2{ 100, 90 } }));
+
+    CHECK(!is_collision(rect{ vec2{ 69, 100 }, vec2{ 100, 90 } },
+                        rect{ vec2{ 48,   6 }, vec2{ 100, 90 } }));
+
+    CHECK(is_collision(rect{ vec2{ 53, 71 }, vec2{ 72, 90 } },
+                       rect{ vec2{ 102, 100 }, vec2{ 64, 48 } }));
+
+    CHECK(is_collision(rect{ vec2{ 100, 80 }, vec2{ 36, 38 } },
+                       rect{ vec2{ 103, 100 }, vec2{ 100, 100 } }));
+
+    CHECK(is_collision(rect{ vec2{ 100, 80 }, vec2{ 36, 38 } },
+                       rect{ vec2{ 64, 100 }, vec2{ 100, 100 } }));
+}

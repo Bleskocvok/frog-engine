@@ -3,6 +3,7 @@
 #pragma once
 
 #include "game_object_base.hpp"
+#include "gx2d/sprite.hpp"
 
 
 namespace frog
@@ -19,9 +20,13 @@ public:
     using Engine = engine2d;
 
 private:
+    gx2d::sprite img;
 
 public:
     game_object2d() = default;
+
+    const gx2d::sprite& model() const { return img; }
+          gx2d::sprite& model()       { return img; }
 };
 
 
