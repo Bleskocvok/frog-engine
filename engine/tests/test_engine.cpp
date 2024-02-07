@@ -245,13 +245,13 @@ TEST_CASE("distance")
     CHECK(distance(vec3(0, 0, 0), vec3(1, 1, 1)) == Approx(std::sqrt(3)));
 
     // rays
-    CHECK(distance(ray3(0, 0, 0, 1, 0, 0), ray3(0, 1, 0, 1, 0, 1)) == Approx(1));
-    CHECK(distance(ray3(0, 0, 0, 1, 0, 0), ray3(0, 0, 0, 1, 0, 1)) == Approx(0));
-    CHECK(distance(ray3(0, 0, 0, 1, 0, 0), ray3(0, 0, 0, 1, 0, 0)) == Approx(0));
-    CHECK(distance(ray3(0, 0, 0, 1, 0, 0), ray3(0, 3, 0, 1, 0, 1)) == Approx(3));
-    CHECK(distance(ray3(0, 0, 0, 1, 0, 0), ray3(0, 0, 0, 0, 1, 0)) == Approx(0));
-    CHECK(distance(ray3(1, 2, 3, 1, 0, 0), ray3(2, 4, 6, 1, 2, 3)) == Approx(0));
-    CHECK(distance(ray3(0, 0, 0, 1, 0, 0), ray3(0, 3, 0, 23, 0, 23)) == Approx(3));
+    CHECK(distance(ray3(0, 0,  0,  1, 0, 0), ray3(0, 1, 0,  1, 0,  1)) == Approx(1));
+    CHECK(distance(ray3(0, 0,  0,  1, 0, 0), ray3(0, 0, 0,  1, 0,  1)) == Approx(0));
+    CHECK(distance(ray3(0, 0,  0,  1, 0, 0), ray3(0, 0, 0,  1, 0,  0)) == Approx(0));
+    CHECK(distance(ray3(0, 0,  0,  1, 0, 0), ray3(0, 3, 0,  1, 0,  1)) == Approx(3));
+    CHECK(distance(ray3(0, 0,  0,  1, 0, 0), ray3(0, 0, 0,  0, 1,  0)) == Approx(0));
+    CHECK(distance(ray3(1, 2,  3,  1, 0, 0), ray3(2, 4, 6,  1, 2,  3)) == Approx(0));
+    CHECK(distance(ray3(0, 0,  0,  1, 0, 0), ray3(0, 3, 0, 23, 0, 23)) == Approx(3));
     CHECK(distance(ray3(0, 0, -3, 12, 2, 0), ray3(0, 0, 3, 23, 67, 0)) == Approx(6));
 
     // ray vs point
