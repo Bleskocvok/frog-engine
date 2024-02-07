@@ -166,6 +166,22 @@ TEST_CASE("matrix inversion")
         check(mat3{ f });
         // check(mat4{ f });
     }
+
+    // larger matrices
+
+    CHECK(mat4{ 1, 2, 3, 4,
+                4, 3, 2, 1,
+                2, 4, 1, 3,
+                3, 4, 2, 1 }.inverted().is_close(0.1 * mat4{ -1,  6,  1, -5,
+                                                             -1, -4,  1,  5,
+                                                              3, -2, -5,  5,
+                                                              1,  2,  3, -5 }));
+
+    check(matrix<double, 5, 5>{ 1, 2, 3, 4, 5,
+                                5, 4, 3, 2, 1,
+                                3, 4, 5, 2, 1,
+                                5, 1, 3, 2, 4,
+                                7, 8, 9, 5, 4 });
 }
 
 
