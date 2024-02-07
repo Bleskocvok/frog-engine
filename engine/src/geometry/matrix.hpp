@@ -303,11 +303,22 @@ public:
             at(c, dst) += mult * at(c, r);
     }
 
-    matrix gauss_elimination() const
+    void mult_row(size_t r, T mult)
     {
+        assert(r <= Height);
+        for (size_t c = 0; c < Width; ++c)
+            at(c, r) *= mult;
+    }
+
+    std::pair<matrix, matrix> gauss_elimination() const
+    {
+        static_assert(Width == Height, "Gaussian elimination is currently "
+                                       "implemented only for square matrices.");
+
         using Idx = unsigned;
 
         matrix mat = *this;
+        matrix ide = matrix{ 1 };
 
         auto argmax = [&mat](auto h, auto k)
         {
@@ -321,6 +332,7 @@ public:
             return i_max;
         };
 
+        constexpr auto Size = Height;
         auto m = Height;
         auto n = Width;
         Idx h = 0;
@@ -334,18 +346,45 @@ public:
             else
             {
                 mat.swap_rows(h, i_max);
+                ide.swap_rows(h, i_max);
                 for (Idx i = h + 1; i < m; ++i)
                 {
                     auto f = mat.at(k, i) / mat.at(k, h);
+                    // mat.at(k, i) = 0;
+                    // for (Idx j = k + 1; j < n; ++j)
+                    //     mat.at(j, i) -= mat.at(j, h) * f;
+                    mat.add_row_multiple(h, -f, i);
+                    ide.add_row_multiple(h, -f, i);
                     mat.at(k, i) = 0;
-                    for (Idx j = k + 1; j < n; ++j)
-                        mat.at(j, i) -= mat.at(j, h) * f;
                 }
                 ++h;
                 ++k;
             }
         }
-        return mat;
+
+        for (Idx i = 0; i < Height; ++i)
+        {
+            Idx row = Height - 1 - i;
+            Idx col = Width - 1 - i;
+            if (mat.at(col, row) == 0)
+                continue;
+            for (Idx j = 0; j < row; ++j)
+            {
+                T coef = -mat.at(col, j) / mat.at(col, row);
+                mat.add_row_multiple(row, coef, j);
+                ide.add_row_multiple(row, coef, j);
+            }
+        }
+        for (Idx i = 0; i < Height; ++i)
+        {
+            if (mat.at(i, i) != 0 && ide.at(i, i) != 0)
+            {
+                ide.mult_row(i, 1 / mat.at(i, i));
+                mat.at(i, i) = 1;
+            }
+        }
+
+        return { mat, ide };
     }
 };
 
