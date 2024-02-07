@@ -279,41 +279,32 @@ public:
         }
         else
         {
-            // TODO
-            assert(false); // Not implemented
-            return *this;
+            return gauss_elimination().second;
         }
-    }
-
-    void swap_rows(size_t i, size_t j)
-    {
-        assert(i <= Height);
-        assert(j <= Height);
-
-        for (size_t k = 0; k < Width; ++k)
-            std::swap(at(k, i), at(k, j));
-    }
-
-    void add_row_multiple(size_t r, T mult, size_t dst)
-    {
-        assert(r <= Height);
-        assert(dst <= Height);
-
-        for (size_t c = 0; c < Width; ++c)
-            at(c, dst) += mult * at(c, r);
-    }
-
-    void mult_row(size_t r, T mult)
-    {
-        assert(r <= Height);
-        for (size_t c = 0; c < Width; ++c)
-            at(c, r) *= mult;
     }
 
     std::pair<matrix, matrix> gauss_elimination() const
     {
         static_assert(Width == Height, "Gaussian elimination is currently "
                                        "implemented only for square matrices.");
+
+        auto swap_rows = [](auto& m, auto i, auto j)
+        {
+            for (size_t k = 0; k < Width; ++k)
+                std::swap(m.at(k, i), m.at(k, j));
+        };
+
+        auto add_row_multiple = [](auto& m, auto r, T mult, auto dst)
+        {
+            for (size_t c = 0; c < Width; ++c)
+                m.at(c, dst) += mult * m.at(c, r);
+        };
+
+        auto div_row = [](auto& m, auto r, T d)
+        {
+            for (size_t c = 0; c < Width; ++c)
+                m.at(c, r) /= d;
+        };
 
         using Idx = unsigned;
 
@@ -342,19 +333,21 @@ public:
         {
             T i_max = argmax(h, k);
             if (mat.at(k, i_max) == 0)
+            {
                 ++k;
+            }
             else
             {
-                mat.swap_rows(h, i_max);
-                ide.swap_rows(h, i_max);
+                swap_rows(mat, h, i_max);
+                swap_rows(ide, h, i_max);
                 for (Idx i = h + 1; i < m; ++i)
                 {
                     auto f = mat.at(k, i) / mat.at(k, h);
                     // mat.at(k, i) = 0;
                     // for (Idx j = k + 1; j < n; ++j)
                     //     mat.at(j, i) -= mat.at(j, h) * f;
-                    mat.add_row_multiple(h, -f, i);
-                    ide.add_row_multiple(h, -f, i);
+                    add_row_multiple(mat, h, -f, i);
+                    add_row_multiple(ide, h, -f, i);
                     mat.at(k, i) = 0;
                 }
                 ++h;
@@ -371,15 +364,15 @@ public:
             for (Idx j = 0; j < row; ++j)
             {
                 T coef = -mat.at(col, j) / mat.at(col, row);
-                mat.add_row_multiple(row, coef, j);
-                ide.add_row_multiple(row, coef, j);
+                add_row_multiple(mat, row, coef, j);
+                add_row_multiple(ide, row, coef, j);
             }
         }
         for (Idx i = 0; i < Height; ++i)
         {
             if (mat.at(i, i) != 0 && ide.at(i, i) != 0)
             {
-                ide.mult_row(i, 1 / mat.at(i, i));
+                div_row(ide, i, mat.at(i, i));
                 mat.at(i, i) = 1;
             }
         }
