@@ -6,6 +6,6 @@ files="$(git ls-files | fgrep -v libraries)"
 
 cloc $files
 
-for i in $(seq 80); do printf '#'; done | 
+for i in $(seq 80); do printf '#'; done
 
 scc $files
