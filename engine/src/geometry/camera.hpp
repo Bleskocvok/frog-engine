@@ -6,7 +6,7 @@
 #include <utility>      // move
 
 
-namespace frog
+namespace frog::geo
 {
 
 
@@ -71,5 +71,5 @@ public:
 };
 
 
-} // namespace frog
+} // namespace frog::geo
 

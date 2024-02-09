@@ -4,6 +4,7 @@
 
 #include "gl/include.hpp"
 
+#include "geometry/camera.hpp"
 #include "graphics/renderer3d.hpp"
 #include "graphics/assets.hpp"
 #include "gl/texture.hpp"
@@ -62,7 +63,7 @@ public:
     os::window* win_raw = nullptr;
     ptr<os::input> input = mk_ptr<os::input>();
 
-    frog::camera camera{ 100, 0.1, 100 };
+    frog::geo::camera camera{ 100, 0.1, 100 };
     geo::vec4 sun = { 7, 7, 7, 0 };
 
     gx::assets<gl::mesh> meshes;

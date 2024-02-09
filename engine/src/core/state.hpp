@@ -1,7 +1,6 @@
 #pragma once
 
-#include "camera.hpp"
-
+#include <string>
 
 namespace frog
 {
