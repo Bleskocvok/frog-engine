@@ -37,13 +37,16 @@ int main(int argc, char** argv)
 
     auto path = frog::fs::path{ argc > 0 ? argv[0] : "./unknown" };
 
-    auto global = frog::mk_ptr<frog::state>();
+    // TODO: solve save_path
+    auto asset_path = create_prog_relative_path(argv[0], "");
+    std::string save_path = "";
+
+    auto global = frog::mk_ptr<frog::state>(asset_path, save_path);
 
     auto set = frog::settings{};
          set.clear_color = { 0.5, 0.6, 0.3 };
          set.window_name = "gaaaaaame";
          set.vsync = true;
-         set.assign_path(path);
 
     //
     // Engine creation

@@ -18,7 +18,6 @@
 #include "scene_manager.hpp"
 #include "game_object.hpp"
 #include "settings.hpp"
-#include "camera.hpp"
 #include "state.hpp"
 
 #include <string_view>
