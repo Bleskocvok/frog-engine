@@ -8,7 +8,7 @@ SDL_TTF_V="2.20.2"
 SDL_IMAGE_V="2.8.1"
 SDL_MIXER_V="2.6.3"
 
-DST="$(realpath 'engine/libraries/')"
+DST="$(realpath "$(dirname "$0")/../engine/libraries/")"
 
 TEMP_DIR=$(mktemp --tmpdir -d XXXXXXXXXXX)
 (
