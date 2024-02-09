@@ -16,22 +16,15 @@ using namespace frog;
 void init_game(frog::engine2d& eng);
 void add_objects(frog::engine2d& eng);
 
-#include "geometry/matrix.hpp"
+
 int main(int argc, char** argv)
 {
-    geo::mat3 m = { 1, 2, 3,
-                    3, 2, 1,
-                    2, 1, 3 };
-    auto inv = m.inverted();
-    LOGX(inv);
-    LOGX(m * inv);
-
     auto engine = frog::ptr<frog::engine2d>{ nullptr };
 
     auto path = frog::fs::path{ argc > 0 ? argv[0] : "./unknown" };
 
+    // TODO: solve save_path
     auto asset_path = create_prog_relative_path(argv[0], "assets");
-    // TODO
     std::string save_path = "";
 
     auto global = frog::mk_ptr<frog::state>(asset_path, save_path);
@@ -50,9 +43,7 @@ int main(int argc, char** argv)
     }
     catch (std::exception& ex)
     {
-        std::cerr << "FATAL ERROR: engine creation failed: "
-                  << ex.what()
-                  << std::endl;
+        lib2d::os::error_box("FATAL ERROR: engine creation failed: ", ex.what());
         return 2;
     }
 
@@ -66,9 +57,6 @@ int main(int argc, char** argv)
     }
     catch (std::exception& ex)
     {
-        std::cerr << "ERROR: engine failed during loading: "
-                  << ex.what()
-                  << std::endl;
         lib2d::os::error_box("ERROR: engine failed during loading", ex.what());
         return 2;
     }
@@ -82,7 +70,6 @@ int main(int argc, char** argv)
     }
     catch (std::exception& ex)
     {
-        std::cerr << "ERROR: engine crashed: " << ex.what() << std::endl;
         lib2d::os::error_box("ERROR: engine crashed", ex.what());
         return 2;
     }
@@ -97,6 +84,9 @@ void init_game(frog::engine2d& eng)
     eng.add_texture("heart", "heart.png");
 }
 
+#include "geometry/physics.hpp"
+
+#include <unordered_map>
 
 struct ballsack : frog::script2d
 {
@@ -107,12 +97,18 @@ struct ballsack : frog::script2d
         engine.win_raw->clear_color(124, 0, 123, 255);
 
         resize(engine.win_raw->w(), engine.win_raw->h(), engine);
+
+        physics.settings_.universum = { 0, 0, 1, 1 };
+        physics.settings_.iterations = 5;
     }
 
     void resize(int w, int h, frog::engine2d& eng)
     {
         eng.camera.size = { w / float(h), 1 };
     }
+
+    geo::soft_physics2d physics;
+    std::unordered_map<decltype(physics)::idx_t, game_object2d*> babies;
 
     void stable_update(frog::game_object2d& obj, frog::engine2d& engine) override
     {
@@ -134,13 +130,30 @@ struct ballsack : frog::script2d
             gobj->model().image_tag = "heart";
             gobj->model().rect.size = { 0.1, 0.1 };
             gobj->model().rect.pos = engine.camera_coords(engine.input->mouse());
-            engine.scenes->current().add(std::move(gobj));
+
+            geo::vec2 pos = engine.camera_coords(engine.input->mouse());
+
+            auto* ptr = engine.scenes->current().add(std::move(gobj));
+            auto idx = physics.add_point(decltype(physics)::point
+            {
+                .pos = pos,
+                .prev = pos,
+                .radius = 0.04,
+                .inv_weight = 1,
+            });
+            babies.emplace(idx, ptr);
         }
 
         if (engine.input->k_at(SDL_SCANCODE_D).down) obj.model().rect.pos.x() += 0.01;
         if (engine.input->k_at(SDL_SCANCODE_A).down) obj.model().rect.pos.x() -= 0.01;
         if (engine.input->k_at(SDL_SCANCODE_S).down) obj.model().rect.pos.y() += 0.01;
         if (engine.input->k_at(SDL_SCANCODE_W).down) obj.model().rect.pos.y() -= 0.01;
+
+        for (auto&[idx, pt] : physics.points())
+        {
+            babies.at(idx)->model().rect.pos = pt.pos;
+        }
+        physics.update();
     }
 };
 

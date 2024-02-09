@@ -46,9 +46,12 @@ public:
     void add_objects(Engine&);
 
 public:
-    void add(ptr<GameObject> obj)
+    // TODO: return weak_ptr
+    GameObject* add(ptr<GameObject> obj)
     {
+        auto* ptr = obj.get();
         to_add.push_back(std::move(obj));
+        return ptr;
     }
 
     /*

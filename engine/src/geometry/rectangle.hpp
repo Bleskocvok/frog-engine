@@ -24,6 +24,7 @@ struct rect_t
     rect_t() = default;
 
     rect_t(vec<T, 2> mid, vec<T, 2> size) : pos(mid), size(size) {}
+    rect_t(T x, T y, T w, T h) : pos(x, y), size(w, h) {}
 
     vec<T, 2> top_left() const { return pos - size * 0.5; }
 };
