@@ -16,15 +16,22 @@ using namespace frog;
 void init_game(frog::engine2d& eng);
 void add_objects(frog::engine2d& eng);
 
-
+#include "geometry/matrix.hpp"
 int main(int argc, char** argv)
 {
+    geo::mat3 m = { 1, 2, 3,
+                    3, 2, 1,
+                    2, 1, 3 };
+    auto inv = m.inverted();
+    LOGX(inv);
+    LOGX(m * inv);
+
     auto engine = frog::ptr<frog::engine2d>{ nullptr };
 
     auto path = frog::fs::path{ argc > 0 ? argv[0] : "./unknown" };
 
-    // TODO:
     auto asset_path = create_prog_relative_path(argv[0], "assets");
+    // TODO
     std::string save_path = "";
 
     auto global = frog::mk_ptr<frog::state>(asset_path, save_path);
@@ -119,6 +126,15 @@ struct ballsack : frog::script2d
         {
             auto [w, h] = engine.input->has_resized().value();
             resize(w, h, engine);
+        }
+
+        if (engine.input->mouse().but_l.pressed)
+        {
+            auto gobj = mk_ptr<game_object2d>();
+            gobj->model().image_tag = "heart";
+            gobj->model().rect.size = { 0.1, 0.1 };
+            gobj->model().rect.pos = engine.camera_coords(engine.input->mouse());
+            engine.scenes->current().add(std::move(gobj));
         }
 
         if (engine.input->k_at(SDL_SCANCODE_D).down) obj.model().rect.pos.x() += 0.01;

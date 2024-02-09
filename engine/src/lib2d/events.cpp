@@ -39,11 +39,33 @@ void events::f_reset()
 }
 
 
+void events::reset_key( key_state& k )
+{
+    k.pressed = false;
+    k.released = false;
+}
+
+
 void events::reset()
 {
     k_reset();
     f_reset();
     resized.reset();
+    reset_key( m_mouse.but_l );
+    reset_key( m_mouse.but_r );
+    reset_key( m_mouse.but_m );
+}
+
+
+events::key_state& events::mouse_button( Uint8 but )
+{
+    switch ( but )
+    {
+        case SDL_BUTTON_LEFT:   return m_mouse.but_l;
+        case SDL_BUTTON_MIDDLE: return m_mouse.but_m;
+        case SDL_BUTTON_RIGHT:  return m_mouse.but_r;
+        default: throw "invalid mouse button";
+    }
 }
 
 
@@ -92,6 +114,23 @@ void events::update()
             case SDL_WINDOWEVENT:
                 if ( event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED )
                     resized = { event.window.data1, event.window.data2 };
+                break;
+
+            case SDL_MOUSEBUTTONDOWN:
+                mouse_button( event.button.button ).down = true;
+                mouse_button( event.button.button ).pressed = true;
+                break;
+
+            case SDL_MOUSEBUTTONUP:
+                mouse_button( event.button.button ).down = false;
+                mouse_button( event.button.button ).released = true;
+                break;
+
+            case SDL_MOUSEMOTION:
+                m_mouse.x = event.motion.x;
+                m_mouse.y = event.motion.y;
+                m_mouse.dx = event.motion.xrel;
+                m_mouse.dy = event.motion.yrel;
                 break;
 
             default: break;

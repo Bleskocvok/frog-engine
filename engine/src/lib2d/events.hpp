@@ -22,11 +22,17 @@ namespace frog::lib2d::gx
         static constexpr int SCANCODES_MAX = SDL_NUM_SCANCODES;
         using KeyPtr = Uint8;
 
-        struct key_state { bool pressed, released, down; };
+        struct key_state { bool pressed=false, released=false, down=false; };
         struct finger { bool pressed=0, released=0;
                         float x=0, y=0, dx=0, dy=0, pressure=0; };
-        struct mouse { std::int32_t x, y, xrel, yrel;
-                       std::uint32_t state; };
+
+        struct mouse_t
+        {
+            std::int32_t x=0, y=0, dx=0, dy=0;
+            key_state but_l;
+            key_state but_r;
+            key_state but_m;
+        };
 
         void k_reset();
         void f_reset();
@@ -40,9 +46,14 @@ namespace frog::lib2d::gx
         const KeyPtr* keyboard_state = nullptr;
         int keyboard_state_count = 0;
 
+        mouse_t m_mouse;
+
         std::map< SDL_FingerID, finger > m_fingers;
 
         std::optional< std::pair< int, int > > resized;
+
+        key_state& mouse_button( Uint8 but );
+        void reset_key( key_state& k );
 
     public:
         events() = default;
@@ -60,6 +71,9 @@ namespace frog::lib2d::gx
 
         // keyboard_state
         bool kb_down( SDL_Scancode k ) const;
+
+        // mouse
+        const mouse_t& mouse() const { return m_mouse; }
 
         // touch
         const decltype( m_fingers )& fingers() const { return m_fingers; }
