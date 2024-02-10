@@ -2,9 +2,8 @@
 
 #include "engine2d.hpp"
 
-#include <utility>      // std::move
-#include <algorithm>    // std::find
-#include <iterator>     // std::distance
+#include <utility>      // move
+#include <vector>
 
 using namespace frog::geo;
 using namespace frog;
@@ -70,6 +69,13 @@ geo::vec2 engine2d::camera_coords(int mouse_x, int mouse_y)
 // TODO: unused parameter, use it for extrapolation of movement
 void engine2d::draw_objects(double /* between */)
 {
+    // TODO: solve in a more appropriate OOP way
+    //       also, perhaps create some sort of reference counting with layers
+    //       in render queue (i.e. add reference for a new game object, remove for deleted object)
+    // TODO: make this more memory efficient for unhinged layer values
+    //       (i.e. don't crash the game for unsigned(-1))
+    std::vector<std::vector<const gx2d::sprite*>> render_queue;
+
     geo::vec2 scale = { win_raw->w() / camera.size.x(),
                         win_raw->h() / camera.size.y() };
     geo::vec2 shift = { 0 };
@@ -78,14 +84,23 @@ void engine2d::draw_objects(double /* between */)
     shift.x() -= camera.pos.x();
     shift.y() -= camera.pos.y();
 
-    scenes->for_each_object([&](auto& obj)
+    scenes->for_each_object([&](const auto& obj)
         {
             if (obj.model().image_tag.empty())
                 return;
 
-            const auto& model = obj.model();
+            auto layer = obj.model().layer;
 
-            auto rect = model.rect;
+            if (layer >= render_queue.size())
+                render_queue.resize(layer + 1);
+
+            render_queue[layer].push_back(&obj.model());
+        });
+
+    for (const auto& layer : render_queue)
+        for (const auto& model : layer)
+        {
+            auto rect = model->rect;
             rect.pos.x() *= scale.x();
             rect.pos.y() *= scale.y();
             rect.pos += shift;
@@ -94,9 +109,10 @@ void engine2d::draw_objects(double /* between */)
             rect.size.y() *= scale.y();
             auto top_left = rect.top_left();
 
-            win_raw->draw(textures.at(model.image_tag), top_left.x(), top_left.y(),
+            // TODO: account for rotation, color etc.
+            win_raw->draw(textures.at(model->image_tag), top_left.x(), top_left.y(),
                           rect.size.x(), rect.size.y());
-        });
+        }
 }
 
 
