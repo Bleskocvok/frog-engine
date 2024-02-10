@@ -28,13 +28,13 @@ class scene
 public:
     using Engine = typename GameObject::Engine;
 
-    std::vector<ptr<GameObject>> objects;
+    std::vector<ptr<GameObject>> objects_;
     std::vector<ptr<GameObject>> to_add;
 
     template <typename Self, typename Func, typename Predicate>
     static void for_each_impl(Self& self, Func func, Predicate pred)
     {
-        std::for_each(self.objects.begin(), self.objects.end(),
+        std::for_each(self.objects_.begin(), self.objects_.end(),
             [=](auto& ptr)
             {
                 if (ptr && pred(*ptr))
@@ -55,19 +55,22 @@ public:
     }
 
     /*
-     * Functions to iterate or get objects
+     * Functions to iterate or get objects_
      */
 
     template<typename Predicate>
     GameObject* get_object(Predicate pred)
     {
-        auto found = std::find_if(objects.begin(), objects.end(),
+        auto found = std::find_if(objects_.begin(), objects_.end(),
             [&](auto& ptr) { return ptr && pred(*ptr); });
 
-        if (found == objects.end())
+        if (found == objects_.end())
             return nullptr;
         return found->get();
     }
+
+    const auto& objects() const { return objects_; }
+          auto& objects()       { return objects_; }
 
     template<typename Func>
     void for_each_object(Func func) const { for_each_impl(*this, func, all); }
@@ -106,7 +109,7 @@ public:
 
     void cleanup(Engine& eng)
     {
-        for (auto& ptr : objects)
+        for (auto& ptr : objects_)
         {
             if (ptr->is_destroyed())
             {
@@ -115,11 +118,11 @@ public:
             }
         }
 
-        objects.erase(std::remove_if(
-                        objects.begin(),
-                        objects.end(),
+        objects_.erase(std::remove_if(
+                        objects_.begin(),
+                        objects_.end(),
                         [&](const auto& ptr) { return !ptr; }),
-                    objects.end());
+                    objects_.end());
 
         add_objects(eng);
     }
@@ -132,7 +135,7 @@ public:
                 continue;
 
             to_add[i]->init(eng);
-            objects.push_back(std::move(to_add[i]));
+            objects_.push_back(std::move(to_add[i]));
         }
         to_add.clear();
     }

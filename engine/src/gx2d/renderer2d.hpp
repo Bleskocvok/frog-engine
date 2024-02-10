@@ -5,8 +5,6 @@
 #include "graphics/renderer_base.hpp"
 #include "lib2d/window.hpp"
 
-#include <stdexcept>
-
 
 namespace frog::gx {
 

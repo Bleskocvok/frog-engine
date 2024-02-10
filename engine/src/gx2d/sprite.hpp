@@ -13,6 +13,9 @@ struct sprite
 
     geo::rect rect;
     float rot = 0;
+
+    // lower layer = rendered earlier
+    unsigned layer = 0;
 };
 
 

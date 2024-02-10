@@ -2,20 +2,20 @@
 
 #pragma once
 
-#include "graphics/renderer2d.hpp"
+#include "gx2d/renderer2d.hpp"
 #include "graphics/assets.hpp"
+
+#include "geometry/rectangle.hpp"
+#include "utils/ptr.hpp"
 
 // bits, please
 #include "lib2d/bits.hpp"
-
-#include "utils/ptr.hpp"
 
 #include "engine_base.hpp"
 #include "game_object2d.hpp"
 #include "scene_manager.hpp"
 #include "settings.hpp"
 #include "state.hpp"
-#include "geometry/rectangle.hpp"
 
 #include <string_view>
 #include <utility>      // move

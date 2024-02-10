@@ -2,8 +2,6 @@
 
 #include "engine2d.hpp"
 
-#include "graphics/renderer2d.hpp"
-
 #include <utility>      // std::move
 #include <algorithm>    // std::find
 #include <iterator>     // std::distance
@@ -69,7 +67,7 @@ geo::vec2 engine2d::camera_coords(int mouse_x, int mouse_y)
 }
 
 
-// unused parameter, TODO use it for extrapolation of movement
+// TODO: unused parameter, use it for extrapolation of movement
 void engine2d::draw_objects(double /* between */)
 {
     geo::vec2 scale = { win_raw->w() / camera.size.x(),
