@@ -19,8 +19,6 @@ void add_objects(frog::engine2d& eng);
 
 int main(int argc, char** argv)
 {
-    auto engine = frog::ptr<frog::engine2d>{ nullptr };
-
     auto path = frog::fs::path{ argc > 0 ? argv[0] : "./unknown" };
 
     // TODO: solve save_path
@@ -34,46 +32,9 @@ int main(int argc, char** argv)
     set.window_name = "gaaaaaame2d";
     set.vsync = true;
 
-    //
-    // Engine creation
-    //
-    try
-    {
-        engine = frog::mk_ptr<frog::engine2d>(std::move(set), std::move(global));
-    }
-    catch (std::exception& ex)
-    {
-        lib2d::os::error_box("FATAL ERROR: engine creation failed: ", ex.what());
-        return 2;
-    }
-
-    //
-    // Engine initialization and asset loading
-    //
-    try
-    {
-        init_game(*engine);
-        add_objects(*engine);
-    }
-    catch (std::exception& ex)
-    {
-        lib2d::os::error_box("ERROR: engine failed during loading", ex.what());
-        return 2;
-    }
-
-    //
-    // Engine running
-    //
-    try
-    {
-        engine->play();
-    }
-    catch (std::exception& ex)
-    {
-        lib2d::os::error_box("ERROR: engine crashed", ex.what());
-        return 2;
-    }
-    return 0;
+    return run_engine2d(std::move(set), std::move(global),
+                        [](frog::engine2d& e){ init_game(e); },
+                        [](frog::engine2d& e){ add_objects(e); });
 }
 
 

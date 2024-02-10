@@ -21,8 +21,6 @@
 
 # editor settings
 /.vscode/
-
-# VS garbage
 /.vs/
 
 # my own unrelated garbage

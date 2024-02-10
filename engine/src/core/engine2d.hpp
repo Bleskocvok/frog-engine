@@ -18,6 +18,7 @@
 #include "state.hpp"
 
 #include <string_view>
+#include <stdexcept>    // exception
 #include <utility>      // move
 
 
@@ -56,6 +57,48 @@ public:
     bool add_texture(const std::string& tag, const std::string& path);
     bool remove_texture(const std::string& name);
 };
+
+
+template<typename InitAssets, typename AddObjects>
+int run_engine2d(settings set, ptr<state> global, InitAssets init_assets,
+                 AddObjects add_objects)
+{
+    using BaseException = std::exception;
+
+    auto engine = frog::ptr<frog::engine2d>{ nullptr };
+
+    try
+    {
+        engine = frog::mk_ptr<frog::engine2d>(std::move(set), std::move(global));
+    }
+    catch (BaseException& ex)
+    {
+        lib2d::os::error_box("FATAL ERROR: engine creation failed: ", ex.what());
+        return 1;
+    }
+
+    try
+    {
+        init_assets(*engine);
+        add_objects(*engine);
+    }
+    catch (BaseException& ex)
+    {
+        lib2d::os::error_box("ERROR: engine failed during loading", ex.what());
+        return 1;
+    }
+
+    try
+    {
+        engine->play();
+    }
+    catch (BaseException& ex)
+    {
+        lib2d::os::error_box("ERROR: engine crashed", ex.what());
+        return 1;
+    }
+    return 0;
+}
 
 
 } // namespace frog
