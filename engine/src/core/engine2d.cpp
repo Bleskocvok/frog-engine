@@ -2,6 +2,8 @@
 
 #include "engine2d.hpp"
 
+#include "graphics/color.hpp"
+
 #include <utility>      // move
 #include <vector>
 
@@ -110,8 +112,14 @@ void engine2d::draw_objects(double /* between */)
             auto top_left = rect.top_left();
 
             // TODO: account for rotation, color etc.
-            win_raw->draw(textures.at(model->image_tag), top_left.x(), top_left.y(),
-                          rect.size.x(), rect.size.y());
+            // win_raw->draw(textures.at(model->image_tag), top_left.x(), top_left.y(),
+            //               rect.size.x(), rect.size.y());
+            const auto& tex = textures.at(model->image_tag);
+            gx::rgba_t color = gx::color_to_255(model->color);
+            win_raw->draw_colored(tex, 0, 0, tex.w(), tex.h(),
+                                  top_left.x(), top_left.y(),
+                                  rect.size.x(), rect.size.y(),
+                                  color.r(), color.g(), color.b(), color.a());
         }
 }
 

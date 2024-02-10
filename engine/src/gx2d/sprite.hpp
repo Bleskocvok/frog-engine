@@ -9,7 +9,8 @@ struct sprite
 {
     std::string image_tag;
     float opacity = 1;
-    // TODO: color
+
+    geo::vec4 color = { 1 };
 
     geo::rect rect;
     float rot = 0;

@@ -42,7 +42,8 @@ void init_game(frog::engine2d& eng)
 {
     using namespace frog;
 
-    eng.add_texture("heart", "heart.png");
+    eng.add_texture("box", "box.png");
+    eng.add_texture("circle", "circle.png");
 }
 
 #include "geometry/physics.hpp"
@@ -55,7 +56,7 @@ struct ballsack : frog::script2d
     {
         using namespace frog;
 
-        engine.win_raw->clear_color(124, 0, 123, 255);
+        // engine.win_raw->clear_color(124, 0, 123, 255);
 
         resize(engine.win_raw->w(), engine.win_raw->h(), engine);
 
@@ -87,9 +88,10 @@ struct ballsack : frog::script2d
 
         if (engine.input->mouse().but_l.pressed)
         {
+            float size = 0.1;
             auto gobj = mk_ptr<game_object2d>();
-            gobj->model().image_tag = "heart";
-            gobj->model().rect.size = { 0.1, 0.1 };
+            gobj->model().image_tag = "circle";
+            gobj->model().rect.size = { size, size };
             gobj->model().rect.pos = engine.camera_coords(engine.input->mouse());
 
             geo::vec2 pos = engine.camera_coords(engine.input->mouse());
@@ -99,7 +101,7 @@ struct ballsack : frog::script2d
             {
                 .pos = pos,
                 .prev = pos,
-                .radius = 0.04,
+                .radius = size / 2,
                 .inv_weight = 1,
             });
             babies.emplace(idx, ptr);
@@ -127,7 +129,8 @@ void add_objects(frog::engine2d& eng)
 
     auto gobj = mk_ptr<game_object2d>();
     gobj->add_script(mk_ptr<ballsack>());
-    gobj->model().image_tag = "heart";
+    gobj->model().image_tag = "box";
+    gobj->model().color = { 0.3, 0.3, 0.3, 1 };
 
     eng.scenes->current().add(std::move(gobj));
 }

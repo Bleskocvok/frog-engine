@@ -67,10 +67,10 @@ private:
     void encapsulate(point& pt, rect rect)
     {
         rect.size *= 0.5;
-        pt.pos.x() = std::clamp(pt.pos.x(), rect.pos.x() - rect.size.x(),
-                                            rect.pos.x() + rect.size.x());
-        pt.pos.y() = std::clamp(pt.pos.y(), rect.pos.y() - rect.size.y(),
-                                            rect.pos.y() + rect.size.y());
+        pt.pos.x() = std::clamp(pt.pos.x(), rect.pos.x() - rect.size.x() + pt.radius,
+                                            rect.pos.x() + rect.size.x() - pt.radius);
+        pt.pos.y() = std::clamp(pt.pos.y(), rect.pos.y() - rect.size.y() + pt.radius,
+                                            rect.pos.y() + rect.size.y() - pt.radius);
     }
 
     void solve_collision(point& a, point& b)
@@ -87,10 +87,10 @@ private:
         }
     }
 
-    void verlet_solve(float delta)
+    void verlet_solve()
     {
         for (auto& [idx, pt] : points_)
-            apply_inertia(pt, delta);
+            apply_inertia(pt, settings_.delta);
 
         for (int it = 0; it < settings_.iterations; ++it)
         {
@@ -122,7 +122,7 @@ public:
 
     void update()
     {
-        verlet_solve(settings_.delta);
+        verlet_solve();
     }
 
     const auto& points() const { return points_; }

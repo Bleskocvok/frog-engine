@@ -32,4 +32,5 @@ endif()
 
 include(../engine/functions.cmake)
 
-asset(assets/heart.png)
+asset(assets/box.png)
+asset(assets/circle.png)
