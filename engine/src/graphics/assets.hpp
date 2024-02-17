@@ -40,6 +40,19 @@ public:
         return data.count(tag);
     }
 
+    // TODO: shove some [[likely]] in there
+    T* find(const std::string& tag)
+    {
+        auto it = data.find(tag);
+        return it == data.end() ? nullptr : it->second.get();
+    }
+
+    const T* find(const std::string& tag) const
+    {
+        auto it = data.find(tag);
+        return it == data.end() ? nullptr : it->second.get();
+    }
+
     const T& at(const std::string& tag) const { return *data.at(tag); }
           T& at(const std::string& tag)       { return *data.at(tag); }
 };
