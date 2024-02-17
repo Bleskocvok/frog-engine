@@ -164,11 +164,11 @@ public:
         verlet_solve();
     }
 
-    const auto& point_at(idx_t i) const { return points_[ map_at("soft_physics2d: points", map_points, i) ]; }
-          auto& point_at(idx_t i)       { return points_[ map_at("soft_physics2d: points", map_points, i) ]; }
+    const auto& point_at(idx_t i) const { return points_[ map_at("soft_physics2d: points", map_points, i) ].second; }
+          auto& point_at(idx_t i)       { return points_[ map_at("soft_physics2d: points", map_points, i) ].second; }
 
-    const auto& joint_at(idx_t i) const { return joints_[ map_at("soft_physics2d: joints", map_joints, i) ]; }
-          auto& joint_at(idx_t i)       { return joints_[ map_at("soft_physics2d: joints", map_joints, i) ]; }
+    const auto& joint_at(idx_t i) const { return joints_[ map_at("soft_physics2d: joints", map_joints, i) ].second; }
+          auto& joint_at(idx_t i)       { return joints_[ map_at("soft_physics2d: joints", map_joints, i) ].second; }
 
     const auto& points() const { return points_; }
           auto& points()       { return points_; }
