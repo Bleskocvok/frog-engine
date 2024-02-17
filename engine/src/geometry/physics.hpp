@@ -5,8 +5,10 @@
 #include "basic.hpp"        // Pi
 
 #include <utility>          // pair
-#include <vector>
 #include <cstddef>          // size_t
+#include <stdexcept>        // runtime_error
+#include <sstream>          // stringstream
+#include <vector>
 
 
 namespace frog::geo
@@ -17,9 +19,6 @@ class soft_physics2d
 {
 public:
     using idx_t = unsigned;
-
-    // // collection of points, joints between them and angles
-    // struct collection {};
 
     struct angle
     {
@@ -103,6 +102,8 @@ private:
         b.pos += dif * (ratio * b.inv_weight * 0.5);
     }
 
+    // void solve_angle(angle alpha) { }
+
     void verlet_solve()
     {
         for (auto& [idx, pt] : points_)
@@ -124,6 +125,19 @@ private:
             for (auto&[idx, j] : joints_)
                 solve_joint(j);
         }
+    }
+
+    template<typename K, typename Map>
+    static auto& map_at(const std::string& desc, Map& m, const K& key)
+    {
+        auto it = m.find(key);
+        if (it == m.end())
+        {
+            auto str = std::stringstream{};
+            str << desc << ": invalid key '" << key << "'";
+            throw std::runtime_error(str.str());
+        }
+        return it->second;
     }
 
 private:
@@ -149,6 +163,12 @@ public:
             update_maps();
         verlet_solve();
     }
+
+    const auto& point_at(idx_t i) const { return points_[ map_at("soft_physics2d: points", map_points, i) ]; }
+          auto& point_at(idx_t i)       { return points_[ map_at("soft_physics2d: points", map_points, i) ]; }
+
+    const auto& joint_at(idx_t i) const { return joints_[ map_at("soft_physics2d: joints", map_joints, i) ]; }
+          auto& joint_at(idx_t i)       { return joints_[ map_at("soft_physics2d: joints", map_joints, i) ]; }
 
     const auto& points() const { return points_; }
           auto& points()       { return points_; }
