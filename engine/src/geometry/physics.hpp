@@ -6,6 +6,7 @@
 
 #include <utility>          // pair
 #include <vector>
+#include <cstddef>          // size_t
 
 
 namespace frog::geo
@@ -81,10 +82,25 @@ private:
 
         if (dist < radii)
         {
+            // TODO: avoid division by 0
             float ratio = (dist - radii) / (dist * (a.inv_weight * b.inv_weight));
             a.pos -= dif * (ratio * a.inv_weight * 0.5);
             b.pos += dif * (ratio * b.inv_weight * 0.5);
         }
+    }
+
+    void solve_joint(joint j)
+    {
+        auto& a = points_[ map_points[ j.a ] ].second;
+        auto& b = points_[ map_points[ j.b ] ].second;
+
+        vec2 dif = a.pos - b.pos;
+        float dist = dif.length();
+        float desired = j.dist;
+
+        float ratio = (dist - desired) / (dist * (a.inv_weight * b.inv_weight));
+        a.pos -= dif * (ratio * a.inv_weight * 0.5);
+        b.pos += dif * (ratio * b.inv_weight * 0.5);
     }
 
     void verlet_solve()
@@ -104,17 +120,24 @@ private:
                     solve_collision(a, b);
                 }
             }
+
+            for (auto&[idx, j] : joints_)
+                solve_joint(j);
         }
     }
 
 private:
     idx_t last = 0;
+    idx_t updated = 0;
 
 public:
     settings settings_;
 
     std::vector<std::pair<idx_t, point>> points_;
-    std::vector<std::pair<idx_t, point>> joints_;
+    std::vector<std::pair<idx_t, joint>> joints_;
+
+    std::unordered_map<idx_t, std::size_t> map_points;
+    std::unordered_map<idx_t, std::size_t> map_joints;
 
     soft_physics2d(settings s) : settings_(s) {}
 
@@ -122,6 +145,8 @@ public:
 
     void update()
     {
+        if (updated != last)
+            update_maps();
         verlet_solve();
     }
 
@@ -137,8 +162,28 @@ public:
         return last++;
     }
 
-    void add_joint(idx_t col, joint j)
-    { }
+    idx_t add_joint(joint j)
+    {
+        joints_.emplace_back(last, j);
+        return last++;
+    }
+
+    void update_maps()
+    {
+        updated = last;
+
+        map_points.clear();
+        map_joints.clear();
+
+        map_points.reserve(points_.size());
+        map_joints.reserve(joints_.size());
+
+        for (std::size_t i = 0; i < points_.size(); ++i)
+            map_points.emplace(points_[i].first, i);
+
+        for (std::size_t i = 0; i < joints_.size(); ++i)
+            map_joints.emplace(joints_[i].first, i);
+    }
 };
 
 

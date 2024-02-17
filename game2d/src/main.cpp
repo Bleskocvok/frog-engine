@@ -86,15 +86,13 @@ struct ballsack : frog::script2d
             resize(w, h, engine);
         }
 
-        if (engine.input->mouse().but_l.pressed)
+        auto add_baby = [&](auto pos) -> decltype(physics)::idx_t
         {
             float size = 0.1;
             auto gobj = mk_ptr<game_object2d>();
             gobj->model().image_tag = "circle";
             gobj->model().rect.size = { size, size };
-            gobj->model().rect.pos = engine.camera_coords(engine.input->mouse());
-
-            geo::vec2 pos = engine.camera_coords(engine.input->mouse());
+            gobj->model().rect.pos = pos;
 
             auto* ptr = engine.scenes->current().add(std::move(gobj));
             auto idx = physics.add_point(decltype(physics)::point
@@ -105,6 +103,27 @@ struct ballsack : frog::script2d
                 .inv_weight = 1,
             });
             babies.emplace(idx, ptr);
+            return idx;
+        };
+
+        if (engine.input->mouse().but_l.pressed)
+        {
+            geo::vec2 pos = engine.camera_coords(engine.input->mouse());
+            auto a = add_baby(pos + geo::vec2(0.01));
+            auto b = add_baby(pos - geo::vec2(0.01));
+            auto c = add_baby(pos - geo::vec2(0.02));
+            physics.add_joint(decltype(physics)::joint
+            {
+                .a = a,
+                .b = b,
+                .dist = 0.1,
+            });
+            physics.add_joint(decltype(physics)::joint
+            {
+                .a = b,
+                .b = c,
+                .dist = 0.1,
+            });
         }
 
         if (engine.input->k_at(SDL_SCANCODE_D).down) obj.model().rect.pos.x() += 0.01;
