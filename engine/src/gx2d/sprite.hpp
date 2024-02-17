@@ -13,7 +13,7 @@ struct sprite
     geo::vec4 color = { 1 };
 
     geo::rect rect;
-    float rot = 0;
+    float angle = 0;
 
     // lower layer = rendered earlier
     unsigned layer = 0;
