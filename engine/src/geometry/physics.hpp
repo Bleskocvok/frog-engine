@@ -2,17 +2,80 @@
 
 #include "vector.hpp"
 #include "rectangle.hpp"
+#include "collision.hpp"
 #include "basic.hpp"        // Pi
 
 #include <utility>          // pair
 #include <cstddef>          // size_t
 #include <stdexcept>        // runtime_error
 #include <sstream>          // stringstream
+#include <algorithm>        // max, min
 #include <vector>
 
+#include "utils/debug.hpp"
 
 namespace frog::geo
 {
+
+
+template<typename T>
+class optimization_grid
+{
+    std::vector<std::vector<T>> grid;
+    ivec2 dim;
+    rect box;
+    vec2 chunk;
+
+    template<typename Func>
+    void for_each_around_impl(circle c, Func f)
+    {
+        using std::min, std::max;
+
+        auto inside = c.pos - box.top_left();
+        auto minim = ivec2{ ( inside.x() - c.radius ) / chunk.x(),
+                            ( inside.y() - c.radius ) / chunk.y() };
+        auto maxim = ivec2{ ( inside.x() + c.radius ) / chunk.x(),
+                            ( inside.y() + c.radius ) / chunk.y() };
+
+        // LOG(minim, maxim);
+
+        for     (int y = max( 0, minim.y() ); y <= min( dim.y() - 1, maxim.y() ); ++y)
+            for (int x = max( 0, minim.x() ); x <= min( dim.x() - 1, maxim.x() ); ++x)
+                // if (is_collision(c, rect_at(x, y)))
+                    f(x, y);
+    }
+
+public:
+    optimization_grid(ivec2 dim, rect box)
+        : grid(dim.x() * dim.y()),
+          dim(dim),
+          box(box),
+          chunk(box.size.x() / dim.x(), box.size.y() / dim.y()) {}
+
+    const auto& at(int x, int y) const { return grid.at( x + y * dim.x() ); }
+          auto& at(int x, int y)       { return grid.at( x + y * dim.x() ); }
+
+    rect rect_at(int x, int y) const
+    {
+        auto pos = box.top_left() + chunk * 0.5 + vec2{ x * chunk.x(), y * chunk.y() };
+        return rect{ pos, chunk };
+    }
+
+    void add_to_touching(circle c, T val)
+    {
+        for_each_around_impl(c, [&](int x, int y){ at(x, y).push_back(val); });
+    }
+
+    template<typename Func>
+    void for_each_around(circle c, Func f)
+    {
+        for_each_around_impl(c, [&](int x, int y)
+        {
+            for (auto& val : at(x, y))
+                f(val);
+        });
+    }
+};
 
 
 class soft_physics2d
@@ -102,6 +165,7 @@ private:
         b.pos += dif * (ratio * b.inv_weight * 0.5);
     }
 
+    // TODO
     // void solve_angle(angle alpha) { }
 
     void verlet_solve()
@@ -111,16 +175,32 @@ private:
 
         for (int it = 0; it < settings_.iterations; ++it)
         {
-            for (int i = 0; i < points_.size(); ++i)
-            {
-                auto& a = points_[i].second;
-                encapsulate(a, settings_.universum);
-                for (int j = i + 1; j < points_.size(); ++j)
-                {
-                    auto& b = points_[j].second;
-                    solve_collision(a, b);
-                }
-            }
+            for (auto& [i, pt] : points_)
+                encapsulate(pt, settings_.universum);
+
+            auto grid = optimization_grid<point*>({ 10, 10 }, settings_.universum);
+            for (auto& [i, pt] : points_)
+                grid.add_to_touching(circle(pt.pos, pt.radius), &pt);
+
+            for (auto& [i, pt] : points_)
+                grid.for_each_around(circle(pt.pos, pt.radius), [&](point* other)
+                    {
+                        if (other != &pt)
+                            solve_collision(pt, *other);
+                    });
+
+
+            // for (int i = 0; i < points_.size(); ++i)
+            // {
+            //     auto& a = points_[i].second;
+            //     encapsulate(a, settings_.universum);
+            //     for (int j = i + 1; j < points_.size(); ++j)
+            //     {
+            //         auto& b = points_[j].second;
+            //         solve_collision(a, b);
+            //     }
+            // }
+
 
             for (auto&[idx, j] : joints_)
                 solve_joint(j);

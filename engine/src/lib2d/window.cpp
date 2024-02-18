@@ -176,9 +176,37 @@ void window::draw_colored( const texture& tex, int u, int v,
 }
 
 
+// void window::draw_colored_rotated( const texture& tex, int u, int v,
+//                             int cut_width, int cut_height, int x, int y,
+//                             int tex_width, int tex_height,
+//                             std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a,
+//                             int pivot_x, int pivot_y, float angle,
+//                             bool flipped )
+// {
+//     if ( !tex.src() ) throw std::runtime_error( "draw empty texture" );
+
+//     SDL_SetTextureColorMod( tex.src(), r, g, b );
+//     SDL_SetTextureAlphaMod( tex.src(), a );
+
+//     SDL_Rect src = { u, v, cut_width, cut_height };
+//     SDL_Rect dest = { x, y, tex_width, tex_height };
+//     SDL_Point center = { pivot_x, pivot_y };
+//     SDL_RenderCopyEx( renderer.get(),
+//                         tex.src(),
+//                         &src,
+//                         &dest,
+//                         angle,
+//                         &center,
+//                         flipped ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE );
+
+//     SDL_SetTextureAlphaMod( tex.src(), 255 );
+//     SDL_SetTextureColorMod( tex.src(), 255, 255, 255 );
+// }
+
+
 void window::draw_colored_rotated( const texture& tex, int u, int v,
-                            int cut_width, int cut_height, int x, int y,
-                            int tex_width, int tex_height,
+                            int cut_width, int cut_height, float x, float y,
+                            float tex_width, float tex_height,
                             std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a,
                             int pivot_x, int pivot_y, float angle,
                             bool flipped )
@@ -189,9 +217,9 @@ void window::draw_colored_rotated( const texture& tex, int u, int v,
     SDL_SetTextureAlphaMod( tex.src(), a );
 
     SDL_Rect src = { u, v, cut_width, cut_height };
-    SDL_Rect dest = { x, y, tex_width, tex_height };
-    SDL_Point center = { pivot_x, pivot_y };
-    SDL_RenderCopyEx( renderer.get(),
+    SDL_FRect dest = { x, y, tex_width, tex_height };
+    SDL_FPoint center = { pivot_x, pivot_y };
+    SDL_RenderCopyExF( renderer.get(),
                         tex.src(),
                         &src,
                         &dest,

@@ -74,6 +74,7 @@ struct ballsack : frog::script2d
 
     void stable_update(frog::game_object2d& obj, frog::engine2d& engine) override
     {
+        // LOGX(engine.global->fps());
         if (engine.input->k_at(SDL_SCANCODE_ESCAPE).released)
             engine.global->quit = true;
 
@@ -88,7 +89,8 @@ struct ballsack : frog::script2d
 
         auto add_baby = [&](auto pos) -> decltype(physics)::idx_t
         {
-            float size = 0.1;
+            // float size = 0.1;
+            float size = 0.05;
             auto gobj = mk_ptr<game_object2d>();
             gobj->model().image_tag = "circle";
             gobj->model().rect.size = { size, size };
@@ -106,24 +108,25 @@ struct ballsack : frog::script2d
             return idx;
         };
 
-        if (engine.input->mouse().but_l.pressed)
+        // if (engine.input->mouse().but_l.pressed)
+        if (engine.input->k_at(SDL_SCANCODE_F).down)
         {
             geo::vec2 pos = engine.camera_coords(engine.input->mouse());
             auto a = add_baby(pos + geo::vec2(0.01));
-            auto b = add_baby(pos - geo::vec2(0.01));
-            auto c = add_baby(pos - geo::vec2(0.02));
-            physics.add_joint(decltype(physics)::joint
-            {
-                .a = a,
-                .b = b,
-                .dist = 0.1,
-            });
-            physics.add_joint(decltype(physics)::joint
-            {
-                .a = b,
-                .b = c,
-                .dist = 0.1,
-            });
+            // auto b = add_baby(pos - geo::vec2(0.01));
+            // auto c = add_baby(pos - geo::vec2(0.02));
+            // physics.add_joint(decltype(physics)::joint
+            // {
+            //     .a = a,
+            //     .b = b,
+            //     .dist = 0.1,
+            // });
+            // physics.add_joint(decltype(physics)::joint
+            // {
+            //     .a = b,
+            //     .b = c,
+            //     .dist = 0.1,
+            // });
         }
 
         if (engine.input->k_at(SDL_SCANCODE_D).down) obj.model().rect.pos.x() += 0.01;

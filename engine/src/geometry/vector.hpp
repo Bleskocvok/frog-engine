@@ -188,6 +188,13 @@ public:
         return mat;
     }
 
+    friend vec operator*(vec a, vec b)
+    {
+        vec res = a;
+        detail::zip([](auto& u, const auto& v){ u *= v; }, res.data, b.data);
+        return res;
+    }
+
 private:
     // TODO add enable_if
     template<int Idx>
