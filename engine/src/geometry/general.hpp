@@ -25,6 +25,12 @@ inline float angle_diff(float a, float b)
 }
 
 
+inline float vec_angle(vec2 a, vec2 b)
+{
+    return std::acos(a.dot(b) / (a.length() * b.length()));
+}
+
+
 inline vec2 to_vec2(vec3 v) { return { v.x(), v.z() }; }
 
 

@@ -91,6 +91,7 @@ struct ballsack : frog::script2d
         {
             // float size = 0.1;
             float size = 0.05;
+            // float size = 0.025;
             auto gobj = mk_ptr<game_object2d>();
             gobj->model().image_tag = "circle";
             gobj->model().rect.size = { size, size };
@@ -108,31 +109,38 @@ struct ballsack : frog::script2d
             return idx;
         };
 
-        // if (engine.input->mouse().but_l.pressed)
-        if (engine.input->k_at(SDL_SCANCODE_F).down)
+        if (engine.input->mouse().but_l.pressed)
+        // if (engine.input->k_at(SDL_SCANCODE_F).down)
         {
             geo::vec2 pos = engine.camera_coords(engine.input->mouse());
             auto a = add_baby(pos + geo::vec2(0.01));
-            // auto b = add_baby(pos - geo::vec2(0.01));
-            // auto c = add_baby(pos - geo::vec2(0.02));
-            // physics.add_joint(decltype(physics)::joint
-            // {
-            //     .a = a,
-            //     .b = b,
-            //     .dist = 0.1,
-            // });
-            // physics.add_joint(decltype(physics)::joint
-            // {
-            //     .a = b,
-            //     .b = c,
-            //     .dist = 0.1,
-            // });
+            auto b = add_baby(pos - geo::vec2(0.01));
+            auto c = add_baby(pos - geo::vec2(0.02));
+            physics.add_joint(decltype(physics)::joint
+            {
+                .a = a,
+                .b = b,
+                .dist = 0.1,
+            });
+            physics.add_joint(decltype(physics)::joint
+            {
+                .a = b,
+                .b = c,
+                .dist = 0.1,
+            });
+            physics.add_angle(decltype(physics)::angle
+            {
+                .a = a,
+                .b = b,
+                .c = c,
+                .angle = frog::geo::Pi / 2,
+            });
         }
 
-        if (engine.input->k_at(SDL_SCANCODE_D).down) obj.model().rect.pos.x() += 0.01;
-        if (engine.input->k_at(SDL_SCANCODE_A).down) obj.model().rect.pos.x() -= 0.01;
-        if (engine.input->k_at(SDL_SCANCODE_S).down) obj.model().rect.pos.y() += 0.01;
-        if (engine.input->k_at(SDL_SCANCODE_W).down) obj.model().rect.pos.y() -= 0.01;
+        // if (engine.input->k_at(SDL_SCANCODE_D).down) obj.model().rect.pos.x() += 0.01;
+        // if (engine.input->k_at(SDL_SCANCODE_A).down) obj.model().rect.pos.x() -= 0.01;
+        // if (engine.input->k_at(SDL_SCANCODE_S).down) obj.model().rect.pos.y() += 0.01;
+        // if (engine.input->k_at(SDL_SCANCODE_W).down) obj.model().rect.pos.y() -= 0.01;
 
         for (auto&[idx, pt] : physics.points())
         {

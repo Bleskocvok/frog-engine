@@ -4,6 +4,8 @@
 #include "rectangle.hpp"
 #include "collision.hpp"
 #include "basic.hpp"        // Pi
+#include "general.hpp"
+#include "polar.hpp"
 
 #include <utility>          // pair
 #include <cstddef>          // size_t
@@ -11,6 +13,8 @@
 #include <sstream>          // stringstream
 #include <algorithm>        // max, min
 #include <vector>
+
+#include <unordered_set>
 
 #include "utils/debug.hpp"
 
@@ -32,16 +36,14 @@ class optimization_grid
         using std::min, std::max;
 
         auto inside = c.pos - box.top_left();
-        auto minim = ivec2{ ( inside.x() - c.radius ) / chunk.x(),
-                            ( inside.y() - c.radius ) / chunk.y() };
-        auto maxim = ivec2{ ( inside.x() + c.radius ) / chunk.x(),
-                            ( inside.y() + c.radius ) / chunk.y() };
-
-        // LOG(minim, maxim);
+        auto minim = ivec2{ int( ( inside.x() - c.radius ) / chunk.x() ),
+                            int( ( inside.y() - c.radius ) / chunk.y() ) };
+        auto maxim = ivec2{ int( ( inside.x() + c.radius ) / chunk.x() ),
+                            int( ( inside.y() + c.radius ) / chunk.y() ) };
 
         for     (int y = max( 0, minim.y() ); y <= min( dim.y() - 1, maxim.y() ); ++y)
             for (int x = max( 0, minim.x() ); x <= min( dim.x() - 1, maxim.x() ); ++x)
-                // if (is_collision(c, rect_at(x, y)))
+                if (is_collision(c, rect_at(x, y)))
                     f(x, y);
     }
 
@@ -116,6 +118,7 @@ public:
         int iterations = 10;
         rect universum = { 0, 0, 1, 1 };
         float delta = 0.016;
+        ivec2 grid_dim = { 10, 10 };
     };
 
 private:
@@ -166,27 +169,54 @@ private:
     }
 
     // TODO
-    // void solve_angle(angle alpha) { }
+    void solve_angle(angle alpha)
+    {
+        auto& a = points_[ map_points[ alpha.a ] ].second;
+        auto& b = points_[ map_points[ alpha.b ] ].second;
+        auto& c = points_[ map_points[ alpha.c ] ].second;
+
+        float cur = vec_angle(a.pos - b.pos, c.pos - b.pos);
+        float desired = alpha.angle;
+        float dif = desired - cur;
+
+        a.pos -= b.pos;
+        c.pos -= b.pos;
+
+        polar2 pol_a = to_polar(a.pos);
+        polar2 pol_c = to_polar(c.pos);
+
+        float ratio = dif / (a.inv_weight * b.inv_weight);
+        pol_a.theta -= (ratio * a.inv_weight * 0.5);
+        pol_c.theta += (ratio * b.inv_weight * 0.5);
+
+        a.pos = to_cartesian(pol_a);
+        c.pos = to_cartesian(pol_c);
+        a.pos += b.pos;
+        c.pos += b.pos;
+    }
 
     void verlet_solve()
     {
         for (auto& [idx, pt] : points_)
             apply_inertia(pt, settings_.delta);
 
+        // LOGX(points_.size());
+
         for (int it = 0; it < settings_.iterations; ++it)
         {
             for (auto& [i, pt] : points_)
                 encapsulate(pt, settings_.universum);
 
-            auto grid = optimization_grid<point*>({ 10, 10 }, settings_.universum);
+            auto grid = optimization_grid<std::pair<idx_t, point*>>(
+                                        settings_.grid_dim, settings_.universum);
             for (auto& [i, pt] : points_)
-                grid.add_to_touching(circle(pt.pos, pt.radius), &pt);
+                grid.add_to_touching(circle(pt.pos, pt.radius), { i, &pt });
 
             for (auto& [i, pt] : points_)
-                grid.for_each_around(circle(pt.pos, pt.radius), [&](point* other)
+                grid.for_each_around(circle(pt.pos, pt.radius), [&](std::pair<idx_t, point*> other)
                     {
-                        if (other != &pt)
-                            solve_collision(pt, *other);
+                        if (other.first > i)
+                            solve_collision(pt, *other.second);
                     });
 
 
@@ -204,6 +234,9 @@ private:
 
             for (auto&[idx, j] : joints_)
                 solve_joint(j);
+
+            for (auto&[idx, a] : angles_)
+                solve_angle(a);
         }
     }
 
@@ -229,6 +262,7 @@ public:
 
     std::vector<std::pair<idx_t, point>> points_;
     std::vector<std::pair<idx_t, joint>> joints_;
+    std::vector<std::pair<idx_t, angle>> angles_;
 
     std::unordered_map<idx_t, std::size_t> map_points;
     std::unordered_map<idx_t, std::size_t> map_joints;
@@ -265,6 +299,12 @@ public:
     idx_t add_joint(joint j)
     {
         joints_.emplace_back(last, j);
+        return last++;
+    }
+
+    idx_t add_angle(angle a)
+    {
+        angles_.emplace_back(last, a);
         return last++;
     }
 
