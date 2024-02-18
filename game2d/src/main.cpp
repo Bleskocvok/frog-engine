@@ -113,21 +113,25 @@ struct ballsack : frog::script2d
         // if (engine.input->k_at(SDL_SCANCODE_F).down)
         {
             geo::vec2 pos = engine.camera_coords(engine.input->mouse());
-            auto a = add_baby(pos + geo::vec2(0.01));
-            auto b = add_baby(pos - geo::vec2(0.01));
-            auto c = add_baby(pos - geo::vec2(0.02));
-            physics.add_joint(decltype(physics)::joint
-            {
-                .a = a,
-                .b = b,
-                .dist = 0.1,
-            });
-            physics.add_joint(decltype(physics)::joint
-            {
-                .a = b,
-                .b = c,
-                .dist = 0.1,
-            });
+            auto a = add_baby(pos);
+            auto b = add_baby(pos + geo::vec2(0, 0.1));
+            auto c = add_baby(pos + geo::vec2(0.1, 0.1));
+            // physics.add_joint(decltype(physics)::joint
+            // {
+            //     .a = a,
+            //     .b = b,
+            //     .dist = 0.1,
+            // });
+            // physics.add_joint(decltype(physics)::joint
+            // {
+            //     .a = b,
+            //     .b = c,
+            //     .dist = 0.1,
+            // });
+
+            physics.add_joint_between(a, b);
+            physics.add_joint_between(b, c);
+
             physics.add_angle(decltype(physics)::angle
             {
                 .a = a,

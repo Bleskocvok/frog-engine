@@ -273,8 +273,8 @@ public:
 
     void update()
     {
-        if (updated != last)
-            update_maps();
+        // if (updated != last)
+        //     update_maps();
         verlet_solve();
     }
 
@@ -292,14 +292,26 @@ public:
 
     idx_t add_point(point pt)
     {
+        map_points.emplace(last, points_.size());
         points_.emplace_back(last, pt);
         return last++;
     }
 
     idx_t add_joint(joint j)
     {
+        map_joints.emplace(last, joints_.size());
         joints_.emplace_back(last, j);
         return last++;
+    }
+
+    idx_t add_joint_between(idx_t a, idx_t b)
+    {
+        return add_joint(joint
+        {
+            .a = a,
+            .b = b,
+            .dist = ( point_at(a).pos - point_at(b).pos ).length()
+        });
     }
 
     idx_t add_angle(angle a)
