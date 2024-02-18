@@ -7,6 +7,7 @@
 
 
 using frog::geo::mat4;
+using frog::geo::mat2;
 
 
 mat4 frog::geo::perspective(float fov, float ratio, float near, float far)
@@ -44,6 +45,18 @@ mat4 frog::geo::translate(vec3 vec)
         res.at(3, i) = vec[i];
     }
     return res;
+}
+
+
+mat2 frog::geo::rotate2d(float rad)
+{
+    float cos_theta = std::cos(rad);
+    float sin_theta = std::sin(rad);
+    return mat2
+    {
+        cos_theta, -sin_theta,
+        sin_theta,  cos_theta,
+    };
 }
 
 

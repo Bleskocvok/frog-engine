@@ -168,7 +168,8 @@ private:
         b.pos += dif * (ratio * b.inv_weight * 0.5);
     }
 
-    // TODO
+    // TODO: there must be something wrong, doesn't seem to work for angles ~180 deg
+    // probably has to do with angles being (mod 360)
     void solve_angle(angle alpha)
     {
         auto& a = points_[ map_points[ alpha.a ] ].second;

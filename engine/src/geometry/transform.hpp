@@ -13,6 +13,8 @@ mat4 translate(vec3 vec);
 
 mat4 scale(vec3 magnitude);
 
+mat2 rotate2d(float rad);
+
 mat4 rotate(int axis, float angle);
 mat4 rotate(vec3 axis, float angle);
 
