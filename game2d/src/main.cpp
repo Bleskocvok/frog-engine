@@ -42,9 +42,15 @@ void init_game(frog::engine2d& eng)
 {
     using namespace frog;
 
+    eng.add_texture("font", "font.png");
+
     eng.add_texture("box", "box.png");
     eng.add_texture("circle", "circle.png");
 }
+
+
+
+
 
 #include "geometry/physics.hpp"
 
@@ -52,7 +58,7 @@ void init_game(frog::engine2d& eng)
 
 struct ballsack : frog::script2d
 {
-    void init(frog::game_object2d&, frog::engine2d& engine) override
+    void init(frog::game_object2d& obj, frog::engine2d& engine) override
     {
         using namespace frog;
 
@@ -62,6 +68,14 @@ struct ballsack : frog::script2d
 
         physics.settings_.universum = { 0, 0, 1, 1 };
         physics.settings_.iterations = 5;
+
+        // auto* label_fps = obj.add_element(mk_ptr<gx::ui_element>());
+        // label_fps->label = gx::text{ "ABCDEFGHIJKL" };
+        // label_fps->pos = geo::vec2{ 0 };
+        // label_fps->size = geo::vec2{ 0.3, 0.1 };
+        // label_fps->sprite = "circle";
+        // label_fps->tex_pos = { 0, 0, };
+        // label_fps->tex_size = { 0.5, 0.5 };
     }
 
     void resize(int w, int h, frog::engine2d& eng)
@@ -109,42 +123,28 @@ struct ballsack : frog::script2d
             return idx;
         };
 
-        if (engine.input->mouse().but_l.pressed)
-        // if (engine.input->k_at(SDL_SCANCODE_F).down)
+        if (engine.input->mouse().but_l.pressed
+         || engine.input->k_at(SDL_SCANCODE_F).down)
         {
             geo::vec2 pos = engine.camera_coords(engine.input->mouse());
             auto a = add_baby(pos);
             auto b = add_baby(pos + geo::vec2(0, 0.1));
             auto c = add_baby(pos + geo::vec2(0.1, 0.1));
-            // physics.add_joint(decltype(physics)::joint
-            // {
-            //     .a = a,
-            //     .b = b,
-            //     .dist = 0.1,
-            // });
-            // physics.add_joint(decltype(physics)::joint
-            // {
-            //     .a = b,
-            //     .b = c,
-            //     .dist = 0.1,
-            // });
+            // auto d = add_baby(pos + geo::vec2(-0.1, 0.1));
 
             physics.add_joint_between(a, b);
             physics.add_joint_between(b, c);
+            // physics.add_joint_between(b, d);
 
-            physics.add_angle(decltype(physics)::angle
-            {
-                .a = a,
-                .b = b,
-                .c = c,
-                .angle = frog::geo::Pi / 2,
-            });
+            // physics.add_angle(decltype(physics)::angle
+            // {
+            //     .a = a,
+            //     .b = b,
+            //     .c = c,
+            //     // .angle = geo::Pi / 2,
+            //     .angle = geo::Pi - 0.2,
+            // });
         }
-
-        // if (engine.input->k_at(SDL_SCANCODE_D).down) obj.model().rect.pos.x() += 0.01;
-        // if (engine.input->k_at(SDL_SCANCODE_A).down) obj.model().rect.pos.x() -= 0.01;
-        // if (engine.input->k_at(SDL_SCANCODE_S).down) obj.model().rect.pos.y() += 0.01;
-        // if (engine.input->k_at(SDL_SCANCODE_W).down) obj.model().rect.pos.y() -= 0.01;
 
         for (auto&[idx, pt] : physics.points())
         {
@@ -155,6 +155,8 @@ struct ballsack : frog::script2d
 };
 
 
+#include "scripts/fps_script.hpp"
+
 void add_objects(frog::engine2d& eng)
 {
     using namespace frog;
@@ -163,6 +165,7 @@ void add_objects(frog::engine2d& eng)
 
     auto gobj = mk_ptr<game_object2d>();
     gobj->add_script(mk_ptr<ballsack>());
+    gobj->add_script(mk_ptr<fps_script>());
     gobj->model().image_tag = "box";
     gobj->model().color = { 0.3, 0.3, 0.3, 1 };
 

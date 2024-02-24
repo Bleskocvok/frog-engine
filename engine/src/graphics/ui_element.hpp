@@ -1,6 +1,7 @@
 #pragma once
 
 #include "geometry/vector.hpp"
+#include "graphics/color.hpp"
 
 #include <string>
 #include <optional>
@@ -25,10 +26,10 @@ struct ui_element
     std::optional<text> label;
 
     geo::vec2 pos;
-    geo::vec2 size;
+    geo::vec2 size = { 1, 1 };
     geo::vec2 tex_pos = { 0, 0 };
     geo::vec2 tex_size = { 1, 1 };
-    geo::vec4 color = { 1, 1, 1, 1 };
+    gx::rgba_t color = gx::colors::white;
 };
 
 

@@ -188,11 +188,16 @@ public:
         return mat;
     }
 
+    vec& operator*=(vec other)
+    {
+        detail::zip([](auto& u, const auto& v){ u *= v; }, this->data, other.data);
+        return *this;
+    }
+
     friend vec operator*(vec a, vec b)
     {
-        vec res = a;
-        detail::zip([](auto& u, const auto& v){ u *= v; }, res.data, b.data);
-        return res;
+        a *= b;
+        return a;
     }
 
 private:

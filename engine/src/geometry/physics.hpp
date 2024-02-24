@@ -170,6 +170,7 @@ private:
 
     // TODO: there must be something wrong, doesn't seem to work for angles ~180 deg
     // probably has to do with angles being (mod 360)
+    // probably just use geo::angle_diff
     void solve_angle(angle alpha)
     {
         auto& a = points_[ map_points[ alpha.a ] ].second;
@@ -178,7 +179,7 @@ private:
 
         float cur = vec_angle(a.pos - b.pos, c.pos - b.pos);
         float desired = alpha.angle;
-        float dif = desired - cur;
+        float dif = angle_diff(cur, desired);
 
         a.pos -= b.pos;
         c.pos -= b.pos;

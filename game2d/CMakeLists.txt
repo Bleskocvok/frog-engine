@@ -34,3 +34,4 @@ include(../engine/functions.cmake)
 
 asset(assets/box.png)
 asset(assets/circle.png)
+asset(assets/font.png)
