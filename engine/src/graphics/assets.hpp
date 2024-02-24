@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <string>
 #include <utility>          // move
+#include <stdexcept>        // std::out_of_range, runtime_error
 
 
 namespace frog::gx
@@ -15,6 +16,19 @@ template <typename T>
 class assets
 {
     std::unordered_map<std::string, ptr<T>> data;
+
+    template<typename This>
+    static auto& try_get(This* t, const std::string& tag)
+    {
+        try
+        {
+            return *t->data.at(tag);
+        }
+        catch (std::out_of_range&)
+        {
+            throw std::runtime_error("assets '" + tag + "' not found");
+        }
+    }
 
 public:
     // TODO: investigate why this segfaults
@@ -53,8 +67,8 @@ public:
         return it == data.end() ? nullptr : it->second.get();
     }
 
-    const T& at(const std::string& tag) const { return *data.at(tag); }
-          T& at(const std::string& tag)       { return *data.at(tag); }
+    const T& at(const std::string& tag) const { return try_get(this, tag); }
+          T& at(const std::string& tag)       { return try_get(this, tag); }
 };
 
 
