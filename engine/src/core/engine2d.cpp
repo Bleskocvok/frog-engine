@@ -221,9 +221,7 @@ void engine2d::draw_sprite(const lib2d::gx::texture& tex, geo::rect dest,
 
 void engine2d::draw_ui(double)
 {
-    const auto& it = textures.find("font");
-    // TODO: check
-    const auto& tex = *it;
+    const auto& tex = textures.at("font");
 
     scenes->for_each_object([&](auto& obj)
     {
