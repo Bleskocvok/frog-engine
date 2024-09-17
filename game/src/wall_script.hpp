@@ -1,9 +1,9 @@
 #pragma once
 
-#include "core/script.hpp"
-#include "core/engine3d.hpp"
-#include "core/object_builder.hpp"
-#include "geometry/paddle.hpp"
+#include "frog/core/script.hpp"
+#include "frog/core/engine3d.hpp"
+#include "frog/core/object_builder.hpp"
+#include "frog/geometry/paddle.hpp"
 
 #include "constants.hpp"
 #include "bounce_script.hpp"

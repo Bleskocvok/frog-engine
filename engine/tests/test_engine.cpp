@@ -8,15 +8,15 @@ using doctest::Approx;
  * Here go the tests.
  */
 
-#include "geometry/basic.hpp"
-#include "geometry/vector.hpp"
-#include "geometry/matrix.hpp"
-#include "geometry/general.hpp"
-#include "geometry/objects.hpp"
-#include "geometry/ray.hpp"
-#include "geometry/transform.hpp"
+#include "frog/geometry/basic.hpp"
+#include "frog/geometry/vector.hpp"
+#include "frog/geometry/matrix.hpp"
+#include "frog/geometry/general.hpp"
+#include "frog/geometry/objects.hpp"
+#include "frog/geometry/ray.hpp"
+#include "frog/geometry/transform.hpp"
 
-#include "utils/debug.hpp"
+#include "frog/utils/debug.hpp"
 
 #include <iostream>
 #include <functional>   // std::plus
@@ -344,8 +344,8 @@ TEST_CASE("reflection")
 }
 
 
-#include "geometry/rectangle.hpp"
-#include "geometry/collision.hpp"
+#include "frog/geometry/rectangle.hpp"
+#include "frog/geometry/collision.hpp"
 
 TEST_CASE("rectangle collision")
 {

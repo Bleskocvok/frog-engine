@@ -1,7 +1,7 @@
 
 #undef NDEBUG
 
-#include "geometry/fixed.hpp"
+#include "frog/geometry/fixed.hpp"
 
 #include <cassert>      // assert
 #include <cmath>        // fabs

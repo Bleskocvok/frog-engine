@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core/script.hpp"
-#include "geometry/paddle.hpp"
+#include "frog/core/script.hpp"
+#include "frog/geometry/paddle.hpp"
 
 #include "constants.hpp"
 

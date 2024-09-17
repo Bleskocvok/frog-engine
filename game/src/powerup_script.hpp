@@ -1,11 +1,11 @@
 #pragma once
 
-#include "core/script.hpp"
-#include "core/engine3d.hpp"
-#include "geometry/general.hpp"
-#include "geometry/paddle.hpp"
-#include "geometry/polar.hpp"
-#include "utils/debug.hpp"
+#include "frog/core/script.hpp"
+#include "frog/core/engine3d.hpp"
+#include "frog/geometry/general.hpp"
+#include "frog/geometry/paddle.hpp"
+#include "frog/geometry/polar.hpp"
+#include "frog/utils/debug.hpp"
 
 #include "constants.hpp"
 

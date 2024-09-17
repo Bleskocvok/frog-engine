@@ -1,9 +1,9 @@
 
-#include "core/engine2d.hpp"
+#include "frog/core/engine2d.hpp"
 
-#include "utils/load_file.hpp"
-#include "utils/ptr.hpp"
-#include "utils/debug.hpp"
+#include "frog/utils/load_file.hpp"
+#include "frog/utils/ptr.hpp"
+#include "frog/utils/debug.hpp"
 
 #include <utility>      // move
 #include <iostream>     // cout
@@ -52,7 +52,7 @@ void init_game(frog::engine2d& eng)
 
 
 
-#include "geometry/physics.hpp"
+#include "frog/geometry/physics.hpp"
 
 #include <unordered_map>
 
@@ -155,7 +155,7 @@ struct ballsack : frog::script2d
 };
 
 
-#include "scripts/fps_script.hpp"
+#include "frog/scripts/fps_script.hpp"
 
 void add_objects(frog::engine2d& eng)
 {

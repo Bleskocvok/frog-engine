@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/script.hpp"
+#include "frog/core/script.hpp"
 
 
 struct quit_script : frog::script

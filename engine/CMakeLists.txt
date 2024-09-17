@@ -64,13 +64,13 @@ message(STATUS "Build 2D engine: ${FROG_BUILD_2D}")
 
 file(GLOB
     SRC_FILES
-    src/*.cpp
-    src/*/*.cpp
-    src/core/*.cpp
-    src/geometry/*.cpp
-    src/graphics/*.cpp
-    src/os/*.cpp
-    src/utils/*.cpp
+    src/frog/*.cpp
+    src/frog/*/*.cpp
+    src/frog/core/*.cpp
+    src/frog/geometry/*.cpp
+    src/frog/graphics/*.cpp
+    src/frog/os/*.cpp
+    src/frog/utils/*.cpp
 )
 
 # verbose info
@@ -79,7 +79,7 @@ print_list("Source files" "${SRC_FILES}")
 file(GLOB
     SRC_TESTS
     tests/test_engine.cpp
-    src/geometry/*.cpp
+    src/frog/geometry/*.cpp
 )
 
 set(SRC_WINDOW_TEST

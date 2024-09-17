@@ -1,11 +1,11 @@
 
-#include "core/engine3d.hpp"
-#include "core/object_builder.hpp"
-#include "gl/shape.hpp"
+#include "frog/core/engine3d.hpp"
+#include "frog/core/object_builder.hpp"
+#include "frog/gl/shape.hpp"
 
-#include "utils/load_file.hpp"
-#include "utils/ptr.hpp"
-#include "utils/debug.hpp"
+#include "frog/utils/load_file.hpp"
+#include "frog/utils/ptr.hpp"
+#include "frog/utils/debug.hpp"
 
 #include "constants.hpp"
 #include "paddle_script.hpp"
