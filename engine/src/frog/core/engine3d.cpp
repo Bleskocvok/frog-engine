@@ -150,7 +150,7 @@ void frog::engine::draw_ui(double)
                             elem->size,
                             elem->tex_pos,
                             elem->tex_size,
-                            elem->color);
+                            gx::rgb_to_vec(elem->color));
             }
 
             if (elem->label)
@@ -159,7 +159,7 @@ void frog::engine::draw_ui(double)
                           elem->label->str,
                           elem->pos,
                           elem->size.y() * elem->label->height,
-                          elem->color,
+                          gx::rgb_to_vec(elem->color),
                           elem->label->centered);
             }
         }

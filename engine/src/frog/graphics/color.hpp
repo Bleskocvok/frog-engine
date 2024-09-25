@@ -19,6 +19,13 @@ inline rgba_t color_to_255(geo::vec4 v)
 }
 
 
+inline geo::vec4 rgb_to_vec( gx::rgba_t rgb )
+{
+    return { rgb.a() / 255.0f, rgb.g() / 255.0f, rgb.b() / 255.0f,
+             rgb.a() / 255.0f };
+}
+
+
 namespace colors
 {
 

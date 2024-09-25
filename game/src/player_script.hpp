@@ -46,7 +46,7 @@ struct player_script : frog::script
         auto* display = self->add_element(mk_ptr<gx::ui_element>());
         display->label = { "score: "s + std::to_string(score) };
         display->label->centered = true;
-        display->color = { 0.3, 0.3, 0.8, 1 };
+        display->color = gx::color_to_255({ 0.3, 0.3, 0.8, 1 });
         display->pos = { 0, 1 - IconSize - Offset };
         display->size = { IconSize * 0.75 };
     }
