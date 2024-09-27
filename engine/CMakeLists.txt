@@ -345,12 +345,22 @@ endfunction()
 # The file list
 #
 
-asset(assets/main.vert)
-asset(assets/main.frag)
-asset(assets/ui.vert)
-asset(assets/ui.frag)
-asset(assets/font.png)
-asset(assets/empty.png)
+set(FROG_3D_ASSETS
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/main.vert
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/main.frag
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui.vert
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui.frag
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/font.png
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/empty.png
+    PARENT_SCOPE
+)
+
+# asset(assets/main.vert)
+# asset(assets/main.frag)
+# asset(assets/ui.vert)
+# asset(assets/ui.frag)
+# asset(assets/font.png)
+# asset(assets/empty.png)
 
 
 

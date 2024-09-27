@@ -64,6 +64,8 @@ frog::engine::engine(settings set, ptr<state> _global)
 
 void frog::engine::init()
 {
+    // TODO: Get prefix path from somewhere (config from constructor probably?).
+
     programs.add("main", program("engine/assets/main.vert",
                                  "engine/assets/main.frag"));
 
@@ -238,5 +240,21 @@ void frog::engine::draw_text(gl::program& ui,
         pos.x() += height * spacing * size_ratio / camera.ratio();
     }
 }
+
+
+bool frog::engine::add_texture(const std::string& tag, const std::string& path)
+{
+    bool has = textures.contains(tag);
+    auto full = global->asset_path() + "/" + path;
+    textures.add(tag, gl::texture{ std::move(full) });
+    return has;
+}
+
+
+bool frog::engine::remove_texture(const std::string& tag)
+{
+    return textures.remove(tag);
+}
+
 
 #endif

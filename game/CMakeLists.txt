@@ -9,6 +9,8 @@ add_subdirectory(../engine
                  # we also need to specify BINARY directory for it
                  ${CMAKE_CURRENT_BINARY_DIR}/engine)
 
+include(../engine/functions.cmake)
+
 set(SRC_FILES
     src/game.cpp
     src/powerup_script.cpp
@@ -35,13 +37,7 @@ add_executable(${PROJECT_NAME} ${SRC_FILES})
 target_link_libraries(${PROJECT_NAME} PRIVATE Frog::Frog)
 
 
-function(asset FILENAME)
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/${FILENAME}
-        ${CMAKE_CURRENT_BINARY_DIR}/${FILENAME}
-        COPYONLY
-    )
-endfunction()
-
 asset(game_assets/ground.png)
 asset(game_assets/heart.png)
+
+place_engine_assets(${CMAKE_CURRENT_BINARY_DIR}/engine/assets)

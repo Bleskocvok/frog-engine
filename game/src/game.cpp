@@ -139,7 +139,7 @@ void init_game(frog::engine& eng)
 
     for (auto& [tag, tex] : textures)
     {
-        eng.textures.add(std::move(tag), gl::texture{ tex });
+        eng.add_texture(tag, tex);
     }
 
     for (auto& name : scenes)

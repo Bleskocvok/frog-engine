@@ -70,6 +70,9 @@ public:
     gx::assets<gl::texture> textures;
 
     engine(settings set, ptr<state> global);
+
+    bool add_texture(const std::string& tag, const std::string& path);
+    bool remove_texture(const std::string& name);
 };
 
 
