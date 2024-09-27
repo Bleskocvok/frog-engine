@@ -14,9 +14,12 @@ struct script2d;
 template<typename GameObject, typename Engine>
 struct script_base;
 
-template<typename GameObject, typename Engine>
+template<typename _GameObject, typename _Engine>
 struct script_base
 {
+    using GameObject = _GameObject;
+    using Engine = _Engine;
+
     virtual ~script_base() = default;
 
     virtual void init(GameObject&, Engine&) {}

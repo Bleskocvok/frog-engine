@@ -4,6 +4,12 @@
 #include "frog/geometry/vector.hpp"
 
 #include <string>
+#include <utility>      // move
+#include <sstream>      // ostringstream
+#include <iomanip>      // setw, setprecision
+
+
+namespace frog {
 
 
 struct fps_script : frog::script2d
@@ -24,6 +30,14 @@ struct fps_script : frog::script2d
 
     void frame_update(frog::game_object2d&, frog::engine2d& engine) override
     {
-        display->label->str = "fps: " + std::to_string(engine.global->fps());
+        auto out = std::ostringstream{};
+
+        out << "fps: " << std::setw(7) << std::fixed << std::setprecision(2)
+            << engine.global->fps();
+
+        display->label->str = std::move(out).str();
     }
 };
+
+
+}   // namespace frog
