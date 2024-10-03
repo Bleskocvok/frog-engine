@@ -54,6 +54,13 @@ public:
         return ptr;
     }
 
+    // For convenience's sake.
+    GameObject* create_object()
+    {
+        to_add.emplace_back(mk_ptr<GameObject>());
+        return to_add.back().get();
+    }
+
     /*
      * Functions to iterate or get objects_
      */

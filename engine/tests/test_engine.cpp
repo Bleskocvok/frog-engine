@@ -164,7 +164,7 @@ TEST_CASE("matrix inversion")
         auto f = static_cast<float>(i);
         check(mat2{ f });
         check(mat3{ f });
-        // check(mat4{ f });
+        check(mat4{ f });
     }
 
     // larger matrices
