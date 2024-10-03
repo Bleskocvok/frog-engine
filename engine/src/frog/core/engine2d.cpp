@@ -133,8 +133,8 @@ void engine2d::draw_objects(double /* between */)
             const auto& tex = *it;
 
             auto uv_size = geo::vec2{ tex.w(), tex.h() } * model->tex.size;
-            auto uv = ( model->tex.pos - model->tex.size / 2 )
-                    * geo::vec2{ tex.h(), tex.w() };
+            auto uv = ( model->tex.pos - model->tex.size * 0.5f )
+                    * geo::vec2{ tex.w(), tex.h() };
 
             gx::rgba_t color = gx::color_to_255(model->color);
             win_raw->draw_colored_rotated(tex, uv.x(), uv.y(), uv_size.x(), uv_size.y(),
