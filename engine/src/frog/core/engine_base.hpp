@@ -99,11 +99,20 @@ public:
         {
             frame_update();
 
+            // int i = 0;
             while (accum >= decltype(accum)(delta))
             {
                 update_controls();
                 stable_update();
                 accum -= delta;
+                // TODO: Consider the situation when stable_update takes longer
+                // than delta. That way, accum keeps increasing, leading to a
+                // drastic FPS drop. How solve?
+                // if (++i > 2)
+                // {
+                //     accum = 0;
+                //     break;
+                // }
             }
 
             auto frame = timer.reset_duration_us();
