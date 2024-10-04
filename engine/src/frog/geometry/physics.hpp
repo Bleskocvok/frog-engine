@@ -77,6 +77,14 @@ public:
                 f(val);
         });
     }
+
+    void clear()
+    {
+        for (auto& square : grid)
+        {
+            square.clear();
+        }
+    }
 };
 
 
@@ -202,15 +210,16 @@ private:
         for (auto& [idx, pt] : points_)
             apply_inertia(pt, settings_.delta);
 
-        // LOGX(points_.size());
+        auto grid = optimization_grid<std::pair<idx_t, point*>>(
+                                        settings_.grid_dim, settings_.universum);
 
         for (int it = 0; it < settings_.iterations; ++it)
         {
             for (auto& [i, pt] : points_)
                 encapsulate(pt, settings_.universum);
 
-            auto grid = optimization_grid<std::pair<idx_t, point*>>(
-                                        settings_.grid_dim, settings_.universum);
+            grid.clear();
+
             for (auto& [i, pt] : points_)
                 grid.add_to_touching(circle(pt.pos, pt.radius), { i, &pt });
 
@@ -275,8 +284,10 @@ public:
 
     void update()
     {
-        // if (updated != last)
-        //     update_maps();
+        // TODO: ??? Consider deletion???
+        if (updated != last)
+            update_maps();
+
         verlet_solve();
     }
 
