@@ -1,5 +1,10 @@
 #include "physics.hpp"
 
+#include <utility>          // pair
+#include <cstddef>          // size_t
+#include <algorithm>        // max, min, clamp
+#include <vector>
+
 
 namespace frog::geo {
 

@@ -11,7 +11,6 @@
 #include <cstddef>          // size_t
 #include <stdexcept>        // runtime_error
 #include <sstream>          // stringstream
-#include <algorithm>        // max, min
 #include <vector>
 
 #include "frog/utils/debug.hpp"
@@ -31,6 +30,8 @@ public:
         idx_t a;
         idx_t b;
         idx_t c;
+        // My past self was probably thinking optimization, using radians is
+        // faster (sin/cos use them, so no need for conversion).
         // radians
         float angle = Pi;
     };
@@ -62,6 +63,9 @@ public:
     };
 
 private:
+    idx_t last = 0;
+    idx_t updated = 0;
+
     void apply_inertia(point& pt, float delta);
 
     void encapsulate(point& pt, rect rect);
@@ -86,10 +90,6 @@ private:
         }
         return it->second;
     }
-
-private:
-    idx_t last = 0;
-    idx_t updated = 0;
 
 public:
     settings settings_;
