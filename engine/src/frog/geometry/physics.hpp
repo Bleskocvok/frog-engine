@@ -14,11 +14,7 @@
 #include <algorithm>        // max, min
 #include <vector>
 
-#include <unordered_set>
-#include <set>
-
 #include "frog/utils/debug.hpp"
-#include "frog/os/timer.hpp"
 
 namespace frog::geo
 {
@@ -212,12 +208,6 @@ private:
         for (auto& [idx, pt] : points_)
             apply_inertia(pt, settings_.delta);
 
-        // auto count = points_.size();
-        auto count = last;
-        auto solved = std::vector<int>(count * count + points_.size(), 0);
-        LOGX(solved.size());
-        auto solved_at = [&](int x, int y) -> int& { return solved[ x + count * y ]; };
-
         auto grid = optimization_grid<std::pair<idx_t, point*>>(
                                         settings_.grid_dim, settings_.universum);
 
@@ -226,47 +216,17 @@ private:
             for (auto& [i, pt] : points_)
                 encapsulate(pt, settings_.universum);
 
-            for (auto& s : solved)
-                s = 0;
-
             grid.clear();
 
             for (auto& [i, pt] : points_)
                 grid.add_to_touching(circle(pt.pos, pt.radius), { i, &pt });
 
-            // struct otisk
-            // {
-            //     size_t operator()(const std::tuple<idx_t, idx_t, point*>& tup) const
-            //     {
-            //         const auto& [a, b, c] = tup;
-            //         return a ^ b ^ size_t(c);
-            //     }
-            // };
-            // auto uniq = std::unordered_set<std::tuple<idx_t, idx_t, point*>, otisk>{};
-            // auto uniq = std::vector<std::tuple<idx_t, idx_t, point*>>{};
-
             for (auto& [i, pt] : points_)
                 grid.for_each_around(circle(pt.pos, pt.radius), [&](std::pair<idx_t, point*> other)
                     {
-                        if (other.first > i && solved_at(i, other.first) == 0)
-                        {
-                            solved_at(i, other.first) = 1;
+                        if (other.first > i)
                             solve_collision(pt, *other.second);
-                            // uniq.emplace(i, other.first, other.second);
-                            // uniq.emplace_back(i, other.first, other.second);
-                        }
                     });
-
-            // std::sort(uniq.begin(), uniq.end());
-            // auto last = std::tuple<idx_t, idx_t, point*>{ -1, -1, nullptr };
-            // for (auto thing : uniq)
-            // {
-            //     auto& [i, other_i, other_pt] = thing;
-            //     if (thing != last)
-            //     solve_collision(point_at(i), *other_pt);
-            //     last = thing;
-            // }
-
 
             // for (int i = 0; i < points_.size(); ++i)
             // {
@@ -325,9 +285,7 @@ public:
         if (updated != last)
             update_maps();
 
-        frog::os::timer tim;
         verlet_solve();
-        LOGX(tim.duration_us());
     }
 
     const point& point_at(idx_t i) const { return points_[ map_at("soft_physics2d: points", map_points, i) ].second; }
@@ -389,6 +347,7 @@ public:
             map_joints.emplace(joints_[i].first, i);
     }
 
+    // TODO: Implement deletion.
     void delete_point(idx_t i) {}
     void delete_joint(idx_t i) {}
     void delete_angle(idx_t i) {}
