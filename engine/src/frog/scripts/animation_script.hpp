@@ -20,8 +20,9 @@ public:
     animation_script(gx2d::animation animation)
         : animation(std::move(animation)) {}
 
-    void init(frog::game_object2d&, frog::engine2d&) override
+    void init(frog::game_object2d& obj, frog::engine2d&) override
     {
+        obj.model().tex = animation.frame().tex;
     }
 
     void frame_update(frog::game_object2d&, frog::engine2d& eng) override

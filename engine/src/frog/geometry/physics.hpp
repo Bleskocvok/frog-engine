@@ -279,6 +279,9 @@ public:
 
     soft_physics2d() = default;
 
+    const auto& settings() const { return settings_; }
+          auto& settings()       { return settings_; }
+
     void update()
     {
         // TODO: ??? Consider deletion???
