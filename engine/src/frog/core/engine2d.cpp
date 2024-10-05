@@ -132,9 +132,9 @@ void engine2d::draw_objects(double /* between */)
                 throw std::runtime_error("invalid texture '" + model->image_tag + "'");
             const auto& tex = *it;
 
-            auto uv_size = geo::vec2{ tex.w(), tex.h() } * model->tex.size;
+            auto uv_size = geo::vec2{ float(tex.w()), float(tex.h()) } * model->tex.size;
             auto uv = ( model->tex.pos - model->tex.size * 0.5f )
-                    * geo::vec2{ tex.w(), tex.h() };
+                    * geo::vec2{ float(tex.w()), float(tex.h()) };
 
             gx::rgba_t color = gx::color_to_255(model->color);
             win_raw->draw_colored_rotated(tex, uv.x(), uv.y(), uv_size.x(), uv_size.y(),

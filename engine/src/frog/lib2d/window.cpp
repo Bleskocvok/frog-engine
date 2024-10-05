@@ -169,6 +169,7 @@ void window::draw_colored( const texture& tex, int u, int v,
 
     SDL_Rect src = { u, v, cut_width, cut_height };
     SDL_Rect dest = { x, y, tex_width, tex_height };
+    // TODO: Change all of these to ...F version (which use float and render better).
     SDL_RenderCopy( renderer.get(), tex.src(), &src, &dest );
 
     SDL_SetTextureAlphaMod( tex.src(), 255 );
@@ -208,7 +209,7 @@ void window::draw_colored_rotated( const texture& tex, int u, int v,
                             int cut_width, int cut_height, float x, float y,
                             float tex_width, float tex_height,
                             std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a,
-                            int pivot_x, int pivot_y, float angle,
+                            float pivot_x, float pivot_y, float angle,
                             bool flipped )
 {
     if ( !tex.src() ) throw std::runtime_error( "draw empty texture" );
