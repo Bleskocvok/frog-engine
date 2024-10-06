@@ -109,8 +109,11 @@ void soft_physics2d::solve_collision(point& a, point& b)
 
 void soft_physics2d::solve_joint(joint j)
 {
-    auto& a = points_[ map_points[ j.a ] ].second;
-    auto& b = points_[ map_points[ j.b ] ].second;
+    // auto& a = points_[ map_points[ j.a ] ].second;
+    // auto& b = points_[ map_points[ j.b ] ].second;
+
+    auto& a = point_at(j.a);
+    auto& b = point_at(j.b);
 
     vec2 dif = a.pos - b.pos;
     float dist = dif.length();
@@ -126,9 +129,13 @@ void soft_physics2d::solve_joint(joint j)
 // probably just use geo::angle_diff
 void soft_physics2d::solve_angle(angle alpha)
 {
-    auto& a = points_[ map_points[ alpha.a ] ].second;
-    auto& b = points_[ map_points[ alpha.b ] ].second;
-    auto& c = points_[ map_points[ alpha.c ] ].second;
+    // auto& a = points_[ map_points[ alpha.a ] ].second;
+    // auto& b = points_[ map_points[ alpha.b ] ].second;
+    // auto& c = points_[ map_points[ alpha.c ] ].second;
+
+    auto& a = point_at(alpha.a);
+    auto& b = point_at(alpha.b);
+    auto& c = point_at(alpha.c);
 
     float cur = vec_angle(a.pos - b.pos, c.pos - b.pos);
     float desired = alpha.angle;
@@ -152,7 +159,7 @@ void soft_physics2d::solve_angle(angle alpha)
 
 void soft_physics2d::verlet_solve()
 {
-    for (auto& [idx, pt] : points_)
+    for (auto& [idx, pt] : points())
         apply_inertia(pt, settings_.delta);
 
     auto grid = optimization_grid<std::pair<idx_t, point*>>(
@@ -160,44 +167,27 @@ void soft_physics2d::verlet_solve()
 
     for (int it = 0; it < settings_.iterations; ++it)
     {
-        for (auto& [i, pt] : points_)
+        for (auto& [i, pt] : points())
             encapsulate(pt, settings_.universum);
 
         grid.clear();
 
-        for (auto& [i, pt] : points_)
+        for (auto& [i, pt] : points())
             grid.add_to_touching(circle(pt.pos, pt.radius), { i, &pt });
 
-        for (auto& [i, pt] : points_)
+        for (auto& [i, pt] : points())
             grid.for_each_around(circle(pt.pos, pt.radius), [&](std::pair<idx_t, point*> other)
                 {
                     if (other.first > i)
                         solve_collision(pt, *other.second);
                 });
 
-        for (auto&[idx, j] : joints_)
+        for (auto&[idx, j] : joints())
             solve_joint(j);
 
-        for (auto&[idx, a] : angles_)
+        for (auto&[idx, a] : angles())
             solve_angle(a);
     }
-}
-
-void soft_physics2d::update_maps()
-{
-    updated = last;
-
-    map_points.clear();
-    map_joints.clear();
-
-    map_points.reserve(points_.size());
-    map_joints.reserve(joints_.size());
-
-    for (std::size_t i = 0; i < points_.size(); ++i)
-        map_points.emplace(points_[i].first, i);
-
-    for (std::size_t i = 0; i < joints_.size(); ++i)
-        map_joints.emplace(joints_[i].first, i);
 }
 
 
