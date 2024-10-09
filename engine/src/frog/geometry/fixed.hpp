@@ -46,6 +46,12 @@ public:
     fixed( float  x ) : value( x * Div ) {}
     fixed( double x ) : value( x * Div ) {}
 
+    template< typename T >
+    fixed( T numerator, T denominator ) : fixed( numerator )
+    {
+        *this /= denominator;
+    }
+
     operator double() const
     {
         Integral n = to< Integral >();

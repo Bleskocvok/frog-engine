@@ -77,6 +77,9 @@ int main()
     assert( is_close( fx64( 100 ) * fx64( 100 ).recip(), 1.0 ) );
     assert( is_close( fx64( 1 ) / fx64( 100 ).recip(), 100.0 ) );
 
+    // fraction constructor
+    assert( is_close( fx64( 13, 27 ),  13 / 27.0 ) );
+
     for ( int i = -10000; i <= 10000; ++i )
         assert( equal( fx32( i ), i ) );
 
