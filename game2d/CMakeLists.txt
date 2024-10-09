@@ -14,11 +14,11 @@ file(GLOB SRC_FILES
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/)
 include_directories(${FROG_INCLUDE_DIRS})
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED on)
+
 add_executable(game_2d ${SRC_FILES})
 target_link_libraries(game_2d PRIVATE Frog::Frog)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED on)
 
 # Normal compiler options
 if(NOT MSVC)

@@ -66,8 +66,8 @@ struct ballsack : frog::script2d
 
         resize(engine.win_raw->w(), engine.win_raw->h(), engine);
 
-        physics.settings_.universum = { 0, 0, 1, 1 };
-        physics.settings_.iterations = 5;
+        physics.settings().universum = { 0, 0, 1, 1 };
+        physics.settings().iterations = 5;
 
         // auto* label_fps = obj.add_element(mk_ptr<gx::ui_element>());
         // label_fps->label = gx::text{ "ABCDEFGHIJKL" };
