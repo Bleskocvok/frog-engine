@@ -2,7 +2,7 @@
 
 #include <utility>          // pair
 #include <cstddef>          // size_t
-#include <algorithm>        // max, min, clamp
+#include <algorithm>        // max, min, clamp, find
 #include <vector>
 
 
@@ -188,6 +188,33 @@ void soft_physics2d::verlet_solve()
         for (auto&[idx, a] : angles())
             solve_angle(a);
     }
+}
+
+void soft_physics2d::remove()
+{
+    // TODO: Consider how this could be made more efficient.
+    if (!points_removal.empty())
+    {
+        auto has = [](const auto& cont, const auto& elem)
+        {
+            return std::find(cont.begin(), cont.end(), elem) != cont.end();
+        };
+
+        for (int i = 0; i < joints_.size(); ++i)
+            if (has(points_removal, joints_.data[i].second.a)
+             || has(points_removal, joints_.data[i].second.b))
+                joints_removal.push_back(joints_.data[i].first);
+
+        // TODO: Do the same thing for angles;
+    }
+
+    points_.remove(points_removal);
+    joints_.remove(joints_removal);
+    angles_.remove(angles_removal);
+
+    points_removal.clear();
+    joints_removal.clear();
+    angles_removal.clear();
 }
 
 

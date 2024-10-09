@@ -11,10 +11,12 @@
 #include <cstddef>          // size_t
 #include <stdexcept>        // runtime_error
 #include <sstream>          // stringstream
-#include <vector>
+#include <vector>           // vector
+#include <algorithm>        // remove_if
 
 #include "frog/utils/debug.hpp"
 
+#include "frog/utils/exception.hpp"
 
 namespace frog::geo
 {
@@ -121,14 +123,12 @@ public:
             return emplace(std::move(val));
         }
 
-        // TODO: Add a remove(multiple) method to be more efficient when
-        // removing multiple (using this thing it would be quadratic).
         void remove(idx_t i)
         {
             if (i >= limit_)
                 throw std::runtime_error("physics container: invalid index");
             if (map[i] == -1)
-                throw std::runtime_error("physics container: cannot delete already deleted element");
+                throw std::runtime_error("physics container: cannot delete a nonexistent element");
 
             auto removed = map[i];
             data.erase(data.begin() + removed);
@@ -140,6 +140,43 @@ public:
                 if (idx > removed)
                     --idx;
             }
+        }
+
+        template<template<typename> typename Vec>
+        void remove(const Vec<idx_t>& vec)
+        {
+            if (vec.empty())
+                return;
+
+            if (vec.size() == 1)
+            {
+                remove(vec.front());
+                return;
+            }
+
+            for (auto i : vec)
+            {
+                if (i >= limit_)
+                    throw std::runtime_error("physics container: invalid index");
+                if (map[i] == -1)
+                    throw std::runtime_error("physics container: cannot delete a nonexistent element");
+            }
+
+            for (auto i : vec)
+            {
+                if (map[i] == -1)
+                    continue;
+                data[ map[i] ].first = -1;
+                map[i] = -1;
+                free.push_back(i);
+            }
+
+            data.erase(std::remove_if(data.begin(), data.end(),
+                       [](const auto& elem){ return elem.first == idx_t(-1); }),
+                       data.end());
+
+            for (std::size_t i = 0; i < data.size(); ++i)
+                map[ data[i].first ] = i;
         }
 
         std::size_t size() const { return data.size(); }
@@ -156,6 +193,10 @@ private:
     container<joint> joints_;
     container<angle> angles_;
 
+    std::vector<idx_t> points_removal;
+    std::vector<idx_t> joints_removal;
+    std::vector<idx_t> angles_removal;
+
     void apply_inertia(point& pt, float delta);
 
     void encapsulate(point& pt, rect rect);
@@ -167,6 +208,8 @@ private:
     void solve_angle(angle alpha);
 
     void verlet_solve();
+
+    void remove();
 
     template<typename K, typename Map>
     static auto& map_at(const std::string& desc, Map& m, const K& key)
@@ -194,6 +237,7 @@ public:
 
     void update()
     {
+        remove();
         verlet_solve();
     }
 
@@ -245,25 +289,17 @@ public:
 
     void remove_point(idx_t i)
     {
-        points_.remove(i);
-
-        // TODO: Burn this awful thing!
-        for (int j = joints_.size() - 1; j >= 0; --j)
-        {
-            if (joints_.data[j].second.a == i
-             || joints_.data[j].second.b == i)
-                joints_.remove(joints_.data[j].first);
-        }
+        points_removal.push_back(i);
     }
 
     void remove_joint(idx_t i)
     {
-        joints_.remove(i);
+        joints_removal.push_back(i);
     }
 
     void remove_angle(idx_t i)
     {
-        angles_.remove(i);
+        angles_removal.push_back(i);
     }
 };
 
