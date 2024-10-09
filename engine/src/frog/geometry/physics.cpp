@@ -109,9 +109,6 @@ void soft_physics2d::solve_collision(point& a, point& b)
 
 void soft_physics2d::solve_joint(joint j)
 {
-    // auto& a = points_[ map_points[ j.a ] ].second;
-    // auto& b = points_[ map_points[ j.b ] ].second;
-
     auto& a = point_at(j.a);
     auto& b = point_at(j.b);
 
@@ -129,10 +126,6 @@ void soft_physics2d::solve_joint(joint j)
 // probably just use geo::angle_diff
 void soft_physics2d::solve_angle(angle alpha)
 {
-    // auto& a = points_[ map_points[ alpha.a ] ].second;
-    // auto& b = points_[ map_points[ alpha.b ] ].second;
-    // auto& c = points_[ map_points[ alpha.c ] ].second;
-
     auto& a = point_at(alpha.a);
     auto& b = point_at(alpha.b);
     auto& c = point_at(alpha.c);
