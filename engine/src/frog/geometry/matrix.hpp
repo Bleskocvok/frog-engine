@@ -97,7 +97,7 @@ public:
             del = ", ";
             auto row = std::vector<T>(Width);
             int i = 0;
-            std::generate(row.begin(), row.end(), [=, &i]()
+            std::generate(row.begin(), row.end(), [=, this, &i]()
             {
                 return at(i++, y);
             });
