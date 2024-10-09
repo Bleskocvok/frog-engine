@@ -193,7 +193,7 @@ void soft_physics2d::remove()
             return std::find(cont.begin(), cont.end(), elem) != cont.end();
         };
 
-        for (int i = 0; i < joints_.size(); ++i)
+        for (unsigned i = 0; i < joints_.size(); ++i)
             if (has(points_removal, joints_.data[i].second.a)
              || has(points_removal, joints_.data[i].second.b))
                 joints_removal.push_back(joints_.data[i].first);
