@@ -6,12 +6,12 @@
 
 #include "frog/geometry/transform.hpp"
 #include "frog/graphics/renderer3d.hpp"
-#include "frog/gl/program.hpp"
-#include "frog/gl/location.hpp"
-#include "frog/gl/shape.hpp"
-#include "frog/gl/mesh.hpp"
-#include "frog/gl/material.hpp"
-#include "frog/gl/model.hpp"
+#include "frog/gx3d/program.hpp"
+#include "frog/gx3d/location.hpp"
+#include "frog/gx3d/shape.hpp"
+#include "frog/gx3d/mesh.hpp"
+#include "frog/gx3d/material.hpp"
+#include "frog/gx3d/model.hpp"
 
 #include "frog/utils/debug.hpp"
 

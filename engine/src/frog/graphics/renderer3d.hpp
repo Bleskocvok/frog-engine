@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "frog/gl/include.hpp"
+#include "frog/gx3d/include.hpp"
 #include "frog/graphics/renderer_base.hpp"
 
 #include <stdexcept>

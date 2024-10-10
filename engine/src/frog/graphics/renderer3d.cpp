@@ -1,6 +1,6 @@
 #ifndef NOT_FROG_BUILD_3D
 
-#include "frog/gl/include.hpp"
+#include "frog/gx3d/include.hpp"
 
 #include "renderer3d.hpp"
 

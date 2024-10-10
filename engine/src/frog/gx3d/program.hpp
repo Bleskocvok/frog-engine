@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "frog/gl/include.hpp"
+#include "frog/gx3d/include.hpp"
 #include "frog/geometry/matrix.hpp"
 #include "frog/geometry/vector.hpp"
 

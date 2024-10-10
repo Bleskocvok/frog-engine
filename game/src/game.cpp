@@ -1,7 +1,7 @@
 
 #include "frog/core/engine3d.hpp"
 #include "frog/core/object_builder.hpp"
-#include "frog/gl/shape.hpp"
+#include "frog/gx3d/shape.hpp"
 
 #include "frog/utils/load_file.hpp"
 #include "frog/utils/ptr.hpp"

@@ -2,13 +2,13 @@
 
 #pragma once
 
-#include "frog/gl/include.hpp"
+#include "frog/gx3d/include.hpp"
 
 #include "frog/geometry/camera.hpp"
 #include "frog/graphics/renderer3d.hpp"
 #include "frog/graphics/assets.hpp"
-#include "frog/gl/texture.hpp"
-#include "frog/gl/mesh.hpp"
+#include "frog/gx3d/texture.hpp"
+#include "frog/gx3d/mesh.hpp"
 #include "frog/os/window.hpp"
 #include "frog/os/input.hpp"
 #include "frog/os/timer.hpp"
