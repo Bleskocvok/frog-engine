@@ -4,6 +4,7 @@
 
 #include "sdl_include.hpp"
 #include SDL_HEADER
+// #include SDL_TTF_HEADER
 
 #include <memory>       // unique_ptr
 
@@ -12,6 +13,8 @@ struct SDL_Texture;
 struct SDL_Window;
 struct SDL_Renderer;
 struct SDL_RWops;
+
+typedef struct _TTF_Font TTF_Font;
 
 // This one fucks it up. It's a typedef.
 // struct SDL_GameController;
@@ -27,8 +30,8 @@ namespace frog::lib2d::detail
         void operator()( SDL_Renderer* obj );
         void operator()( SDL_GameController* c );
         void operator()( SDL_RWops* obj );
-        // // TTF
-        // void operator()( TTF_Font* font );
+        // TTF
+        void operator()( TTF_Font* font );
     };
 
     using surface = std::unique_ptr<SDL_Surface, deleter>;
@@ -37,6 +40,9 @@ namespace frog::lib2d::detail
     using renderer = std::unique_ptr<SDL_Renderer, deleter>;
     using game_controller = std::unique_ptr<SDL_GameController, deleter>;
     using rwops = std::unique_ptr<SDL_RWops, deleter>;
+
+    // TTF
+    using font = std::unique_ptr<TTF_Font, deleter>;
 
 }  // namespace frog::lib2d::detail
 

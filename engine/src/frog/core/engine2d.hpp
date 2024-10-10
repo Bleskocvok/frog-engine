@@ -45,6 +45,8 @@ class engine2d : public engine_base<engine2d, game_object2d, lib2d::os::timer>
     void draw_sprite(const lib2d::gx::texture& tex, geo::rect dest, geo::rect uv, gx::rgba_t color);
 
 public:
+    lib2d::initializer initializer_{ lib2d::initializer::Video };
+
     lib2d::gx::window* win_raw = nullptr;
     ptr<lib2d::gx::events> input = mk_ptr<lib2d::gx::events>();
 

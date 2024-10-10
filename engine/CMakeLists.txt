@@ -232,7 +232,7 @@ if(FROG_BUILD_2D)
 
     set(SDL_PATH       "${SDL_PREFIX}/SDL2-2.28.5")
     set(SDL_NET_PATH   "${SDL_PREFIX}/SDL2_net-2.2.0")
-    # set(SDL_TTF_PATH   "${SDL_PREFIX}/SDL2_ttf-2.20.2")
+    set(SDL_TTF_PATH   "${SDL_PREFIX}/SDL2_ttf-2.20.2")
     set(SDL_IMAGE_PATH "${SDL_PREFIX}/SDL2_image-2.8.1")
     set(SDL_MIXER_PATH "${SDL_PREFIX}/SDL2_mixer-2.6.3")
 
@@ -243,6 +243,7 @@ if(FROG_BUILD_2D)
 
     message(STATUS "SDL_PATH:       ${SDL_PATH}")
     message(STATUS "SDL_NET_PATH:   ${SDL_NET_PATH}")
+    message(STATUS "SDL_TTF_PATH:   ${SDL_TTF_PATH}")
     message(STATUS "SDL_IMAGE_PATH: ${SDL_IMAGE_PATH}")
     message(STATUS "SDL_MIXER_PATH: ${SDL_MIXER_PATH}")
 
@@ -254,26 +255,35 @@ if(FROG_BUILD_2D)
     set(SDL2MIXER_MOD       OFF)
     set(SDL2MIXER_MP3       OFF)
 
+    set(SDL2TTF_INSTALL     OFF)
+
     set(SDL_TEST            OFF)
     set(SDL_STATIC          ON)
     set(SDL_SHARED          ON)
 
     add_subdirectory(${SDL_PATH}       sdl2-bin)
     add_subdirectory(${SDL_NET_PATH}   sdl2-net-bin)
+    add_subdirectory(${SDL_TTF_PATH}   sdl2-ttf-bin)
     add_subdirectory(${SDL_IMAGE_PATH} sdl2-image-bin)
     add_subdirectory(${SDL_MIXER_PATH} sdl2-mixer-bin)
 
     find_library(SDL2       SDL2)
     find_library(SDL2_image SDL2_image)
     find_library(SDL2_mixer SDL2_mixer)
+    find_library(SDL2_net   SDL2_net)
+    find_library(SDL2_ttf   SDL2_ttf)
+
+    # target_compile_definitions(frog_lib PRIVATE -D SDL_TTF_HEADER_FOLDER=SDL2)
 
     target_link_libraries(frog_lib PRIVATE SDL2::SDL2)
     # SDL2_image::SDL2_image doesn't work for some reason (same for mixer below)
     target_link_libraries(frog_lib PRIVATE SDL2_image)
     target_link_libraries(frog_lib PRIVATE SDL2_mixer)
+    target_link_libraries(frog_lib PRIVATE SDL2_ttf)
 
     set(SDL2_INCLUDE_DIRS "${SDL_PATH}/include"
-                          "${SDL_IMAGE_PATH}/include")
+                          "${SDL_IMAGE_PATH}/include"
+                          "${SDL_TTF_PATH}/include")
 
     include_directories(${SDL2_INCLUDE_DIRS})
     # TODO: remove this shit

@@ -58,7 +58,11 @@ public:
     T* find(const std::string& tag)
     {
         auto it = data.find(tag);
-        return it == data.end() ? nullptr : it->second.get();
+        if (it == data.end()) [[unlikely]]
+            return nullptr;
+        else [[likely]]
+            return it->second.get();
+        // return it == data.end() ? nullptr : it->second.get();
     }
 
     const T* find(const std::string& tag) const

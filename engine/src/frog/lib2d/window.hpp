@@ -7,10 +7,13 @@
 
 #include "frog/os/window_base.hpp"
 
-#include "sdl_include.hpp"
-#include SDL_HEADER
+// #include "sdl_include.hpp"
+// #include SDL_HEADER
 
 #include <cstdint>      // uint8_t
+
+
+struct SDL_Surface;
 
 
 namespace frog::lib2d::gx

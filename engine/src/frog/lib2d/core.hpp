@@ -36,17 +36,33 @@ public:
 };
 
 
-// class init_ttf
-// {
-// public:
-//     init_ttf();
-//     ~init_ttf();
+class init_ttf
+{
+public:
+    init_ttf();
+    ~init_ttf();
 
-//     init_ttf( const init_ttf& ) = delete;
-//     init_ttf& operator=( const init_ttf& ) = delete;
-//     init_ttf( init_ttf&& ) = default;
-//     init_ttf& operator=( init_ttf&& ) = default;
-// };
+    init_ttf( const init_ttf& ) = delete;
+    init_ttf& operator=( const init_ttf& ) = delete;
+    init_ttf( init_ttf&& ) = default;
+    init_ttf& operator=( init_ttf&& ) = default;
+};
+
+
+class initializer
+{
+    init_core core;
+    init_ttf ttf;
+public:
+    enum : std::uint32_t { None = 0, OnlyEvents = 0x1, Video = 0x7,
+                           TTF = 0xf, Audio = 0x10, Net = 0x70 };
+
+    // TODO: Move ttf to optional<ttf>
+    // TODO: Finish audio and net
+    initializer(std::uint32_t flags = None);
+
+    static std::uint32_t flags_to_lib(std::uint32_t flags);
+};
 
 
 namespace fs
