@@ -209,14 +209,10 @@ void engine2d::draw_ui(double)
 
             if (elem->label)
             {
-                // draw_sprite(textures.at("box"),
-                //             { elem->pos, elem->size },
-                //             { elem->tex_pos, elem->tex_size },
-                //             gx::rgba_t{ 200, 0, 0, 255 });
                 draw_text(tex, elem->label->str,
                           elem->pos,
                           elem->size.y() * elem->label->height,
-                          elem->color,
+                          elem->label->color,
                           elem->label->centered);
             }
         }
