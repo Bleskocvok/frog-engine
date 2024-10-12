@@ -23,6 +23,8 @@ public:
     detail::surface render_text(const std::string& text);
 
     std::pair<int, int> size_text(const std::string& text);
+
+    void set_outline(int size);
 };
 
 

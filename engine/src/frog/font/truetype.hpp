@@ -14,7 +14,7 @@ class truetype : public base
 {
     lib2d::font font_;
 public:
-    truetype(const std::string& file, int size);
+    truetype(const std::string& file, int size, int outline = 0);
 
     frog::geo::vec2 size(const std::string& str, float height) override;
 

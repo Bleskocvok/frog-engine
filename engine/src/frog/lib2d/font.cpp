@@ -50,5 +50,10 @@ std::pair<int, int> font::size_text(const std::string& text)
     return { w, h };
 }
 
+void font::set_outline(int size)
+{
+    TTF_SetFontOutline(font_.get(), size);
+}
+
 
 } // namespace frog::lib2d

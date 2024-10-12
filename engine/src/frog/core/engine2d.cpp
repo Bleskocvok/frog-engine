@@ -151,8 +151,8 @@ void engine2d::draw_objects(double /* between */)
 }
 
 
-void engine2d::draw_text(const lib2d::gx::texture& tex, const std::string& str,
-               geo::vec2 pos, float height, gx::rgba_t color, bool centered)
+void engine2d::draw_text(const std::string& str, geo::vec2 pos, float height,
+                         gx::rgba_t color, bool centered)
 {
     auto& font = fonts.at("default");
 
@@ -193,8 +193,6 @@ void engine2d::draw_sprite(const lib2d::gx::texture& tex, geo::rect dest,
 
 void engine2d::draw_ui(double)
 {
-    const auto& tex = textures.at("font");
-
     scenes->for_each_object([&](auto& obj)
     {
         for (const auto& elem : obj.elements())
@@ -209,7 +207,7 @@ void engine2d::draw_ui(double)
 
             if (elem->label)
             {
-                draw_text(tex, elem->label->str,
+                draw_text(elem->label->str,
                           elem->pos,
                           elem->size.y() * elem->label->height,
                           elem->label->color,

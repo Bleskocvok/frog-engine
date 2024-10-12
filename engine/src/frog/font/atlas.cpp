@@ -10,7 +10,7 @@ namespace frog::font {
 
 
 frog::font::atlas::atlas(frog::engine2d& engine, const std::string& atlas_file,
-                         const std::string& config_file)
+                         const std::string& /* config_file */)
     : texture(engine.win_raw->make_texture(atlas_file.c_str()))
 { }
 
@@ -38,7 +38,8 @@ void atlas::draw(frog::engine2d& engine, const std::string& str,
                                    "QRSTUVWXYZ012345"
                                    "6789 .,!?-:/_'#*"
                                    "\"+abcdefghijklmn"
-                                   "opqrstuvwxyz=()";
+                                   "opqrstuvwxyz=() "
+                                   "$%&<>@[]^`|{}\\";
 
     pos.x() += char_size(height).x() / 2;
 
@@ -49,6 +50,7 @@ void atlas::draw(frog::engine2d& engine, const std::string& str,
 
         if (idx >= map.size())
         {
+            pos.x() += char_size(height).x();
             continue;
         }
 
