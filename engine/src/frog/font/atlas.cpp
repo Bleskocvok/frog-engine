@@ -19,7 +19,7 @@ frog::geo::vec2 atlas::char_size(float height) const
     return { height * spacing * size_ratio, height };
 }
 
-geo::vec2 atlas::size(const std::string& str, float height) const
+geo::vec2 atlas::size(const std::string& str, float height)
 {
     return { str.length() * height
                           * spacing

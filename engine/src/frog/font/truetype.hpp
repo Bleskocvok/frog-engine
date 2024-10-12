@@ -16,7 +16,7 @@ class truetype : public base
 public:
     truetype(const std::string& file, int size);
 
-    frog::geo::vec2 size(const std::string& str, float height) const override;
+    frog::geo::vec2 size(const std::string& str, float height) override;
 
     void draw(frog::engine2d&, const std::string& str,
               frog::geo::vec2 pos, float height, frog::gx::rgba_t color) override;
