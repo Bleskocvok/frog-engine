@@ -14,6 +14,7 @@ struct SDL_Window;
 struct SDL_Renderer;
 struct SDL_RWops;
 
+// Sigh…
 typedef struct _TTF_Font TTF_Font;
 
 // This one fucks it up. It's a typedef.

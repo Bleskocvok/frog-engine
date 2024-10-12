@@ -3,7 +3,7 @@
 #include "frog/geometry/vector.hpp"
 #include "frog/graphics/color.hpp"
 
-#include <string_view>
+#include <string>
 
 
 // TODO: Solve issues that arise with this (engine2d).
@@ -17,8 +17,9 @@ struct base
 {
     virtual ~base() = default;
 
-    virtual geo::vec2 size(std::string_view str, float height) const = 0;
-    virtual void draw(frog::engine2d&, std::string_view str,
+    virtual geo::vec2 size(const std::string& str, float height) const = 0;
+
+    virtual void draw(frog::engine2d&, const std::string& str,
                       frog::geo::vec2 pos, float height, frog::gx::rgba_t color) = 0;
 };
 

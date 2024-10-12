@@ -67,6 +67,7 @@ file(GLOB
     src/frog/*.cpp
     src/frog/*/*.cpp
     src/frog/core/*.cpp
+    src/frog/font/*.cpp
     src/frog/geometry/*.cpp
     src/frog/graphics/*.cpp
     src/frog/os/*.cpp

@@ -20,8 +20,9 @@ public:
     atlas(frog::engine2d&, const std::string& atlas_file,
           const std::string& config_file);
 
-    frog::geo::vec2 size(std::string_view str, float height) const override;
-    void draw(frog::engine2d&, std::string_view str,
+    frog::geo::vec2 size(const std::string& str, float height) const override;
+
+    void draw(frog::engine2d&, const std::string& str,
               frog::geo::vec2 pos, float height, frog::gx::rgba_t color) override;
 };
 

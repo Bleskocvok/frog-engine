@@ -9,6 +9,7 @@
 #include <tuple>        // tie
 
 #include "frog/font/atlas.hpp"
+#include "frog/font/truetype.hpp"
 
 using namespace frog::geo;
 using namespace frog;
@@ -147,15 +148,10 @@ void engine2d::draw_objects(double /* between */)
                                           rect.size.x() / 2, rect.size.y() / 2,
                                           model->angle);
         }
-
-    // lib2d::font font{ "bin-game2d-lin/assets/IosevkaFixedSS01-Medium.ttf", 50 };
-    // auto hello = font.render_text("Ahoj");
-    // auto tex = win_raw->make_texture(hello);
-    // win_raw->draw(tex, 0, 0, 300, 100);
 }
 
 
-void engine2d::draw_text(const lib2d::gx::texture& tex, std::string_view str,
+void engine2d::draw_text(const lib2d::gx::texture& tex, const std::string& str,
                geo::vec2 pos, float height, gx::rgba_t color, bool centered)
 {
     auto& font = fonts.at("default");

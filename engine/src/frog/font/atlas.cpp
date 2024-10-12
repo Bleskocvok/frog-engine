@@ -19,7 +19,7 @@ frog::geo::vec2 atlas::char_size(float height) const
     return { height * spacing * size_ratio, height };
 }
 
-geo::vec2 atlas::size(std::string_view str, float height) const
+geo::vec2 atlas::size(const std::string& str, float height) const
 {
     return { str.length() * height
                           * spacing
@@ -27,12 +27,13 @@ geo::vec2 atlas::size(std::string_view str, float height) const
            , height };
 }
 
-void atlas::draw(frog::engine2d& engine, std::string_view str,
+void atlas::draw(frog::engine2d& engine, const std::string& str,
                  geo::vec2 pos, float height, gx::rgba_t color)
 {
     using namespace frog;
     using namespace frog::geo;
 
+    // TODO: Load this from config_file
     static const std::string map = "ABCDEFGHIJKLMNOP"
                                    "QRSTUVWXYZ012345"
                                    "6789 .,!?-:/_'#*"
