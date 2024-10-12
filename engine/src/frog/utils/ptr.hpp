@@ -21,7 +21,7 @@ using shared = std::shared_ptr<T>;
 // frog::mk_ptr
 // second is shorter
 template<typename T, typename... Args>
-ptr<T> mk_ptr(Args... args)
+ptr<T> mk_ptr(Args&&... args)
 {
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
@@ -29,7 +29,7 @@ ptr<T> mk_ptr(Args... args)
 // std::make_shared
 // frog::mk_shared
 template<typename T, typename... Args>
-ptr<T> mk_shared(Args... args)
+ptr<T> mk_shared(Args&&... args)
 {
     return std::make_shared<T>(std::forward<Args>(args)...);
 }

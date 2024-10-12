@@ -17,9 +17,14 @@
 #include "settings.hpp"
 #include "state.hpp"
 
+#include "frog/font/base.hpp"
+
 #include <string_view>
 #include <stdexcept>    // exception
 #include <utility>      // move, pair
+
+
+namespace frog::font { class atlas; } // namespace font
 
 
 namespace frog {
@@ -44,6 +49,9 @@ class engine2d : public engine_base<engine2d, game_object2d, lib2d::os::timer>
 
     void draw_sprite(const lib2d::gx::texture& tex, geo::rect dest, geo::rect uv, gx::rgba_t color);
 
+    // Friends and family.
+    friend font::atlas;
+
 public:
     lib2d::initializer initializer_{ lib2d::initializer::Video };
 
@@ -51,6 +59,7 @@ public:
     ptr<lib2d::gx::events> input = mk_ptr<lib2d::gx::events>();
 
     gx::assets<lib2d::gx::texture> textures;
+    gx::assets<font::base> fonts;
 
     geo::rect camera = { geo::vec2{ 0 }, geo::vec2{ 1, 1 } };
 

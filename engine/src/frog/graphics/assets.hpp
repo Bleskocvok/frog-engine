@@ -68,6 +68,7 @@ public:
     const T* find(const std::string& tag) const
     {
         auto it = data.find(tag);
+        // TODO: Use [[likely]] and [[unlikely]] here, too.
         return it == data.end() ? nullptr : it->second.get();
     }
 

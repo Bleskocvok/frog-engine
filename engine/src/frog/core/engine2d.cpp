@@ -7,7 +7,8 @@
 #include <utility>      // move
 #include <vector>
 #include <tuple>        // tie
-#include "frog/utils/debug.hpp"
+
+#include "frog/font/atlas.hpp"
 
 using namespace frog::geo;
 using namespace frog;
@@ -29,6 +30,8 @@ engine2d::engine2d(settings set, ptr<state> _global)
 void engine2d::init()
 {
     scenes->init(*this);
+
+    fonts.add("default", mk_ptr<font::atlas>(*this, "assets/font.png", "oogabooga.ini"));
 }
 
 
@@ -144,55 +147,23 @@ void engine2d::draw_objects(double /* between */)
                                           rect.size.x() / 2, rect.size.y() / 2,
                                           model->angle);
         }
+
+    // lib2d::font font{ "bin-game2d-lin/assets/IosevkaFixedSS01-Medium.ttf", 50 };
+    // auto hello = font.render_text("Ahoj");
+    // auto tex = win_raw->make_texture(hello);
+    // win_raw->draw(tex, 0, 0, 300, 100);
 }
 
 
 void engine2d::draw_text(const lib2d::gx::texture& tex, std::string_view str,
                geo::vec2 pos, float height, gx::rgba_t color, bool centered)
 {
-    static const std::string map = "ABCDEFGHIJKLMNOP"
-                                   "QRSTUVWXYZ012345"
-                                   "6789 .,!?-:/_'#*"
-                                   "\"+abcdefghijklmn"
-                                   "opqrstuvwxyz=()";
-    static const int grid_size = 16;
-    static const float size_ratio = 1;
-    static const float spacing = 0.75;
+    auto& font = fonts.at("default");
 
     if (centered)
-    {
-        pos.x() -= str.length()
-                    * height
-                    * spacing
-                    * size_ratio
-                    / 2;
-    }
-    else
-    {
-        pos.x() += height / 2;
-    }
+        pos.x() -= font.size(str, height).x() / 2;
 
-    for (char c : str)
-    {
-        size_t idx = std::distance(map.begin(),
-                                   std::find(map.begin(), map.end(), c));
-
-        if (idx >= map.size())
-        {
-            continue;
-        }
-
-        geo::vec2 tex_size = { 1.f / grid_size,
-                               size_ratio / grid_size };
-
-        geo::vec2 tex_pos = { static_cast<float>(idx % grid_size),
-                              static_cast<float>(idx / grid_size) };
-
-        tex_pos *= tex_size;
-
-        draw_sprite(tex, { pos, vec2{ height } }, { tex_pos, tex_size }, color);
-        pos.x() += height * spacing * size_ratio;
-    }
+    font.draw(*this, str, pos, height, color);
 }
 
 
