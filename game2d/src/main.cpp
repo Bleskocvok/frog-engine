@@ -96,8 +96,7 @@ struct balls : frog::script2d
 
         ui->label->str = make_string("count: ", babies.size());
 
-        if (engine.input->mouse().but_l.pressed
-         || engine.input->k_at(SDL_SCANCODE_F).down)
+        if (engine.input->k_at(SDL_SCANCODE_F).down)
         {
             if (!physics.limit_reached())
                 add_screw(engine);
@@ -107,6 +106,17 @@ struct balls : frog::script2d
                     if (!physics.limit_reached())
                         add_screw(engine);
         }
+
+        if (engine.input->mouse().but_l.pressed || engine.input->mouse().but_l.down)
+            for (int i = 0; i < 1 + 10 * engine.input->k_at(SDL_SCANCODE_LSHIFT).down; ++i)
+                add_screw(engine, 0.5);
+
+        if (engine.input->mouse().but_r.pressed || engine.input->mouse().but_r.down)
+            for (int i = 0; i < 1 + 10 * engine.input->k_at(SDL_SCANCODE_LSHIFT).down; ++i)
+                add_screw(engine, 3);
+
+        // static auto gen = std::mt19937{ 0 };
+        // static auto dist = std::uniform_real_distribution<float>(0.5, 3);
 
         if (engine.input->k_at(SDL_SCANCODE_B).down)
         {
@@ -129,7 +139,7 @@ struct balls : frog::script2d
         babies.erase(babies.begin() + i);
     }
 
-    void add_screw(frog::engine2d& engine)
+    void add_screw(frog::engine2d& engine, float size_mult = 1)
     {
         auto add_ball = [&](float size, auto pos)
             -> std::pair<frog::game_object2d*, decltype(physics)::idx_t>
@@ -146,7 +156,7 @@ struct balls : frog::script2d
                 .pos = pos,
                 .prev = pos,
                 .radius = size / 2,
-                .inv_weight = 1,
+                .inv_weight = 1 / size,
             });
             return { ptr, idx };
         };
@@ -157,6 +167,7 @@ struct balls : frog::script2d
         auto ball = ball_t{};
 
         auto circ = circle{ vec2{ 0, 0.055 }, 0.04 };
+        circ.radius *= size_mult;
 
         frog::geo::vec2 pos = engine.camera_coords(engine.input->mouse());
         auto[obj, idx] = add_ball(circ.radius, pos);
