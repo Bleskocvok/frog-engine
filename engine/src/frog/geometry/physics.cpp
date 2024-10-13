@@ -111,8 +111,8 @@ void soft_physics2d::solve_collision(point& a, point& b)
         else [[likely]]
         {
             float ratio = (dist - radii) / div;
-            a.pos -= dif * (ratio * a.inv_weight * 0.5);
-            b.pos += dif * (ratio * b.inv_weight * 0.5);
+            a.pos -= dif * (ratio * a.inv_weight);
+            b.pos += dif * (ratio * b.inv_weight);
         }
     }
 }
@@ -136,8 +136,8 @@ void soft_physics2d::solve_joint(joint j)
     else [[likely]]
     {
         float ratio = (dist - desired) / div;
-        a.pos -= dif * (ratio * a.inv_weight * 0.5);
-        b.pos += dif * (ratio * b.inv_weight * 0.5);
+        a.pos -= dif * (ratio * a.inv_weight);
+        b.pos += dif * (ratio * b.inv_weight);
     }
 }
 
