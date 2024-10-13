@@ -12,6 +12,9 @@ public:
     virtual bool should_close() const = 0;
 
     virtual void swap_buffers() = 0;
+
+    virtual int width() const = 0;
+    virtual int height() const = 0;
 };
 
 

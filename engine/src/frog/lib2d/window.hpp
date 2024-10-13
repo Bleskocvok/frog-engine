@@ -41,6 +41,9 @@ namespace frog::lib2d::gx
         int w() const { return win_width; }
         int h() const { return win_height; }
 
+        int width() const override { return win_width; }
+        int height() const override { return win_height; }
+
         void screenshot( const std::string& filename ) const;
 
         void update_size( int w = -1, int h = -1 );

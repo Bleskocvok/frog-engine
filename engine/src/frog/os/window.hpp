@@ -102,6 +102,9 @@ public:
     }
 
     void set_callbacks(input* in);
+
+    int width() const override { assert(false); throw std::runtime_error("width not implemented"); }
+    int height() const override { assert(false); throw std::runtime_error("height not implemented"); }
 };
 
 
