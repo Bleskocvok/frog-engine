@@ -101,6 +101,7 @@ void soft_physics2d::solve_collision(point& a, point& b)
     if (dist < radii)
     {
         float div = dist * (a.inv_weight + b.inv_weight);
+
         // TODO: Think further about this code and see if it makes sense.
         if (div == 0) [[unlikely]]
         {

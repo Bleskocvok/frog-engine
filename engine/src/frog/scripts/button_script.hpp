@@ -5,8 +5,10 @@
 #include "frog/utils/ptr.hpp"
 #include "frog/geometry/rectangle.hpp"
 #include "frog/geometry/collision.hpp"
+#include "frog/graphics/ui_element.hpp"
 
 #include "button_action.hpp"
+#include "button_style.hpp"
 
 #include <string>
 #include <utility>      // move
@@ -29,18 +31,44 @@ class button_script_base : public Script
     frog::gx::ui_element* ui = nullptr;
     bool down = false;
 
+    enum state_t { idling, hovering, pressing };
+
+    void set_state(state_t next)
+    {
+        if (state == next)
+            return;
+
+        state = next;
+
+        if (! style)
+            return;
+
+        switch (state)
+        {
+            case idling:   style->idle(*ui);  break;
+            case hovering: style->hover(*ui); break;
+            case pressing: style->press(*ui); break;
+        }
+    }
+
 public:
     frog::gx2d::sprite normal;
     frog::gx2d::sprite hover;
     frog::gx2d::sprite press;
     frog::ptr<frog::button_action> action = nullptr;
+    frog::ptr<frog::button_style> style = nullptr;
 
-    button_script_base(frog::gx2d::sprite normal, frog::gx2d::sprite hover,
-                       frog::gx2d::sprite press, frog::ptr<frog::button_action> action = nullptr)
+    state_t state = idling;
+
+    button_script_base(/*frog::gx2d::sprite normal, frog::gx2d::sprite hover,
+                       frog::gx2d::sprite press,*/
+                       frog::ptr<frog::button_action> action = nullptr,
+                       frog::ptr<frog::button_style> style = nullptr)
         : normal(std::move(normal)),
           hover(std::move(hover)),
           press(std::move(press)),
-          action(std::move(action)) {}
+          action(std::move(action)),
+          style(std::move(style)) {}
 
     void init(typename Script::GameObject& obj, typename Script::Engine&) override
     {
@@ -52,7 +80,7 @@ public:
         else
             ui = obj.elements().front().get();
 
-        ui->sprite.image_tag = normal.image_tag;
+        if (style) style->idle(*ui);
     }
 
     void frame_update(typename Script::GameObject& obj, typename Script::Engine& engine) override
@@ -79,11 +107,11 @@ public:
             if (action) action->frame_holding();
 
         if (down)
-            ui->sprite.image_tag = press.image_tag;
+            set_state(pressing);
         else if (collides)
-            ui->sprite.image_tag = hover.image_tag;
+            set_state(hovering);
         else
-            ui->sprite.image_tag = normal.image_tag;
+            set_state(idling);
     }
 
     void stable_update(typename Script::GameObject& obj, typename Script::Engine& engine) override
@@ -92,7 +120,8 @@ public:
             if (action) action->stable_holding();
     }
 
-    bool is_down() const {
+    bool is_down() const
+    {
         return down;
     }
 };
