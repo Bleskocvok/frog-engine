@@ -2,6 +2,7 @@
 
 #include "frog/geometry/vector.hpp"
 #include "frog/graphics/color.hpp"
+#include "frog/gx2d/sprite.hpp"
 
 #include <string>
 #include <optional>
@@ -22,15 +23,15 @@ struct text
 
 struct ui_element
 {
-    std::string sprite;
+    frog::gx2d::sprite sprite;
 
     std::optional<text> label;
 
-    geo::vec2 pos;
-    geo::vec2 size = { 1, 1 };
-    geo::vec2 tex_pos = { 0, 0 };
-    geo::vec2 tex_size = { 1, 1 };
-    gx::rgba_t color = gx::colors::white;
+    const geo::vec2& pos() const { return sprite.rect.pos; }
+          geo::vec2& pos()       { return sprite.rect.pos; }
+
+    const geo::vec2& size() const { return sprite.rect.size; }
+          geo::vec2& size()       { return sprite.rect.size; }
 };
 
 

@@ -140,7 +140,7 @@ void engine2d::draw_objects(double /* between */)
             auto uv = ( model->tex.pos - model->tex.size * 0.5f )
                     * geo::vec2{ float(tex.w()), float(tex.h()) };
 
-            gx::rgba_t color = gx::color_to_255(model->color);
+            gx::rgba_t color = model->color;
             win_raw->draw_colored_rotated(tex, uv.x(), uv.y(), uv_size.x(), uv_size.y(),
                                           top_left.x(), top_left.y(),
                                           rect.size.x(), rect.size.y(),
@@ -178,8 +178,39 @@ void engine2d::draw_sprite(const lib2d::gx::texture& tex, geo::rect dest,
     dest.size.y() *= scale.y();
     auto top_left = dest.top_left();
 
+    // TODO: This is a little unhinged. I should probably use the same
+    // coordinate system for textures throughout the whole code.
     uv.pos *= geo::vec2(tex.w(), tex.h());
     uv.size *= geo::vec2(tex.w(), tex.h());
+
+    win_raw->draw_colored_rotated(tex, uv.pos.x(), uv.pos.y(),
+                                  uv.size.x(), uv.size.y(),
+                                  top_left.x(), top_left.y(),
+                                  dest.size.x(), dest.size.y(),
+                                  color.r(), color.g(), color.b(), color.a(),
+                                  dest.size.x() / 2, dest.size.y() / 2,
+                                  0);
+}
+
+
+void engine2d::draw_ui_sprite(const lib2d::gx::texture& tex, geo::rect dest,
+                           geo::rect uv, gx::rgba_t color)
+{
+    geo::vec2 scale;
+    geo::vec2 shift;
+    std::tie(scale, shift) = scale_shift();
+
+    dest.pos.x() *= scale.x();
+    dest.pos.y() *= scale.y();
+    dest.pos += shift;
+
+    dest.size.x() *= scale.x();
+    dest.size.y() *= scale.y();
+    auto top_left = dest.top_left();
+
+    uv.pos *= geo::vec2(tex.w(), tex.h());
+    uv.size *= geo::vec2(tex.w(), tex.h());
+    uv.pos -= uv.size * 0.5;
 
     win_raw->draw_colored_rotated(tex, uv.pos.x(), uv.pos.y(),
                                   uv.size.x(), uv.size.y(),
@@ -197,19 +228,19 @@ void engine2d::draw_ui(double)
     {
         for (const auto& elem : obj.elements())
         {
-            if (!elem->sprite.empty())
+            if (!elem->sprite.image_tag.empty())
             {
-                draw_sprite(textures.at(elem->sprite),
-                            { elem->pos, elem->size },
-                            { elem->tex_pos, elem->tex_size },
-                            elem->color);
+                draw_ui_sprite(textures.at(elem->sprite.image_tag),
+                            elem->sprite.rect,
+                            elem->sprite.tex,
+                            elem->sprite.color);
             }
 
             if (elem->label)
             {
                 draw_text(elem->label->str,
-                          elem->pos,
-                          elem->size.y() * elem->label->height,
+                          elem->pos(),
+                          elem->size().y() * elem->label->height,
                           elem->label->color,
                           elem->label->centered);
             }

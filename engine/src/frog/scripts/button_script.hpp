@@ -52,7 +52,7 @@ public:
         else
             ui = obj.elements().front().get();
 
-        ui->sprite = normal.image_tag;
+        ui->sprite.image_tag = normal.image_tag;
     }
 
     void frame_update(typename Script::GameObject& obj, typename Script::Engine& engine) override
@@ -61,7 +61,7 @@ public:
 
         geo::vec2 pos = engine.camera_coords(engine.input->mouse());
 
-        auto rect = geo::rect(ui->pos, ui->size);
+        auto rect = ui->sprite.rect;
         bool collides = geo::is_collision(rect, pos);
         bool l_pressed = engine.input->mouse().but_l.pressed;
         bool l_released = engine.input->mouse().but_l.released;
@@ -79,11 +79,11 @@ public:
             if (action) action->frame_holding();
 
         if (down)
-            ui->sprite = press.image_tag;
+            ui->sprite.image_tag = press.image_tag;
         else if (collides)
-            ui->sprite = hover.image_tag;
+            ui->sprite.image_tag = hover.image_tag;
         else
-            ui->sprite = normal.image_tag;
+            ui->sprite.image_tag = normal.image_tag;
     }
 
     void stable_update(typename Script::GameObject& obj, typename Script::Engine& engine) override

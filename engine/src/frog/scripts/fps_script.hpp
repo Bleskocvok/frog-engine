@@ -24,8 +24,8 @@ struct fps_script : frog::script2d
 
         display = object.add_element(mk_ptr<gx::ui_element>());
         display->label = { "fps: -", 1 };
-        display->pos = geo::vec2(-0.5, -0.5 + label_height * 0.5);
-        display->size = { label_height };
+        display->pos() = geo::vec2(-0.5, -0.5 + label_height * 0.5);
+        display->size() = { label_height };
     }
 
     void frame_update(frog::game_object2d&, frog::engine2d& engine) override

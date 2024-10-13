@@ -1,6 +1,7 @@
 #pragma once
 
 #include "frog/geometry/rectangle.hpp"
+#include "frog/graphics/color.hpp"
 
 #include <string>
 
@@ -13,7 +14,7 @@ struct sprite
     std::string image_tag;
     geo::rect rect;
 
-    geo::vec4 color = { 1 };
+    gx::rgba_t color = gx::colors::white;
     float angle = 0;
     bool flipped = false;
 

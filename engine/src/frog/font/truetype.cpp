@@ -10,7 +10,7 @@ frog::font::truetype::truetype(const std::string& file, int size, int outline)
     : font_(file, size)
 {
     if (outline > 0)
-        font_.set_outline(10);
+        font_.set_outline(outline);
 }
 
 geo::vec2 truetype::size(const std::string& str, float height)
@@ -30,7 +30,6 @@ void truetype::draw(frog::engine2d& engine, const std::string& str,
 
     engine.draw_sprite(texture, { pos, size(str, height) }, { 0, 0, 1, 1 },
                        gx::colors::white);
-
 }
 
 

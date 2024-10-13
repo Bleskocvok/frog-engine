@@ -167,7 +167,7 @@ void add_objects(frog::engine2d& eng)
     gobj->add_script(mk_ptr<ballsack>());
     gobj->add_script(mk_ptr<fps_script>());
     gobj->model().image_tag = "box";
-    gobj->model().color = { 0.3, 0.3, 0.3, 1 };
+    gobj->model().color = { int(0.3 * 255), int(0.3 * 255), int(0.3 * 255), 255 };
 
     eng.scenes->current().add(std::move(gobj));
 }
