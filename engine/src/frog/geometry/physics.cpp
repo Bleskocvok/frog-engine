@@ -100,10 +100,20 @@ void soft_physics2d::solve_collision(point& a, point& b)
 
     if (dist < radii)
     {
-        // TODO: avoid division by 0
-        float ratio = (dist - radii) / (dist * (a.inv_weight * b.inv_weight));
-        a.pos -= dif * (ratio * a.inv_weight * 0.5);
-        b.pos += dif * (ratio * b.inv_weight * 0.5);
+        float div = dist * (a.inv_weight + b.inv_weight);
+        // TODO: Think further about this code and see if it makes sense.
+        if (div == 0) [[unlikely]]
+        {
+            dif.x() = radii;
+            a.pos -= dif * 0.5;
+            b.pos += dif * 0.5;
+        }
+        else [[likely]]
+        {
+            float ratio = (dist - radii) / div;
+            a.pos -= dif * (ratio * a.inv_weight * 0.5);
+            b.pos += dif * (ratio * b.inv_weight * 0.5);
+        }
     }
 }
 
@@ -115,10 +125,20 @@ void soft_physics2d::solve_joint(joint j)
     vec2 dif = a.pos - b.pos;
     float dist = dif.length();
     float desired = j.dist;
+    float div = dist * (a.inv_weight + b.inv_weight);
 
-    float ratio = (dist - desired) / (dist * (a.inv_weight * b.inv_weight));
-    a.pos -= dif * (ratio * a.inv_weight * 0.5);
-    b.pos += dif * (ratio * b.inv_weight * 0.5);
+    if (div == 0) [[unlikely]]
+    {
+        dif.x() = desired;
+        a.pos -= dif * 0.5;
+        b.pos += dif * 0.5;
+    }
+    else [[likely]]
+    {
+        float ratio = (dist - desired) / div;
+        a.pos -= dif * (ratio * a.inv_weight * 0.5);
+        b.pos += dif * (ratio * b.inv_weight * 0.5);
+    }
 }
 
 // TODO: there must be something wrong, doesn't seem to work for angles ~180 deg
