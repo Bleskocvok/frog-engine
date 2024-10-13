@@ -52,66 +52,95 @@ void init_game(frog::engine2d& eng)
 
 
 
+#include "frog/utils/ptr.hpp"
+
+#include "frog/core/engine2d.hpp"
+
 #include "frog/geometry/physics.hpp"
+#include "frog/geometry/basic.hpp"
+#include "frog/geometry/transform.hpp"
 
 #include <unordered_map>
+#include <random>
 
-struct ballsack : frog::script2d
+struct ball_t
 {
-    void init(frog::game_object2d& obj, frog::engine2d& engine) override
+    frog::game_object2d* obj = nullptr;
+    frog::geo::soft_physics2d::idx_t idx;
+};
+
+struct balls : frog::script2d
+{
+    frog::geo::soft_physics2d physics = { decltype(physics)::limits{ 20000, 20000, 200 } };
+    std::vector<ball_t> babies;
+
+    frog::gx::ui_element* ui = nullptr;
+
+    void init(frog::game_object2d& obj, frog::engine2d&) override
     {
         using namespace frog;
-
-        // engine.win_raw->clear_color(124, 0, 123, 255);
-
-        resize(engine.win_raw->w(), engine.win_raw->h(), engine);
 
         physics.settings().universum = { 0, 0, 1, 1 };
         physics.settings().iterations = 5;
 
-        // auto* label_fps = obj.add_element(mk_ptr<gx::ui_element>());
-        // label_fps->label = gx::text{ "ABCDEFGHIJKL" };
-        // label_fps->pos = geo::vec2{ 0 };
-        // label_fps->size = geo::vec2{ 0.3, 0.1 };
-        // label_fps->sprite = "circle";
-        // label_fps->tex_pos = { 0, 0, };
-        // label_fps->tex_size = { 0.5, 0.5 };
+        static constexpr float label_height = 0.03;
+        ui = obj.add_element(mk_ptr<gx::ui_element>());
+        ui->label = { "count:", 1 };
+        ui->pos() = geo::vec2(-0.5, -0.5 + label_height * 1.5);
+        ui->size() = { label_height };
     }
-
-    void resize(int w, int h, frog::engine2d& eng)
-    {
-        eng.camera.size = { w / float(h), 1 };
-    }
-
-    geo::soft_physics2d physics;
-    std::unordered_map<decltype(physics)::idx_t, game_object2d*> babies;
 
     void stable_update(frog::game_object2d& obj, frog::engine2d& engine) override
     {
-        // LOGX(engine.global->fps());
-        if (engine.input->k_at(SDL_SCANCODE_ESCAPE).released)
-            engine.global->quit = true;
+        using namespace frog;
 
-        if (engine.input->k_at(SDL_SCANCODE_SPACE).released)
-            throw std::runtime_error("Spacebar pressed");
+        ui->label->str = make_string("count: ", babies.size());
 
-        if (engine.input->has_resized())
+        if (engine.input->mouse().but_l.pressed
+         || engine.input->k_at(SDL_SCANCODE_F).down)
         {
-            auto [w, h] = engine.input->has_resized().value();
-            resize(w, h, engine);
+            if (!physics.limit_reached())
+                add_screw(engine);
+
+            if (engine.input->k_at(SDL_SCANCODE_LSHIFT).down)
+                for (int i = 0; i < 10; ++i)
+                    if (!physics.limit_reached())
+                        add_screw(engine);
         }
 
-        auto add_baby = [&](auto pos) -> decltype(physics)::idx_t
+        if (engine.input->k_at(SDL_SCANCODE_B).down)
         {
-            // float size = 0.1;
-            float size = 0.05;
-            // float size = 0.025;
-            auto gobj = mk_ptr<game_object2d>();
+            if (!babies.empty())
+                delete_screw(rand() % babies.size());
+
+            if (engine.input->k_at(SDL_SCANCODE_LSHIFT).down)
+                for (int i = 0; i < 9; ++i)
+                    if (!babies.empty())
+                        delete_screw(rand() % babies.size());
+        }
+
+        update_screws();
+    }
+
+    void delete_screw(int i)
+    {
+        babies.at(i).obj->destroy();
+        physics.remove_point(babies.at(i).idx);
+        babies.erase(babies.begin() + i);
+    }
+
+    void add_screw(frog::engine2d& engine)
+    {
+        auto add_ball = [&](float size, auto pos)
+            -> std::pair<frog::game_object2d*, decltype(physics)::idx_t>
+        {
+            auto gobj = frog::mk_ptr<frog::game_object2d>();
             gobj->model().image_tag = "circle";
             gobj->model().rect.size = { size, size };
             gobj->model().rect.pos = pos;
-
+            gobj->model().layer = 1;
             auto* ptr = engine.scenes->current().add(std::move(gobj));
+
             auto idx = physics.add_point(decltype(physics)::point
             {
                 .pos = pos,
@@ -119,41 +148,63 @@ struct ballsack : frog::script2d
                 .radius = size / 2,
                 .inv_weight = 1,
             });
-            babies.emplace(idx, ptr);
-            return idx;
+            return { ptr, idx };
         };
 
-        if (engine.input->mouse().but_l.pressed
-         || engine.input->k_at(SDL_SCANCODE_F).down)
-        {
-            geo::vec2 pos = engine.camera_coords(engine.input->mouse());
-            auto a = add_baby(pos);
-            auto b = add_baby(pos + geo::vec2(0, 0.1));
-            auto c = add_baby(pos + geo::vec2(0.1, 0.1));
-            // auto d = add_baby(pos + geo::vec2(-0.1, 0.1));
+        using namespace frog::geo;
+        using frog::mk_ptr, frog::game_object2d, frog::make_string;
 
-            physics.add_joint_between(a, b);
-            physics.add_joint_between(b, c);
-            // physics.add_joint_between(b, d);
+        auto ball = ball_t{};
 
-            // physics.add_angle(decltype(physics)::angle
-            // {
-            //     .a = a,
-            //     .b = b,
-            //     .c = c,
-            //     // .angle = geo::Pi / 2,
-            //     .angle = geo::Pi - 0.2,
-            // });
-        }
+        auto circ = circle{ vec2{ 0, 0.055 }, 0.04 };
 
-        for (auto&[idx, pt] : physics.points())
-        {
-            babies.at(idx)->model().rect.pos = pt.pos;
-        }
+        frog::geo::vec2 pos = engine.camera_coords(engine.input->mouse());
+        auto[obj, idx] = add_ball(circ.radius, pos);
+
+        ball.obj = obj;
+        ball.idx = idx;
+
+        babies.push_back(std::move(ball));
+    }
+
+    void update_screws()
+    {
         physics.update();
+
+        for (auto& ball : babies)
+        {
+            ball.obj->model().rect.pos = physics.point_at(ball.idx).pos;
+        }
     }
 };
 
+
+struct controls : frog::script2d
+{
+    void init(frog::game_object2d& obj, frog::engine2d& engine)
+    {
+        using namespace frog;
+        engine.win_raw->clear_color(0, 0, 0, 255);
+        resize(engine.win_raw->w(), engine.win_raw->h(), engine);
+    }
+
+    void resize(int w, int h, frog::engine2d& eng)
+    {
+        eng.camera.size = { w / float(h), 1 };
+    }
+
+    void stable_update(frog::game_object2d& obj, frog::engine2d& engine) override
+    {
+        if (engine.input->k_at(SDL_SCANCODE_ESCAPE).released)
+            engine.global->quit = true;
+
+        if (engine.input->has_resized())
+        {
+            auto [w, h] = engine.input->has_resized().value();
+            resize(w, h, engine);
+        }
+    }
+};
 
 #include "frog/scripts/fps_script.hpp"
 
@@ -164,8 +215,9 @@ void add_objects(frog::engine2d& eng)
     eng.scenes->add("main", mk_ptr<scene<game_object2d>>());
 
     auto gobj = mk_ptr<game_object2d>();
-    gobj->add_script(mk_ptr<ballsack>());
+    gobj->add_script(mk_ptr<balls>());
     gobj->add_script(mk_ptr<fps_script>());
+    gobj->add_script(mk_ptr<controls>());
     gobj->model().image_tag = "box";
     gobj->model().color = { int(0.3 * 255), int(0.3 * 255), int(0.3 * 255), 255 };
 
