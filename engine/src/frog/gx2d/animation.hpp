@@ -31,9 +31,9 @@ class animation
     sprite atlas;
     geo::ivec2 atlas_size;
     std::unordered_map<std::string, animation_frame> map;
-    std::string _current = "";
+    std::string current_ = "";
     std::string next = "";
-    int _frame = 0;
+    int frame_ = 0;
 
     float delay = 0.16667;
     float accum = 0;
@@ -43,7 +43,7 @@ public:
         : atlas(std::move(atlas))
         , atlas_size(atlas_size)
         , delay(delay)
-        , _current(std::move(start))
+        , current_(std::move(start))
     {}
 
     void add_frame(std::string name, animation_frame frame)
@@ -53,9 +53,9 @@ public:
 
     void set(std::string name)
     {
-        _current = std::move(name);
+        current_ = std::move(name);
         next = current().next;
-        _frame = 0;
+        frame_ = 0;
     }
 
     void buffer(std::string name)
@@ -69,8 +69,8 @@ public:
         while (accum >= delay)
         {
             accum -= delay;
-            ++_frame;
-            if (_frame >= ( current().length == -1 ? atlas_size.x() : current().length ))
+            ++frame_;
+            if (frame_ >= ( current().length == -1 ? atlas_size.x() : current().length ))
                 set(next);
         }
     }
@@ -79,26 +79,27 @@ public:
     {
         try
         {
-            return map.at(_current);
+            return map.at(current_);
         }
         catch (...)
         {
             // If it were:
             //     catch (std::exception& ex)
             // then:
-            //     throw frog::error(ex, "animation invalid frame '", _current, "'");
-            throw frog::error("animation invalid frame '", _current, "'");
+            //     throw frog::error(ex, "animation invalid frame '", current_, "'");
+            throw frog::error("animation invalid frame '", current_, "'");
         }
     }
 
-    const std::string& current_name() const { return _current; }
+    const std::string& current_name() const { return current_; }
+    const std::string& next_name() const { return next; }
 
     sprite frame() const
     {
         sprite img = atlas;
 
         geo::vec2 units = { 1.0f / atlas_size.x(), 1.0f / atlas_size.y() };
-        geo::ivec2 pos = { _frame, current().index };
+        geo::ivec2 pos = { frame_, current().index };
 
         img.tex.pos = { units.x() / 2 + pos.x() * units.x(),
                         units.y() / 2 + pos.y() * units.y() };
