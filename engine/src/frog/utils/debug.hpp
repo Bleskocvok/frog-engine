@@ -1,6 +1,8 @@
 #pragma once
 
-#include <iostream>
+#include <iostream>         // clog
+#include <type_traits>      // is_same_v
+#include <string>           // string
 
 #define LOGX(x) frog::log_ln(#x, "→", x)
 #define LOG(...) frog::log_ln(__VA_ARGS__ )
@@ -13,7 +15,11 @@ namespace frog
 template<typename Arg, typename ... Args>
 void log(Arg&& arg, Args&& ... args)
 {
-    if constexpr (requires{ arg.begin(); arg.end(); })
+    if constexpr (std::is_same_v<std::decay_t<Arg>, std::string>)
+    {
+        std::clog << arg;
+    }
+    else if constexpr (requires{ arg.begin(); arg.end(); })
     {
         if (arg.begin() != arg.end())
         {
