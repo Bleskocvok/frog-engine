@@ -127,10 +127,6 @@ void engine2d::draw_objects(double /* between */)
             rect.size.y() *= scale.y();
             auto top_left = rect.top_left();
 
-            // TODO: account for rotation, color etc.
-            // win_raw->draw(textures.at(model->image_tag), top_left.x(), top_left.y(),
-            //               rect.size.x(), rect.size.y());
-            // const auto& tex = textures.at(model->image_tag);
             const auto& it = textures.find(model->image_tag);
             if (!it)
                 throw std::runtime_error("invalid texture '" + model->image_tag + "'");

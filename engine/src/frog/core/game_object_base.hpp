@@ -7,6 +7,7 @@
 #include <algorithm>    // for_each
 #include <string>
 #include <cassert>
+#include <utility>      // forward, utility
 
 
 namespace frog
@@ -97,6 +98,15 @@ public:
     {
         scripts.push_back(std::move(scr));
         return scripts.back().get();
+    }
+
+    template<typename T, typename... Args>
+    T* mk_script(Args&&... args)
+    {
+        auto ptr = mk_ptr<T>(std::forward<Args>(args)...);
+        T* raw = ptr.get();
+        add_script(std::move(ptr));
+        return raw;
     }
 
     bool remove_script(Script* scr)
