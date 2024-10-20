@@ -15,10 +15,10 @@ namespace frog::geo
 {
 
 
-template<typename T, int Dim>
+template<typename T, unsigned Dim>
 class vec;
 
-template<typename T, int Width, int Height>
+template<typename T, unsigned Width, unsigned Height>
 class matrix;
 
 
@@ -35,8 +35,8 @@ constexpr int get_size()
 }
 
 
-template<int Idx = 0, typename Func, typename Array, typename Array2>
-void zip(Func func, Array& array, Array2& other)
+template<unsigned Idx = 0, typename Func, typename Array, typename Array2>
+constexpr void zip(Func func, Array& array, Array2& other)
 {
     func(array[Idx], other[Idx]);
     // damn you, MSVC!
@@ -50,7 +50,7 @@ void zip(Func func, Array& array, Array2& other)
 
 
 template<int Idx = 0, typename Func, typename Array>
-void for_each(Func func, Array& array)
+constexpr void for_each(Func func, Array& array)
 {
     func(array[Idx]);
     if constexpr (Idx < get_size<Array>() - 1)
@@ -61,7 +61,7 @@ void for_each(Func func, Array& array)
 
 
 template<int Idx = 0, typename Array, typename Arg, typename ... Args>
-void fill_array(Array& array, Arg&& arg, Args&& ... args)
+constexpr void fill_array(Array& array, Arg&& arg, Args&& ... args)
 {
     constexpr size_t count = 1 + sizeof...(Args);
     static_assert(get_size<Array>() - Idx == count,
@@ -96,20 +96,20 @@ std::string to_str(const Array& array,
 
 
 
-template<typename T, int Size, typename Derived>
+template<typename T, unsigned Size, typename Derived>
 class element
 {
 public:
     std::array<T, Size> data = { 0 };
 
-    element() = default;
+    constexpr element() = default;
 
     const T* ptr() const
     {
         return &data.front();
     }
 
-    bool is_close(const Derived& other) const
+    constexpr bool is_close(const Derived& other) const
     {
         bool res = true;
         detail::zip([&](const auto& u, const auto& v)
@@ -119,7 +119,7 @@ public:
         return res;
     }
 
-    friend Derived operator+(const Derived& one, const Derived& other)
+    constexpr friend Derived operator+(const Derived& one, const Derived& other)
     {
         Derived res = one;
         detail::zip([](auto& u, const auto& v)
@@ -129,7 +129,7 @@ public:
         return res;
     }
 
-    friend Derived operator-(const Derived& one, const Derived& other)
+    constexpr friend Derived operator-(const Derived& one, const Derived& other)
     {
         Derived res = one;
         detail::zip([](auto& u, const auto& v)
@@ -139,13 +139,13 @@ public:
         return res;
     }
 
-    friend Derived operator-(Derived one)
+    constexpr friend Derived operator-(Derived one)
     {
         detail::for_each([](auto& u){ u = -u; }, one.data);
         return one;
     }
 
-    friend Derived& operator+=(Derived& one, const Derived& other)
+    constexpr friend Derived& operator+=(Derived& one, const Derived& other)
     {
         detail::zip([](auto& u, const auto& v)
         {
@@ -154,7 +154,7 @@ public:
         return one;
     }
 
-    friend Derived& operator-=(Derived& one, const Derived& other)
+    constexpr friend Derived& operator-=(Derived& one, const Derived& other)
     {
         detail::zip([](auto& u, const auto& v)
         {
@@ -163,38 +163,38 @@ public:
         return one;
     }
 
-    friend Derived operator*(const Derived& one, T val)
+    constexpr friend Derived operator*(const Derived& one, T val)
     {
         Derived res = one;
         detail::for_each([=](auto& u){ u *= val; }, res.data);
         return res;
     }
 
-    friend Derived operator*(T val, const Derived& one)
+    constexpr friend Derived operator*(T val, const Derived& one)
     {
         return one * val;
     }
 
-    friend Derived operator/(const Derived& one, T val)
+    constexpr friend Derived operator/(const Derived& one, T val)
     {
         Derived res = one;
         detail::for_each([=](auto& u){ u /= val; }, res.data);
         return res;
     }
 
-    friend Derived& operator*=(Derived& one, T val)
+    constexpr friend Derived& operator*=(Derived& one, T val)
     {
         detail::for_each([=](auto& u){ u *= val; }, one.data);
         return one;
     }
 
-    friend Derived& operator/=(Derived& one, T val)
+    constexpr friend Derived& operator/=(Derived& one, T val)
     {
         detail::for_each([=](auto& u){ u /= val; }, one.data);
         return one;
     }
 
-    friend bool operator==(const Derived& one, const Derived& other)
+    constexpr friend bool operator==(const Derived& one, const Derived& other)
     {
         bool res = true;
         detail::zip([&](const auto& u, const auto& v)
@@ -204,7 +204,7 @@ public:
         return res;
     }
 
-    friend bool operator!=(const Derived& one, const Derived& other)
+    constexpr friend bool operator!=(const Derived& one, const Derived& other)
     {
         return !(one == other);
     }

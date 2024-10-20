@@ -11,7 +11,7 @@
 namespace frog::geo
 {
 
-template<typename T, int Width, int Height>
+template<typename T, unsigned Width, unsigned Height>
 class matrix;
 
 using mat2 = matrix<float, 2, 2>;
@@ -39,26 +39,26 @@ using imat42 = matrix<int, 4, 2>;
 using imat24 = matrix<int, 2, 4>;
 
 
-template<typename T, int Width, int Height>
+template<typename T, unsigned Width, unsigned Height>
 class matrix : public element<T, Width * Height, matrix<T, Width, Height>>
 {
     using Base = element<T, Width * Height, matrix<T, Width, Height>>;
     friend Base;
 
 public:
-    static constexpr int W = Width;
-    static constexpr int H = Height;
+    static constexpr unsigned W = Width;
+    static constexpr unsigned H = Height;
 
-    matrix(T id)
+    constexpr matrix(T id)
     {
-        for (int i = 0; i < std::min(Width, Height); i++)
+        for (unsigned i = 0; i < std::min(Width, Height); i++)
         {
             at(i, i) = id;
         }
     }
 
     template<typename ... Args>
-    matrix(T t, Args&& ... args)
+    constexpr matrix(T t, Args&& ... args)
     {
         static_assert(sizeof...(Args) == (Width * Height) - 1,
                 "Number of arguments must be equal to matrix 'Width * Height'");
@@ -71,14 +71,14 @@ public:
      * Member access
      */
 
-    const T& at(int x, int y) const
+    constexpr const T& at(int x, int y) const
     {
-        assert(x >= 0 && y >= 0 && x < Width && y < Height);
+        assert(x >= 0 && y >= 0 && x < int(Width) && y < int(Height));
         return Base::data[y * Width + x];
     }
-    T& at(int x, int y)
+    constexpr T& at(int x, int y)
     {
-        assert(x >= 0 && y >= 0 && x < Width && y < Height);
+        assert(x >= 0 && y >= 0 && x < int(Width) && y < int(Height));
         return Base::data[y * Width + x];
     }
 
@@ -91,7 +91,7 @@ public:
         std::ostringstream res;
         auto del = "";
         res << "[ ";
-        for (int y = 0; y < Height; y++)
+        for (unsigned y = 0; y < Height; y++)
         {
             res << del;
             del = ", ";
@@ -107,7 +107,7 @@ public:
         return res.str();
     }
 
-    friend std::ostream& operator<<(std::ostream& out, matrix mat)
+    constexpr friend std::ostream& operator<<(std::ostream& out, matrix mat)
     {
         return (out << mat.to_str());
     }
@@ -116,14 +116,14 @@ public:
      * Matrix specific arithmetics
      */
 
-    template<int Dim>
+    template<unsigned Dim>
     friend constexpr auto operator*(const vec<T, Dim>& v, const matrix& mat)
     {
         static_assert(Dim == Height, "Required vector dimension");
         return mat.transposed() * v;
     }
 
-    template<int Dim>
+    template<unsigned Dim>
     friend constexpr auto operator*(const matrix& mat, const vec<T, Dim>& v)
     {
         static_assert(Width == Dim, "Required vector dimension");
@@ -133,7 +133,7 @@ public:
         return result;
     }
 
-    template<int W2, int H2>
+    template<unsigned W2, unsigned H2>
     friend constexpr auto operator*(const matrix mat,
                                     const matrix<T, W2, H2>& other)
     {
@@ -142,12 +142,12 @@ public:
         constexpr auto I = Width;
 
         matrix<T, W2, Height> res(0);  // result with correct dimensions
-        for (int y = 0; y < res.H; y++)
+        for (unsigned y = 0; y < res.H; y++)
         {
-            for (int x = 0; x < res.W; x++)
+            for (unsigned x = 0; x < res.W; x++)
             {
                 T sum{};
-                for (int i = 0; i < I; i++)
+                for (unsigned i = 0; i < I; i++)
                 {
                     sum += mat.at(i, y) * other.at(x, i);
                 }
@@ -157,7 +157,7 @@ public:
         return res;
     }
 
-    template<int W2, int H2>
+    template<unsigned W2, unsigned H2>
     friend constexpr matrix& operator*=(matrix& mat,
                                         const matrix<T, W2, H2>& other)
     {
@@ -172,9 +172,9 @@ public:
     constexpr auto transposed() const
     {
         auto res = matrix<T, Height, Width>(0);
-        for (int y = 0; y < Height; y++)
+        for (unsigned y = 0; y < Height; y++)
         {
-            for (int x = 0; x < Width; x++)
+            for (unsigned x = 0; x < Width; x++)
             {
                 res.at(y, x) = at(x, y);
             }
@@ -185,9 +185,9 @@ public:
     constexpr matrix<T, Width - 1, Height - 1> submatrix(int div_x) const
     {
         auto result = matrix<T, Width - 1, Height - 1>{ 0 };
-        for (int y = 1; y < Height; y++)
+        for (unsigned y = 1; y < Height; y++)
         {
-            for (int x = 0; x < Width; x++)
+            for (unsigned x = 0; x < Width; x++)
             {
                 if (x == div_x)
                     continue;
@@ -218,7 +218,7 @@ public:
         {
             T result = 0;
             T coeff = 1;
-            for (int i = 0; i < Width; i++)
+            for (unsigned i = 0; i < Width; i++)
             {
                 auto sub = submatrix(i);
                 result += coeff * at(i, 0) * sub.det();
@@ -228,6 +228,7 @@ public:
         }
     }
 
+    // TODO: Make this constexpr for god's sake.
     matrix inverted() const
     {
         static_assert(Width == Height,
@@ -247,6 +248,8 @@ public:
         else if constexpr (Size == 3)
         {
             using std::vector, std::pair;
+            // TODO: Omg, find a way to make this constexpr.
+            // Array complains about wrong number of initializers.
             static const auto coords
                 = vector<vector<pair<int, int>>>
             {
@@ -262,11 +265,11 @@ public:
             };
 
             auto result = matrix<T, 3, 3>{ 0 };
-            int idx = 0;
+            unsigned idx = 0;
             for (const auto& row : coords)
             {
                 auto cell = matrix<T, 2, 2>{ 0 };
-                int c = 0;
+                unsigned c = 0;
                 for (auto[x, y] : row)
                 {
                     cell.at(c % 2, c / 2) = at(y - 1, x - 1);
@@ -283,7 +286,7 @@ public:
         }
     }
 
-    std::pair<matrix, matrix> gauss_elimination() const
+    constexpr std::pair<matrix, matrix> gauss_elimination() const
     {
         static_assert(Width == Height, "Gaussian elimination is currently "
                                        "implemented only for square matrices.");

@@ -9,7 +9,7 @@ namespace frog::geo
 {
 
 
-template<typename T, int Dim>
+template<typename T, unsigned Dim>
 class vec;
 
 using vec2 = vec<float, 2>;
@@ -21,17 +21,17 @@ using ivec3 = vec<int, 3>;
 using ivec4 = vec<int, 4>;
 
 
-template<typename T, int Dim>
+template<typename T, unsigned Dim>
 class vec : public element<T, Dim, vec<T, Dim>>
 {
     using Base = element<T, Dim, vec<T, Dim>>;
     friend Base;
 
 public:
-    vec() = default;
+    constexpr vec() = default;
 
     template<typename ... Args>
-    vec(T t1, T t2, Args&& ... args)
+    constexpr vec(T t1, T t2, Args&& ... args)
     {
         static_assert(sizeof...(Args) == Dim - 2,
                 "Number of arguments must be equal to vector Dimension");
@@ -42,7 +42,7 @@ public:
                 std::forward<Args>(args)...);
     }
 
-    vec(vec<T, Dim - 1> v, T&& val)
+    constexpr vec(vec<T, Dim - 1> v, T&& val)
     {
         for (size_t i = 0; i < Dim - 1; i++)
         {
@@ -56,7 +56,7 @@ public:
      *   <k; k>, <k; k; k>, etc.
      */
 
-    vec(T id)
+    constexpr vec(T id)
     {
         detail::for_each([=](auto& elem){ elem = id; }, Base::data);
     }
@@ -65,43 +65,43 @@ public:
      * Member access
      */
 
-    T& operator[](size_t i)
+    constexpr T& operator[](size_t i)
     {
         assert(i < Base::data.size());
         return Base::data[i];
     }
-    const T& operator[](size_t i) const
+    constexpr const T& operator[](size_t i) const
     {
         assert(i < Base::data.size());
         return Base::data[i];
     }
 
-    const T& x() const { return get<0>(); }
-          T& x()       { return get<0>(); }
+    constexpr const T& x() const { return get<0>(); }
+    constexpr       T& x()       { return get<0>(); }
 
-    const T& y() const { return get<1>(); }
-          T& y()       { return get<1>(); }
+    constexpr const T& y() const { return get<1>(); }
+    constexpr       T& y()       { return get<1>(); }
 
-    const T& z() const { return get<2>(); }
-          T& z()       { return get<2>(); }
+    constexpr const T& z() const { return get<2>(); }
+    constexpr       T& z()       { return get<2>(); }
 
-    const T& w() const { return get<3>(); }
-          T& w()       { return get<3>(); }
+    constexpr const T& w() const { return get<3>(); }
+    constexpr       T& w()       { return get<3>(); }
 
-    const T& r() const { return x(); }
-          T& r()       { return x(); }
+    constexpr const T& r() const { return x(); }
+    constexpr       T& r()       { return x(); }
 
-    const T& g() const { return y(); }
-          T& g()       { return y(); }
+    constexpr const T& g() const { return y(); }
+    constexpr       T& g()       { return y(); }
 
-    const T& b() const { return z(); }
-          T& b()       { return z(); }
+    constexpr const T& b() const { return z(); }
+    constexpr       T& b()       { return z(); }
 
-    const T& a() const { return w(); }
-          T& a()       { return w(); }
+    constexpr const T& a() const { return w(); }
+    constexpr       T& a()       { return w(); }
 
 
-    void is_color() const
+    constexpr void is_color() const
     {
         static_assert(Dim == 3 || Dim == 4,
                       "Correct dimensions for color vector");
@@ -125,12 +125,12 @@ public:
      * Vector specific functions
      */
 
-    T length() const
+    constexpr T length() const
     {
         return std::sqrt(length_squared());
     }
 
-    T length_squared() const
+    constexpr T length_squared() const
     {
         T squared = { 0 };
         detail::for_each([&](auto& el)
@@ -141,7 +141,7 @@ public:
         return squared;
     }
 
-    T dot(const vec& other) const
+    constexpr T dot(const vec& other) const
     {
         T sum{};
         detail::zip([&](auto& a, const auto& b)
@@ -151,7 +151,7 @@ public:
         return sum;
     }
 
-    vec cross(const vec& other) const
+    constexpr vec cross(const vec& other) const
     {
         static_assert(Dim == 3,
                 "Cross product is only possible for 3D vectors");
@@ -163,38 +163,38 @@ public:
         return vec<T, 3>(x, y, z);
     }
 
-    vec& normalize()
+    constexpr vec& normalize()
     {
         *this /= length();
         return *this;
     }
 
-    vec normalized() const
+    constexpr vec normalized() const
     {
         return (*this) / length();
     }
 
-    matrix<T, Dim, 1> to_matrix_h() const
+    constexpr matrix<T, Dim, 1> to_matrix_h() const
     {
         auto mat = matrix<T, Dim, 1>(0);
         mat.data = this->data;
         return mat;
     }
 
-    matrix<T, 1, Dim> to_matrix_v() const
+    constexpr matrix<T, 1, Dim> to_matrix_v() const
     {
         auto mat = matrix<T, 1, Dim>(0);
         mat.data = this->data;
         return mat;
     }
 
-    vec& operator*=(vec other)
+    constexpr vec& operator*=(vec other)
     {
         detail::zip([](auto& u, const auto& v){ u *= v; }, this->data, other.data);
         return *this;
     }
 
-    friend vec operator*(vec a, vec b)
+    constexpr friend vec operator*(vec a, vec b)
     {
         a *= b;
         return a;
@@ -203,14 +203,14 @@ public:
 private:
     // TODO add enable_if
     template<int Idx>
-    T& get()
+    constexpr T& get()
     {
         static_assert(Dim > Idx);
         return Base::data[Idx];
     }
 
     template<int Idx>
-    const T& get() const
+    constexpr const T& get() const
     {
         static_assert(Dim > Idx);
         return Base::data[Idx];
