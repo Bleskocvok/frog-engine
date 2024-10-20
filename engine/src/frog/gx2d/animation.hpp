@@ -63,6 +63,8 @@ public:
         next = std::move(name);
     }
 
+    void reset_accum() { accum = 0; }
+
     void update(float delta)
     {
         accum += delta;
@@ -75,20 +77,27 @@ public:
         }
     }
 
-    const animation_frame& current() const
+    const animation_frame& at(const std::string& f) const
     {
         try
         {
-            return map.at(current_);
+            return map.at(f);
         }
         catch (...)
         {
             // If it were:
             //     catch (std::exception& ex)
             // then:
-            //     throw frog::error(ex, "animation invalid frame '", current_, "'");
-            throw frog::error("animation invalid frame '", current_, "'");
+            //     throw frog::error(ex, "animation invalid frame '", f, "'");
+            throw frog::error("animation invalid frame '", f, "'");
         }
+    }
+
+    const animation_frame& current() const { return at(current_); }
+
+    float frame_duration(const std::string& f) const
+    {
+        return at(f).length * delay;
     }
 
     const std::string& current_name() const { return current_; }
