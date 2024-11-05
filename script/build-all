@@ -1,6 +1,22 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
-script/build -o bin-game-lin    -b Release gen-build game
-script/build -o bin-game2d-lin  -b Release gen-build game2d
+b2file=$(mktemp /tmp/game2d.build.time.XXXXXX)
+b3file=$(mktemp /tmp/game3d.build.time.XXXXXX)
+
+aborted() { "rm '$b2file' '$b3file'"; }
+
+trap aborted SIGTERM SIGINT
+
+tim=$(which time)
+
+$tim --output="$b3file" -p script/build -o bin-game-lin   -b Release gen-build game
+$tim --output="$b2file" -p script/build -o bin-game2d-lin -b Release gen-build game2d
+
+indent() { sed 's/^/    /'; }
+
+printf "BUILD 3D GAME TIME\n"; cat "$b3file" | indent
+printf "BUILD 2D GAME TIME\n"; cat "$b2file" | indent
+
+rm "$b2file" "$b3file"

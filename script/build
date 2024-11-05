@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Run this script from the root folder of the project:
-# (the folder where CMakeLists.txt is located)
+# (the folder where CMakeLists.txt is located), e.g.:
 #     $ script/build.sh build game2d Debug
 
 set -e
