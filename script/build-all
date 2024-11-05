@@ -11,8 +11,8 @@ trap aborted SIGTERM SIGINT
 
 tim=$(which time)
 
-$tim --output="$b3file" -p script/build -o bin-game-lin   -b Release gen-build game
-$tim --output="$b2file" -p script/build -o bin-game2d-lin -b Release gen-build game2d
+$tim --output="$b3file" -p script/build -o bin-game   -b Release gen-build game
+$tim --output="$b2file" -p script/build -o bin-game2d -b Release gen-build game2d
 
 indent() { sed 's/^/    /'; }
 
