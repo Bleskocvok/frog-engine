@@ -24,15 +24,17 @@ dir="$2"
 
 [ -z "$cmd" -o -z "$dir" ] && { usage; exit 1; }
 
-build()
-{
-    cmake --build "$out" -j4
-}
-
 gen()
 {
     cmake -D CMAKE_BUILD_TYPE="$build_type" -S "$dir" -B "$out"
 }
+
+build()
+{
+    [ -d "$out" ] || gen
+    cmake --build "$out" -j4
+}
+
 
 case "$cmd" in
     build)
