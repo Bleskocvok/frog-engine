@@ -25,15 +25,15 @@ struct game_over_script : frog::script
 
         auto* text = object.add_element(mk_ptr<gx::ui_element>());
         text->label = { "Game Over" };
-        text->pos = { 0 };
-        text->size = { TextSize };
+        text->pos() = { 0 };
+        text->size() = { TextSize };
         text->label->centered = true;
 
         score = object.add_element(mk_ptr<gx::ui_element>());
         score->label = { "score" };
         score->label->centered = true;
-        score->pos = { 0, 0 - text->size.y() };
-        score->size = { TextSize * 0.5 };
+        score->pos() = { 0, 0 - text->size().y() };
+        score->size() = { TextSize * 0.5 };
     }
 
     void stable_update(frog::game_object&, frog::engine& engine) override

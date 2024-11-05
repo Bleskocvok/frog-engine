@@ -32,6 +32,15 @@ struct ui_element
 
     const geo::vec2& size() const { return sprite.rect.size; }
           geo::vec2& size()       { return sprite.rect.size; }
+
+    const geo::vec2& tex_pos() const { return sprite.tex.pos; }
+          geo::vec2& tex_pos()       { return sprite.tex.pos; }
+
+    const geo::vec2& tex_size() const { return sprite.tex.size; }
+          geo::vec2& tex_size()       { return sprite.tex.size; }
+
+    const gx::rgba_t& color() const { return sprite.color; }
+          gx::rgba_t& color()       { return sprite.color; }
 };
 
 

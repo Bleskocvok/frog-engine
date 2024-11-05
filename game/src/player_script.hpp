@@ -37,18 +37,18 @@ struct player_script : frog::script
         for (int i = 0; i < lives; i++)
         {
             auto* heart = self->add_element(mk_ptr<gx::ui_element>());
-            heart->sprite = "heart";
-            heart->pos = { i * IconSize - diff,
+            heart->sprite.image_tag = "heart";
+            heart->pos() = { i * IconSize - diff,
                            1 - IconSize };
-            heart->size = { IconSize };
+            heart->size() = { IconSize };
         }
 
         auto* display = self->add_element(mk_ptr<gx::ui_element>());
         display->label = { "score: "s + std::to_string(score) };
         display->label->centered = true;
-        display->color = gx::color_to_255({ 0.3, 0.3, 0.8, 1 });
-        display->pos = { 0, 1 - IconSize - Offset };
-        display->size = { IconSize * 0.75 };
+        display->color() = gx::color_to_255({ 0.3, 0.3, 0.8, 1 });
+        display->pos() = { 0, 1 - IconSize - Offset };
+        display->size() = { IconSize * 0.75 };
     }
 
     void add_lives(int val)

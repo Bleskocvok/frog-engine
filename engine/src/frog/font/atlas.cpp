@@ -1,3 +1,5 @@
+#ifndef NOT_FROG_BUILD_2D
+
 #include "frog/core/engine2d.hpp"
 
 #include "atlas.hpp"
@@ -69,3 +71,5 @@ void atlas::draw(frog::engine2d& engine, const std::string& str,
 
 
 } // namespace frog
+
+#endif

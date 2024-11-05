@@ -12,6 +12,7 @@
 #include <stdexcept>    // runtime_error
 
 #include "frog/utils/debug.hpp"
+#include "frog/utils/todo.hpp"
 
 namespace frog::os
 {
@@ -103,8 +104,8 @@ public:
 
     void set_callbacks(input* in);
 
-    int width() const override { assert(false); throw std::runtime_error("width not implemented"); }
-    int height() const override { assert(false); throw std::runtime_error("height not implemented"); }
+    int width() const override { TODO(); }
+    int height() const override { TODO(); }
 };
 
 

@@ -144,24 +144,24 @@ void frog::engine::draw_ui(double)
     {
         for (const auto& elem : obj.elements())
         {
-            if (!elem->sprite.empty())
+            if (!elem->sprite.image_tag.empty())
             {
                 draw_sprite(ui,
-                            elem->sprite,
-                            { elem->pos.x() / camera.ratio(), elem->pos.y() },
-                            elem->size,
-                            elem->tex_pos,
-                            elem->tex_size,
-                            gx::rgb_to_vec(elem->color));
+                            elem->sprite.image_tag,
+                            { elem->pos().x() / camera.ratio(), elem->pos().y() },
+                            elem->size(),
+                            elem->tex_pos(),
+                            elem->tex_size(),
+                            gx::rgb_to_vec(elem->color()));
             }
 
             if (elem->label)
             {
                 draw_text(ui,
                           elem->label->str,
-                          elem->pos,
-                          elem->size.y() * elem->label->height,
-                          gx::rgb_to_vec(elem->color),
+                          elem->pos(),
+                          elem->size().y() * elem->label->height,
+                          gx::rgb_to_vec(elem->color()),
                           elem->label->centered);
             }
         }

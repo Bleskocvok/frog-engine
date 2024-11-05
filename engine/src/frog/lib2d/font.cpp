@@ -1,3 +1,5 @@
+#ifndef NOT_FROG_BUILD_2D
+
 #include "font.hpp"
 
 #include "sdl_include.hpp"
@@ -57,3 +59,5 @@ void font::set_outline(int size)
 
 
 } // namespace frog::lib2d
+
+#endif

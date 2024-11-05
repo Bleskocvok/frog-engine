@@ -1,3 +1,5 @@
+#ifndef NOT_FROG_BUILD_2D
+
 #include "truetype.hpp"
 
 #include "frog/core/engine2d.hpp"
@@ -34,3 +36,5 @@ void truetype::draw(frog::engine2d& engine, const std::string& str,
 
 
 } // namespace frog
+
+#endif
