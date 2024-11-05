@@ -41,6 +41,7 @@ struct player_script : frog::script
             heart->pos() = { i * IconSize - diff,
                            1 - IconSize };
             heart->size() = { IconSize };
+            heart->tex_pos() = { 0, 0 };
         }
 
         auto* display = self->add_element(mk_ptr<gx::ui_element>());
