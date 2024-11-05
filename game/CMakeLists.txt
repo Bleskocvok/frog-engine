@@ -2,10 +2,14 @@ cmake_minimum_required(VERSION 3.18)
 
 project(Game)
 
+set(FROG_BUILD_2D OFF)
+
 # use CMakeLists.txt from engine/
 add_subdirectory(../engine
                  # we also need to specify BINARY directory for it
                  ${CMAKE_CURRENT_BINARY_DIR}/engine)
+
+include(../engine/functions.cmake)
 
 set(SRC_FILES
     src/game.cpp
@@ -16,7 +20,7 @@ set(SRC_FILES
 include_directories(${FROG_INCLUDE_DIRS})
 
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED on)
 
 if(NOT MSVC) # settings for the normal compilers
@@ -33,13 +37,7 @@ add_executable(${PROJECT_NAME} ${SRC_FILES})
 target_link_libraries(${PROJECT_NAME} PRIVATE Frog::Frog)
 
 
-function(asset FILENAME)
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/${FILENAME}
-        ${CMAKE_CURRENT_BINARY_DIR}/${FILENAME}
-        COPYONLY
-    )
-endfunction()
-
 asset(game_assets/ground.png)
 asset(game_assets/heart.png)
+
+place_engine_assets(${CMAKE_CURRENT_BINARY_DIR}/engine/assets)

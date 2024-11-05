@@ -7,5 +7,6 @@ message(STATUS "###################################")
 message(STATUS "### --- ROOT CMakeLists.txt --- ###")
 message(STATUS "###################################")
 
-add_subdirectory(game)
+# add_subdirectory(game)
+add_subdirectory(game2d)
 

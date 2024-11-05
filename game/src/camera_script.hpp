@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core/script.hpp"
-#include "geometry/basic.hpp"
+#include "frog/core/script.hpp"
+#include "frog/geometry/basic.hpp"
 
 
 struct camera_script : frog::script

@@ -7,4 +7,5 @@ echo "# PS      script/build.bat"
 echo "# ===================================================="
 echo ""
 
-cmake.exe -G "MinGW Makefiles" -S game -B bin-win && cmake.exe --build bin-win -j4
+cmake.exe -G "MinGW Makefiles" -S game -B bin-win
+cmake.exe --build bin-win -j4

@@ -1,11 +1,11 @@
 
-#include "core/engine.hpp"
-#include "core/object_builder.hpp"
-#include "graphics/shape.hpp"
+#include "frog/core/engine3d.hpp"
+#include "frog/core/object_builder.hpp"
+#include "frog/gx3d/shape.hpp"
 
-#include "utils/load_file.hpp"
-#include "utils/ptr.hpp"
-#include "utils/debug.hpp"
+#include "frog/utils/load_file.hpp"
+#include "frog/utils/ptr.hpp"
+#include "frog/utils/debug.hpp"
 
 #include "constants.hpp"
 #include "paddle_script.hpp"
@@ -37,13 +37,16 @@ int main(int argc, char** argv)
 
     auto path = frog::fs::path{ argc > 0 ? argv[0] : "./unknown" };
 
-    auto global = frog::mk_ptr<frog::state>();
+    // TODO: solve save_path
+    auto asset_path = create_prog_relative_path(argv[0], "");
+    std::string save_path = "";
+
+    auto global = frog::mk_ptr<frog::state>(asset_path, save_path);
 
     auto set = frog::settings{};
          set.clear_color = { 0.5, 0.6, 0.3 };
          set.window_name = "gaaaaaame";
          set.vsync = true;
-         set.assign_path(path);
 
     //
     // Engine creation
@@ -136,12 +139,12 @@ void init_game(frog::engine& eng)
 
     for (auto& [tag, tex] : textures)
     {
-        eng.textures.add(std::move(tag), gl::texture{ tex });
+        eng.add_texture(tag, tex);
     }
 
     for (auto& name : scenes)
     {
-        eng.scenes->add(std::move(name), mk_ptr<scene>());
+        eng.scenes->add(std::move(name), mk_ptr<scene<game_object>>());
     }
 }
 

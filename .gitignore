@@ -6,17 +6,23 @@
 /bin-win-visual-studio/
 /bin-lin/
 /out/
+/bin-game-*/
+/bin-game2d-*/
+
+# libraries that don't belong in the repository
+/engine/libraries/SDL2*/
+/engine/libraries/SDL2_image*/
+/engine/libraries/SDL2_mixer*/
+/engine/libraries/SDL2_net*/
+/engine/libraries/SDL2_ttf*/
 
 # documentation output
 /engine/docs/html/
 
 # editor settings
 /.vscode/
-
-# VS garbage
 /.vs/
 
 # my own unrelated garbage
 /sketches/
 /stuff/
-

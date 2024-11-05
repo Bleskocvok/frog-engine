@@ -1,14 +1,14 @@
 #pragma once
 
-#include "core/script.hpp"
-#include "geometry/general.hpp"
-#include "geometry/paddle.hpp"
+#include "frog/core/script.hpp"
+#include "frog/geometry/general.hpp"
+#include "frog/geometry/paddle.hpp"
 
 #include "bounce_script.hpp"
 #include "ball_script.hpp"
 #include "constants.hpp"
 
-#include "utils/debug.hpp"
+#include "frog/utils/debug.hpp"
 
 
 struct paddle_script : frog::script
