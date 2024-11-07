@@ -9,13 +9,71 @@
 
 
 
-Simple game engine in C++. Originally made as a project assignment.
-
-Link to the original repository [pa199-project](https://gitlab.fi.muni.cz/xbrablik/pa199-project)
+Simple game engine in C++.
 
 ## Table of contents
 
 [[_TOC_]]
+
+
+## Build examples
+
+1. Clone repository and install engine dependencies.
+
+```sh
+git clone https://github.com/Bleskocvok/frog-engine.git
+cd frog-engine
+sh ./scripts/libraries.sh
+```
+
+Folder `game` contains an example 3D game and folder `game2d` contains a sample
+2D game code.
+
+### 3D example
+
+1. The build might need additional system packages installed:
+`libgl1-mesa-dev`, `mesa-common-dev`, `libxrandr-dev`, `libxinerama-dev`, `libxcursor-dev` and
+`libxi-dev` *should* cover it. These will be probably in your package manager's repository.
+
+2. It can be build by using the helper `build` script.
+
+```sh
+sh ./scripts/build -o bin-game -b Release gen-build game
+```
+
+3. Or by manually invoking `cmake` commands.
+
+```sh
+cmake -S game -B bin-game
+cmake --build bin-game -j4
+```
+
+4. To run the compiled example, execute the `Game` binary.
+
+```sh
+./bin-game/Game
+```
+
+### 2D example
+
+1. It can be build by using the helper `build` script.
+
+```sh
+sh ./scripts/build -o bin-game2d -b Release gen-build game2d
+```
+
+2. Or by manually invoking `cmake` commands.
+
+```sh
+cmake -S game2d -B bin-game2d
+cmake --build bin-game2d -j4
+```
+
+3. To run the compiled example, execute the `Game` binary.
+
+```sh
+./bin-game2d/game_2d
+```
 
 
 ## Folder structure:
@@ -80,16 +138,14 @@ Link to the original repository [pa199-project](https://gitlab.fi.muni.cz/xbrabl
     - the engine follows this structure:
     `engine` -> `scene_manager` -> `scene` -> `game_object` -> `script`
 
-## Build instructions
-
-### Windows
+### Windows build instructions
 
 #### a. Using Visual Studio 🤮
 
 - It should **just work** in VS 2019 (the C++ VS
     components need to be installed in VS Installer)
 
-- Make sure to launch the target `Game.exe`
+- Make sure to select the desired target (`Game.exe` or `game_2d.exe`)
 
 #### b. Using command line
 
@@ -109,6 +165,7 @@ Link to the original repository [pa199-project](https://gitlab.fi.muni.cz/xbrabl
 6. If it worked, after it has finished you should be able to open
     `bin-win/Game.exe`, which starts the game
 
+<!--
 ### Linux (Ubuntu)
 
 1. Install `cmake` and `gcc`/`clang`
@@ -127,7 +184,13 @@ Link to the original repository [pa199-project](https://gitlab.fi.muni.cz/xbrabl
 4. Call `script/build.sh`
 
 5. After it has finished you should be able to execute `bin-lin/Game`,
-    which starts the game
+    which starts the game -->
+
+## Misc
+
+Originally made as a project assignment.
+
+Link to the original repository [pa199-project](https://gitlab.fi.muni.cz/xbrablik/pa199-project)
 
 ## Development tracking
 
