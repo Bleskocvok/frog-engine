@@ -26,7 +26,7 @@ cd frog-engine
 sh ./scripts/libraries.sh
 ```
 
-Folder `game` contains an example 3D game and folder `game2d` contains a sample
+Folder `game` contains an example 3D game and folder `game2d` contains a sample of
 2D game code.
 
 ### 3D example
