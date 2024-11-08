@@ -33,6 +33,41 @@ void ini_file::add_value(std::string key, std::string val)
     }
 }
 
+static std::string unescaped(std::string_view str)
+{
+    if (str.size() < 2 || str.front() != '"' || str.back() != '"')
+        return std::string(str);
+
+    // TODO: Consider how to properly handle:
+    //     key = "value"garbage
+
+    auto out = std::ostringstream{};
+
+    str.remove_prefix(1);
+    str.remove_suffix(1);
+
+    int escaped = 0;
+
+    for (char c : str)
+    {
+        if (c == '\\')
+        {
+            if (++escaped == 2)
+            {
+                out << "\\";
+                escaped = 0;
+            }
+        }
+        else
+        {
+            out << c;
+            escaped = 0;
+        }
+    }
+
+    return std::move(out).str();
+}
+
 void ini_file::parse(std::string_view view)
 {
     constexpr char equals = '=';
@@ -76,10 +111,32 @@ void ini_file::parse(std::string_view view)
                                               : line.substr(del + 1);
             trim(key);
             trim(val);
-            add_value(std::string(key), std::string(val));
+            add_value(std::string(key), unescaped(val));
         }
     };
     for_each_segment(view, "\n", for_line);
+}
+
+static std::string escaped(std::string_view str)
+{
+    auto out = std::ostringstream{};
+
+    if (str.find('"') != str.npos)
+    {
+        out << "\"";
+        for (char c : str)
+        {
+            if (c == '"')
+                out << '\\' << c;
+            else
+                out << c;
+        }
+        out << "\"";
+    }
+    else
+        out << str;
+
+    return std::move(out).str();
 }
 
 std::string ini_file::str() const
@@ -93,7 +150,7 @@ std::string ini_file::str() const
 
         for (const auto&[ k, v ] : sec.values)
             // TODO: Quote and escape appropriately.
-            out << k << " = " << v << "\n";
+            out << k << " = " << escaped(v) << "\n";
 
         if (i != sections_.size() - 1)
             out << "\n";

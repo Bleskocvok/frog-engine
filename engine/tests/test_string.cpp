@@ -44,16 +44,18 @@ TEST_CASE("split")
 }
 
 #include "frog/utils/ini.hpp"
+#include <string>
 
 TEST_CASE("ini")
 {
     const char* content = R"INI(
         [section]
             key = val
-            hello = world
+            hello  =  world
 
         [other]
             key = val
+            escape    =    " escape \" these "
     )INI";
 
     const char* to_str = R"INI([section]
@@ -62,14 +64,18 @@ hello = world
 
 [other]
 key = val
+escape = " escape \" these "
 )INI";
+
+    using namespace std::literals;
 
     auto ini = frog::ini_file(content);
     const auto& const_ini = ini;
-    REQUIRE_EQ(ini.at("key"), "val");
-    REQUIRE_EQ(ini.at("hello"), "world");
-    REQUIRE_EQ(const_ini.section_at("section").name, "section");
-    REQUIRE_EQ(const_ini.section_at("other").name, "other");
+    REQUIRE_EQ(ini.at("key"), "val"s);
+    REQUIRE_EQ(ini.at("hello"), "world"s);
+    REQUIRE_EQ(ini.at("escape"), " escape \" these "s);
+    REQUIRE_EQ(const_ini.section_at("section").name, "section"s);
+    REQUIRE_EQ(const_ini.section_at("other").name, "other"s);
 
-    REQUIRE_EQ(std::string(ini), to_str);
+    REQUIRE_EQ(std::string(ini), std::string(to_str));
 }
