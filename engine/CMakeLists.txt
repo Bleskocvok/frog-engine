@@ -79,9 +79,11 @@ print_list("Source files" "${SRC_FILES}")
 
 file(GLOB
     SRC_TESTS
-    tests/test_engine.cpp
+    tests/test_geometry.cpp
     src/frog/geometry/*.cpp
 )
+
+set(SRC_STRING_TEST tests/test_string.cpp src/frog/utils/string.cpp src/frog/utils/ini.cpp)
 
 set(SRC_FIXED_TEST tests/fixed/test_fixed.cpp)
 set(SRC_FIXED_BENCH tests/fixed/bench_fixed.cpp)
@@ -115,9 +117,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED on)
 
 # tests
 if (FROG_TEST)
-    add_executable(test_engine ${SRC_TESTS})
+    add_executable(test_geometry ${SRC_TESTS})
     add_executable(test_fixed ${SRC_FIXED_TEST})
     add_executable(bench_fixed ${SRC_FIXED_BENCH})
+    add_executable(test_string ${SRC_STRING_TEST})
 endif(FROG_TEST)
 
 # window test
