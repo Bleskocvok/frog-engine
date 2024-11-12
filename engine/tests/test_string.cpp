@@ -43,6 +43,24 @@ TEST_CASE("split")
     check_sv("   a h o j   ", "a h o j");
 }
 
+TEST_CASE("next_segment")
+{
+    using namespace std::literals;
+    std::string_view str = "hello,world;,end";
+
+    REQUIRE_EQ(frog::next_segment(str, ","), "hello"sv);
+    REQUIRE_EQ(str, "world;,end"sv);
+
+    REQUIRE_EQ(frog::next_segment(str, ";"), "world"sv);
+    REQUIRE_EQ(str, ",end"sv);
+
+    REQUIRE_EQ(frog::next_segment(str, ","), ""sv);
+    REQUIRE_EQ(str, "end"sv);
+
+    REQUIRE_EQ(frog::next_segment(str, ","), "end"sv);
+    REQUIRE_EQ(str, ""sv);
+}
+
 #include "frog/utils/ini.hpp"
 #include <string>
 

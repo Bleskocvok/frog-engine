@@ -13,6 +13,8 @@ std::vector<std::string> split(std::string_view str, std::string_view delim = "\
 void trim(std::string_view& str);
 void trim(std::string& str);
 
+std::string_view next_segment(std::string_view& str, std::string_view delim = "\n");
+
 template<typename Func>
 void for_each_segment(std::string_view str, std::string_view delim, Func&& func)
 {

@@ -36,3 +36,18 @@ void frog::trim(std::string& str)
 
     str.erase(str.begin(), it);
 }
+
+std::string_view frog::next_segment(std::string_view& str, std::string_view delim)
+{
+    std::size_t prev = 0;
+    std::size_t found = str.find(delim);
+    if (found != str.npos)
+    {
+        auto res = str.substr(0, found);
+        str.remove_prefix(res.size() + delim.size());
+        return res;
+    }
+    auto res = str.substr();
+    str.remove_prefix(res.size());
+    return res;
+}
