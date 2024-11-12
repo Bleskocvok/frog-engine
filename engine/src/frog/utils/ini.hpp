@@ -82,8 +82,8 @@ public:
     const std::string& at(const std::string& section, const std::string& key) const;
           std::string& at(const std::string& section, const std::string& key);
 
-    bool remove_section(const std::string& name) { TODO(); }
-    bool remove_value(const std::string& key) { TODO(); }
+    bool remove_section(const std::string&) { TODO(); }
+    bool remove_value(const std::string&) { TODO(); }
 };
 
 } // namespace frog

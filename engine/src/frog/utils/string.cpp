@@ -39,7 +39,6 @@ void frog::trim(std::string& str)
 
 std::string_view frog::next_segment(std::string_view& str, std::string_view delim)
 {
-    std::size_t prev = 0;
     std::size_t found = str.find(delim);
     if (found != str.npos)
     {
