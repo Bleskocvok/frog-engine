@@ -2,7 +2,7 @@
 
 #include "program.hpp"
 
-#include "frog/utils/load_file.hpp"
+#include "frog/utils/fs.hpp"
 
 #include <string>       // basic_string
 #include <stdexcept>    // runtime_error

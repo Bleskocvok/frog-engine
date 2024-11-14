@@ -3,7 +3,7 @@
 #include "frog/core/object_builder.hpp"
 #include "frog/gx3d/shape.hpp"
 
-#include "frog/utils/load_file.hpp"
+#include "frog/utils/fs.hpp"
 #include "frog/utils/ptr.hpp"
 #include "frog/utils/debug.hpp"
 
