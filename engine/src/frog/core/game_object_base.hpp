@@ -141,26 +141,32 @@ public:
 
     void init(Engine& engine)
     {
-        for_each_script([&](auto& sc){ sc.init(get(), engine); });
+        // TODO: try_init could be solved better.
+        for_each_script([&](auto& sc){ sc.try_init(get(), engine); });
     }
 
     void stable_update(Engine& engine)
     {
+        // TODO cont'd: And init here could be unnecessary.
+        init(engine);
         for_each_script([&](auto& sc){ sc.stable_update(get(), engine); });
     }
 
     void end_update(Engine& engine)
     {
+        init(engine);
         for_each_script([&](auto& sc) { sc.end_update(get(), engine); });
     }
 
     void frame_update(Engine& engine)
     {
+        init(engine);
         for_each_script([&](auto& sc){ sc.frame_update(get(), engine); });
     }
 
     void destroyed(Engine& engine)
     {
+        init(engine);
         for_each_script([&](auto& sc){ sc.destroyed(get(), engine); });
     }
 };

@@ -22,6 +22,15 @@ struct script_base
 
     virtual ~script_base() = default;
 
+    void try_init(GameObject& o, Engine& e)
+    {
+        if (!initialized)
+        {
+            init(o, e);
+            initialized = true;
+        }
+    }
+
     virtual void init(GameObject&, Engine&) {}
 
     virtual void stable_update(GameObject&, Engine&) {}
@@ -31,6 +40,9 @@ struct script_base
     virtual void frame_update(GameObject&, Engine&) {}
 
     virtual void destroyed(GameObject&, Engine&) {}
+
+private:
+    bool initialized = false;
 };
 
 
