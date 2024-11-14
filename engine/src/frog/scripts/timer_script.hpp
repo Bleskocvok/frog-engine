@@ -68,6 +68,7 @@ public:
             accum_ += engine.global->stable_frame_time();
 
         activated = 0;
+        // TODO: Make this non-exponential, lol.
         while (accum_ >= period_)
         {
             accum_ -= period_;

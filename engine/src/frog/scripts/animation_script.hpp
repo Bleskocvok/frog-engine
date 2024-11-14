@@ -22,7 +22,7 @@ public:
 
     void init(frog::game_object2d& obj, frog::engine2d&) override
     {
-        obj.model().tex = animation_.frame().tex;
+        apply(obj);
     }
 
     void frame_update(frog::game_object2d&, frog::engine2d& eng) override
@@ -31,6 +31,11 @@ public:
     }
 
     void stable_update(frog::game_object2d& obj, frog::engine2d&) override
+    {
+        apply(obj);
+    }
+
+    void apply(frog::game_object2d& obj)
     {
         obj.model().tex = animation_.frame().tex;
     }
