@@ -70,6 +70,11 @@ public:
 
     engine2d(settings set, ptr<state> global);
 
+    geo::vec2 mouse_pos_in_camera()
+    {
+        return camera_coords(input->mouse().x, input->mouse().y);
+    }
+
     geo::vec2 camera_coords(const lib2d::gx::events::mouse_t& m)
     {
         return camera_coords(m.x, m.y);
