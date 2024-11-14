@@ -61,7 +61,7 @@ template<typename ... Args>
 void log_ln(Args&& ... args)
 {
     log(std::forward<Args>(args)...);
-    std::clog << "\n";
+    std::clog << "\n" << std::flush;
 }
 
 
