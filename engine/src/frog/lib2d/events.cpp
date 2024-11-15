@@ -36,6 +36,12 @@ void events::f_reset()
     }
     for ( const auto& key : to_delete )
         m_fingers.erase( key );
+
+    for (auto &[ key, f ] : m_fingers )
+    {
+        f.dx = 0;
+        f.dy = 0;
+    }
 }
 
 
@@ -46,14 +52,22 @@ void events::reset_key( key_state& k )
 }
 
 
+void events::m_reset()
+{
+    reset_key( m_mouse.but_l );
+    reset_key( m_mouse.but_r );
+    reset_key( m_mouse.but_m );
+    m_mouse.dx = 0;
+    m_mouse.dy = 0;
+}
+
+
 void events::reset()
 {
     k_reset();
     f_reset();
     resized.reset();
-    reset_key( m_mouse.but_l );
-    reset_key( m_mouse.but_r );
-    reset_key( m_mouse.but_m );
+    m_reset();
 }
 
 
@@ -71,7 +85,7 @@ events::key_state& events::mouse_button( Uint8 but )
 
 void events::update()
 {
-    reset();
+    // reset();
 
     SDL_Event event;
     while ( SDL_PollEvent( &event ) )
@@ -106,8 +120,8 @@ void events::update()
             case SDL_FINGERMOTION:
                 m_fingers[ event.tfinger.fingerId ].x = event.tfinger.x;
                 m_fingers[ event.tfinger.fingerId ].y = event.tfinger.y;
-                m_fingers[ event.tfinger.fingerId ].dx = event.tfinger.dx;
-                m_fingers[ event.tfinger.fingerId ].dy = event.tfinger.dy;
+                m_fingers[ event.tfinger.fingerId ].dx += event.tfinger.dx;
+                m_fingers[ event.tfinger.fingerId ].dy += event.tfinger.dy;
                 m_fingers[ event.tfinger.fingerId ].pressure = event.tfinger.pressure;
                 break;
 
@@ -129,8 +143,8 @@ void events::update()
             case SDL_MOUSEMOTION:
                 m_mouse.x = event.motion.x;
                 m_mouse.y = event.motion.y;
-                m_mouse.dx = event.motion.xrel;
-                m_mouse.dy = event.motion.yrel;
+                m_mouse.dx += event.motion.xrel;
+                m_mouse.dy += event.motion.yrel;
                 break;
 
             default: break;

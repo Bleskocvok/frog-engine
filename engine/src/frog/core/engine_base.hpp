@@ -38,6 +38,7 @@ protected:
     virtual void draw_ui(double between) = 0;
 
     virtual void update_controls() = 0;
+    virtual void reset_controls() = 0;
     virtual void frame_update() { scenes->frame_update(get()); }
 
     virtual void stable_update()
@@ -99,13 +100,19 @@ public:
 
         while (!global->quit && !window->should_close())
         {
+            update_controls();
             frame_update();
 
             // int i = 0;
             while (accum >= decltype(accum)(delta))
             {
-                update_controls();
+                // Instead of updating controls directly before every
+                // ‹stable_update›, let's do it in a way that ‹frame_update› has
+                // access to the newest events, while ‹stable_update› does not
+                // miss any.
                 stable_update();
+                reset_controls();
+                update_controls();
                 accum -= delta;
                 // TODO: Consider the situation when stable_update takes longer
                 // than delta. That way, accum keeps increasing, leading to a

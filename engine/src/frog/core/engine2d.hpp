@@ -36,6 +36,7 @@ class engine2d : public engine_base<engine2d, game_object2d, lib2d::os::timer>
     void draw_ui(double between) override;
 
     void update_controls() override;
+    void reset_controls() override;
 
     void stable_update() override;
     void frame_update() override;

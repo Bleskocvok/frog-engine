@@ -53,6 +53,10 @@ void engine2d::update_controls()
         global->quit = true;
 }
 
+void engine2d::reset_controls()
+{
+    input->reset();
+}
 
 void engine2d::stable_update()
 {

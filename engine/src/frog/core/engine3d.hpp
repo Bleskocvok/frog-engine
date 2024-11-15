@@ -35,6 +35,7 @@ class engine : public engine_base<engine, game_object, os::timer>
     void draw_ui(double between) override;
 
     void update_controls() override;
+    void reset_controls() override;
 
     void stable_update() override;
     void frame_update() override;

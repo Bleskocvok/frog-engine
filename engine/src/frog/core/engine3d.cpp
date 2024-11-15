@@ -94,7 +94,8 @@ void frog::engine::frame_update()
 
 void frog::engine::update_controls()
 {
-    input->reset();
+    // This was moved to the new method ‹reset_controls›.
+    // input->reset();
     glfw.poll_events();
 
     // resize renderer if window has been resized
@@ -105,6 +106,11 @@ void frog::engine::update_controls()
         renderer->viewport(w, h);
         camera.screen_size(w, h);
     }
+}
+
+void frog::engine::reset_controls()
+{
+    input->reset();
 }
 
 
