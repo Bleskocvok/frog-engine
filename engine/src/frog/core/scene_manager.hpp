@@ -124,6 +124,14 @@ public:
         current().frame_update(eng);
     }
 
+    void end_frame_update(Engine& eng)
+    {
+        if (empty())
+            return;
+
+        current().end_frame_update(eng);
+    }
+
     void switch_scene(std::string name)
     {
         _next = std::move(name);

@@ -39,6 +39,8 @@ struct script_base
 
     virtual void frame_update(GameObject&, Engine&) {}
 
+    virtual void end_frame_update(GameObject&, Engine&) {}
+
     virtual void destroyed(GameObject&, Engine&) {}
 
 private:

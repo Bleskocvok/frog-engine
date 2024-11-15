@@ -166,6 +166,11 @@ public:
     {
         for_each_object([&](auto& obj) { obj.frame_update(eng); });
     }
+
+    void end_frame_update(Engine& eng)
+    {
+        for_each_object([&](auto& obj) { obj.end_frame_update(eng); });
+    }
 };
 
 

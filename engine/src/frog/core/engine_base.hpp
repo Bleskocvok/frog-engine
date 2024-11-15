@@ -44,7 +44,13 @@ protected:
     virtual void stable_update()
     {
         scenes->stable_update(get());
+        scenes->end_update(get());
         scenes->cleanup(get());
+    }
+
+    void end_frame_update()
+    {
+        scenes->end_frame_update(get());
     }
 
     // template<typename Engine>
@@ -114,6 +120,7 @@ public:
                 reset_controls();
                 update_controls();
                 accum -= delta;
+
                 // TODO: Consider the situation when stable_update takes longer
                 // than delta. That way, accum keeps increasing, leading to a
                 // drastic FPS drop. How solve?
@@ -123,6 +130,8 @@ public:
                 //     break;
                 // }
             }
+
+            end_frame_update();
 
             auto frame = timer.reset_duration_us();
             global->frame_time_us = frame;

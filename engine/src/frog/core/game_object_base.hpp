@@ -164,6 +164,12 @@ public:
         for_each_script([&](auto& sc){ sc.frame_update(get(), engine); });
     }
 
+    void end_frame_update(Engine& engine)
+    {
+        init(engine);
+        for_each_script([&](auto& sc){ sc.end_frame_update(get(), engine); });
+    }
+
     void destroyed(Engine& engine)
     {
         init(engine);
