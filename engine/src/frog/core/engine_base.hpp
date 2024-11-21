@@ -1,20 +1,13 @@
 #pragma once
 
 #include "frog/graphics/renderer_base.hpp"
-#include "frog/graphics/assets.hpp"
 
 #include "frog/os/window_base.hpp"
-#include "frog/os/input.hpp"
-#include "frog/os/timer.hpp"
-
 #include "frog/utils/ptr.hpp"
 
 #include "scene_manager.hpp"
-#include "settings.hpp"
 #include "state.hpp"
-#include "script.hpp"
 
-#include <string_view>
 #include <utility>      // move
 
 
@@ -52,19 +45,6 @@ protected:
     {
         scenes->end_frame_update(get());
     }
-
-    // template<typename Engine>
-    // static void stable_update_t(Engine& eng)
-    // {
-    //     eng.scenes->stable_update(eng);
-    //     eng.scenes->cleanup(eng);
-    // }
-
-    // template<typename Engine>
-    // static void frame_update_t(Engine& eng)
-    // {
-    //     eng.scenes->frame_update(eng);
-    // }
 
     virtual void render(double between)
     {

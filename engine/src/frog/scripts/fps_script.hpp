@@ -1,9 +1,12 @@
 #pragma once
 
 #include "frog/core/script.hpp"
+#include "frog/graphics/ui_element.hpp"
 #include "frog/geometry/vector.hpp"
+#include "frog/utils/ptr.hpp"
+#include "frog/core/game_object2d.hpp"
+#include "frog/core/engine2d.hpp"
 
-#include <string>
 #include <utility>      // move
 #include <sstream>      // ostringstream
 #include <iomanip>      // setw, setprecision

@@ -2,9 +2,7 @@
 
 #include "game_object_base.hpp"
 #include "frog/utils/ptr.hpp"
-#include "engine_base.hpp"
 
-#include <memory>       // unique_ptr
 #include <utility>      // move
 #include <algorithm>    // remove_if, for_each, find_if
 #include <vector>

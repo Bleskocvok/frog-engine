@@ -1,8 +1,6 @@
 #pragma once
 
 #include "frog/core/script.hpp"
-#include "frog/gx2d/sprite.hpp"
-#include "frog/utils/ptr.hpp"
 
 namespace frog {
 

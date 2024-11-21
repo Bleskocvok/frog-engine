@@ -2,6 +2,11 @@
 
 #ifdef NOT_FROG_BUILD_2D
 
+#include <fstream>      // ifstream
+#include <string>       // getline
+#include <iterator>     // istreambuf_iterator
+#include <stdexcept>    // runtime_error
+
 std::string frog::load_file(const std::string& filename)
 {
     auto in = std::ifstream{ filename };

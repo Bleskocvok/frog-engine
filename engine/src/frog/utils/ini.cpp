@@ -1,7 +1,6 @@
 #include "ini.hpp"
 
 #include "string.hpp"
-#include "exception"
 
 #include <utility>      // move
 #include <sstream>      // ostringstream

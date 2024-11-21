@@ -1,8 +1,6 @@
 #pragma once
 
-#include <fstream>      // ifstream
 #include <string>       // getline
-#include <iterator>     // istreambuf_iterator
 
 
 namespace frog

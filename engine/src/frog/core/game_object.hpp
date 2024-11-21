@@ -3,6 +3,7 @@
 #pragma once
 
 #include "game_object_base.hpp"
+#include "script.hpp"
 #include "frog/gx3d/model.hpp"
 
 

@@ -35,9 +35,7 @@ std::optional<vec3> frog::geo::intersection(ray3 r1, ray3 r2)
 
 vec3 frog::geo::reflect(vec3 vector, vec3 normal)
 {
-    // vec3 n = normal.normalized();
-    // vec3 v = vector.normalized();
-    // return (v - 2 * n.dot(v) * n).normalized() * vector.length();
+    // TODO: Add debug assert that normal is normalized
 
     vec3 n = normal;
     vec3 v = vector.normalized();

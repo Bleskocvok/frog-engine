@@ -52,16 +52,6 @@ private:
 public:
     virtual ~game_object_base() = default;
 
-    // Script* add_script(ptr<Script> script);
-    // bool remove_script(Script* scr);
-    // gx::ui_element* add_element(ptr<gx::ui_element>);
-    // bool remove_element(gx::ui_element*);
-    // void init(Engine&) = 0;
-    // void stable_update(Engine&);
-    // void end_update(Engine&);
-    // void frame_update(Engine&);
-    // void destroyed(Engine&);
-
     void destroy() { _destroyed = true; }
 
     bool is_destroyed() { return _destroyed; }

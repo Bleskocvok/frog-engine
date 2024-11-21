@@ -10,7 +10,6 @@
 #include "button_action.hpp"
 #include "button_style.hpp"
 
-#include <string>
 #include <utility>      // move
 
 
@@ -64,10 +63,7 @@ public:
                        frog::gx2d::sprite press,*/
                        frog::ptr<frog::button_action> action = nullptr,
                        frog::ptr<frog::button_style> style = nullptr)
-        : normal(std::move(normal)),
-          hover(std::move(hover)),
-          press(std::move(press)),
-          action(std::move(action)),
+        : action(std::move(action)),
           style(std::move(style)) {}
 
     void init(typename Script::GameObject& obj, typename Script::Engine&) override

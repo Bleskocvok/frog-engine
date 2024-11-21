@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cmath>
+#include <cmath>        // acos, abs
 
 
 namespace frog::geo

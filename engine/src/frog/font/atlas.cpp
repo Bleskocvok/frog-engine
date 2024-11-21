@@ -4,8 +4,8 @@
 
 #include "atlas.hpp"
 
-#include <utility>          // move
 #include <iterator>         // distance
+#include <algorithm>        // find
 
 
 namespace frog::font {

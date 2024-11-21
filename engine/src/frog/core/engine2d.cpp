@@ -9,7 +9,6 @@
 #include <tuple>        // tie
 
 #include "frog/font/atlas.hpp"
-#include "frog/font/truetype.hpp"
 
 using namespace frog::geo;
 using namespace frog;

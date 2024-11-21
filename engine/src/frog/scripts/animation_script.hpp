@@ -5,7 +5,6 @@
 #include "frog/gx2d/sprite.hpp"
 #include "frog/gx2d/animation.hpp"
 
-#include <string>
 #include <utility>      // move
 
 

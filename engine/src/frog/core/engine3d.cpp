@@ -2,18 +2,9 @@
 
 #include "engine3d.hpp"
 
-#include "frog/os/timer.hpp"
-
-#include "frog/geometry/transform.hpp"
 #include "frog/graphics/renderer3d.hpp"
 #include "frog/gx3d/program.hpp"
 #include "frog/gx3d/location.hpp"
-#include "frog/gx3d/shape.hpp"
-#include "frog/gx3d/mesh.hpp"
-#include "frog/gx3d/material.hpp"
-#include "frog/gx3d/model.hpp"
-
-#include "frog/utils/debug.hpp"
 
 #include <utility>      // std::move
 #include <algorithm>    // std::find
