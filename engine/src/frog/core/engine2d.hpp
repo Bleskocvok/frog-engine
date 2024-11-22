@@ -52,6 +52,8 @@ class engine2d : public engine_base<engine2d, game_object2d, lib2d::os::timer>
     void draw_ui_sprite(const lib2d::gx::texture& tex, geo::rect dest, geo::rect uv,
                         gx::rgba_t color);
 
+    void prepend_path_prefix(std::string& path);
+
     // Friends and family.
     friend font::atlas;
     friend font::truetype;
@@ -83,6 +85,12 @@ public:
 
     bool add_texture(const std::string& tag, const std::string& path);
     bool remove_texture(const std::string& name);
+
+    bool add_atlas_font(const std::string& tag, std::string path,
+                        const std::string& config);
+
+    bool add_truetype_font(const std::string& tag, std::string path,
+                           int size = 256, bool outline = false);
 };
 
 

@@ -5,6 +5,7 @@
 #include "frog/gx2d/renderer2d.hpp"
 #include "frog/graphics/color.hpp"
 #include "frog/font/atlas.hpp"
+#include "frog/font/truetype.hpp"
 
 #include <utility>      // move
 #include <vector>
@@ -35,6 +36,35 @@ void engine2d::init()
     fonts.add("default", mk_ptr<font::atlas>(*this, prefix + "font.png", "oogabooga.ini"));
 }
 
+bool engine2d::add_atlas_font(const std::string& tag, std::string path,
+                              const std::string& config)
+{
+    bool has = fonts.contains(tag);
+
+    prepend_path_prefix(path);
+    fonts.add(tag, mk_ptr<font::atlas>(*this, path, config));
+    return has;
+}
+
+bool engine2d::add_truetype_font(const std::string& tag, std::string path,
+                                 int size, bool outline)
+{
+    bool has = fonts.contains(tag);
+
+    prepend_path_prefix(path);
+    fonts.add(tag, mk_ptr<font::truetype>(path, size, outline));
+
+    return has;
+}
+
+void engine2d::prepend_path_prefix(std::string& path)
+{
+    if (path.empty())
+        return;
+
+    if (path.front() != '/')
+        path = global->asset_path() + "/" + path;
+}
 
 void engine2d::update_controls()
 {
