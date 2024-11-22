@@ -167,9 +167,9 @@ void engine2d::draw_objects(double /* between */)
             const auto& tex = *it;
 
             auto uv_size = geo::vec2{ float(tex.w()), float(tex.h()) } * model->tex.size;
-            auto uv = ( model->tex.pos - model->tex.size * 0.5f )
-                    * geo::vec2{ float(tex.w()), float(tex.h()) };
-
+            // auto uv = ( model->tex.pos - model->tex.size * 0.5f )
+            //         * geo::vec2{ float(tex.w()), float(tex.h()) };
+            auto uv = ( model->tex.pos ) * geo::vec2{ float(tex.w()), float(tex.h()) };
             gx::rgba_t color = model->color;
             win_raw->draw_colored_rotated(tex, uv.x(), uv.y(), uv_size.x(), uv_size.y(),
                                           top_left.x(), top_left.y(),
@@ -240,7 +240,7 @@ void engine2d::draw_ui_sprite(const lib2d::gx::texture& tex, geo::rect dest,
 
     uv.pos *= geo::vec2(tex.w(), tex.h());
     uv.size *= geo::vec2(tex.w(), tex.h());
-    uv.pos -= uv.size * 0.5;
+    // uv.pos -= uv.size * 0.5;
 
     win_raw->draw_colored_rotated(tex, uv.pos.x(), uv.pos.y(),
                                   uv.size.x(), uv.size.y(),
