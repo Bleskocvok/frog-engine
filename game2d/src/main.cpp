@@ -192,7 +192,7 @@ struct balls : frog::script2d
 
 struct controls : frog::script2d
 {
-    void init(frog::game_object2d& obj, frog::engine2d& engine)
+    void init(frog::game_object2d& obj, frog::engine2d& engine) override
     {
         using namespace frog;
         engine.win_raw->clear_color(0, 0, 0, 255);
