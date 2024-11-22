@@ -2,18 +2,16 @@
 
 #ifndef NOT_FROG_BUILD_2D
 
-#include "frog/gx2d/renderer2d.hpp"
 #include "frog/graphics/assets.hpp"
 
 #include "frog/geometry/rectangle.hpp"
 #include "frog/utils/ptr.hpp"
 
 // bits, please
-#include "frog/lib2d/bits.hpp"
+#include "frog/lib2d/bits.hpp"      // initializer
 
 #include "engine_base.hpp"
 #include "game_object2d.hpp"
-#include "scene_manager.hpp"
 #include "settings.hpp"
 #include "state.hpp"
 

@@ -2,13 +2,13 @@
 
 #include "engine2d.hpp"
 
+#include "frog/gx2d/renderer2d.hpp"
 #include "frog/graphics/color.hpp"
+#include "frog/font/atlas.hpp"
 
 #include <utility>      // move
 #include <vector>
 #include <tuple>        // tie
-
-#include "frog/font/atlas.hpp"
 
 using namespace frog::geo;
 using namespace frog;
