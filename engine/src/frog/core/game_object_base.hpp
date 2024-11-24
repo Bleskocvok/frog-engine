@@ -86,6 +86,7 @@ public:
 
     Script* add_script(ptr<Script> scr)
     {
+        scr->object_ = &get();
         scripts.push_back(std::move(scr));
         return scripts.back().get();
     }

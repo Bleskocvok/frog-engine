@@ -20,6 +20,8 @@ struct script_base
     using GameObject = _GameObject;
     using Engine = _Engine;
 
+    GameObject* object_ = nullptr;
+
     virtual ~script_base() = default;
 
     void try_init(GameObject& o, Engine& e)
@@ -42,6 +44,9 @@ struct script_base
     virtual void end_frame_update(GameObject&, Engine&) {}
 
     virtual void destroyed(GameObject&, Engine&) {}
+
+    const GameObject* object() const { return object_; }
+          GameObject* object()       { return object_; }
 
 private:
     bool initialized = false;
