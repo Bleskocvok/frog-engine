@@ -10,4 +10,4 @@ jobs:
       - name: Get dependencies
         run: ./script/libraries.sh
       - name: Perform build
-        run: ./scripts/build -o bin-game2d -b Release gen-build game2d
+        run: ./script/build -o bin-game2d -b Release gen-build game2d
