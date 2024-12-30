@@ -11,6 +11,8 @@
 
 Simple game engine in C++.
 
+[![coverage badge](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/wiki/Bleskocvok/frog-engine/lines.md)](https://github.com/Bleskocvok/logwrap/actions/workflows/loc.yml)
+
 ## Table of contents
 
 [[_TOC_]]
