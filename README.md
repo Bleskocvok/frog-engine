@@ -19,13 +19,14 @@ Simple game engine in C++.
 -   [frog-engine](#frog-engine)
     -   [Table of contents](#table-of-contents)
     -   [Build examples](#build-examples)
-        -   [3D example](#d-example)
-        -   [2D example](#d-example-1)
+        -   [3D example](#3d-example)
+        -   [2D example](#2d-example)
     -   [Folder structure:](#folder-structure)
-        -   [1. Engine](#engine)
-        -   [2. Game](#game)
+        -   [1. Engine](#1-engine)
+        -   [2. Game](#2-game)
     -   [Notes](#notes)
-        -   [Windows build instructions](#windows-build-instructions)
+        -   [Windows build
+            instructions](#windows-build-instructions)
     -   [Misc](#misc)
 
 
