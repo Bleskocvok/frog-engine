@@ -29,3 +29,13 @@ jobs:
           label: Lines of code
           color: green
           message: ${{ env.LOC }}
+
+jobs:
+  run-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - name: Get dependencies
+        run: ./script/libraries.sh
+      - name: Perform build
+        run: ./scripts/build -o bin-game2d -b Release gen-build game2d
