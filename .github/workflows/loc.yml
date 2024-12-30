@@ -10,7 +10,7 @@ jobs:
       - name: Count lines of code
         uses: djdefi/cloc-action@main
         with:
-          options: --md --report-file=cloc.md --include-lang="C/C++ Header",C,C++ --exclude-dir=libraries,game,game2d
+          options: --md --report-file=cloc.md "--include-lang=C/C++ Header,C,C++" --exclude-dir=libraries,game,game2d
       - name: Print LoC
         run: |
             cat cloc.md
