@@ -9,8 +9,9 @@ jobs:
       - uses: actions/checkout@main
       - name: Count lines of code
         uses: djdefi/cloc-action@main
-        with:
-          options: --md --report-file=cloc.md "--include-lang=C/C++ Header,C,C++" --exclude-dir=libraries,game,game2d
+        # with:
+        #   options: --md --report-file=cloc.md "--include-lang=C/C++ Header,C,C++" --exclude-dir=libraries,game,game2d
+      - run: cloc engine/src
       - run: LC_ALL="C.UTF-8" awk -v lines="$(cat cloc.md | tail -n1 | cut -d, -f5)" 'BEGIN {printf "%6.1fk\n", lines/1000}' | sed 's/^ *//' | tee loc
       - name: Print LoC
         run: |
