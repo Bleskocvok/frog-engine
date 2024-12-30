@@ -10,11 +10,12 @@ jobs:
       - name: Count Lines of Code with additional options
         uses: djdefi/cloc-action@main
         with:
-          options: --csv --report-file=cloc.csv
+          options: --include-lang="C/C++ Header",C,C++ --exclude-dir=libraries,game,game2d --csv --report-file=cloc.csv
       - run: LC_ALL="C.UTF-8" awk -v lines="$(cat cloc.csv | tail -n1 | cut -d, -f5)" 'BEGIN {printf "%6.1fk\n", lines/1000}' | sed 's/^ *//' | tee loc
       - name: Put LoC into an environment variable
-        run: echo "LOC=$(cat loc | tail -n1)" >> $GITHUB_ENV
+        run: echo "LOC=$(cat loc)" >> $GITHUB_ENV
       - name: Print LoC
+        run: cat cloc.csv
         run: cat loc
       - name: Build-A-Badge
         uses: peterrhodesdev/build-a-badge@v1.3.1
