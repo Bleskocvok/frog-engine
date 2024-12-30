@@ -1,6 +1,12 @@
 name: Lines of code
 run-name: Counting lines of code for push by ${{ github.actor }}
+<<<<<<< HEAD
 on: [push]
+=======
+on:
+  push:
+    branches: [master]
+>>>>>>> master
 
 jobs:
   run-loc:
