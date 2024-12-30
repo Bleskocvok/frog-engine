@@ -53,43 +53,43 @@ Simple game engine in C++.
 
 2. It can be build by using the helper `build` script.
 
-```sh
-sh ./scripts/build -o bin-game -b Release gen-build game
-```
+    ```sh
+    sh ./scripts/build -o bin-game -b Release gen-build game
+    ```
 
 3. Or by manually invoking `cmake` commands.
 
-```sh
-cmake -S game -B bin-game
-cmake --build bin-game -j4
-```
+    ```sh
+    cmake -S game -B bin-game
+    cmake --build bin-game -j4
+    ```
 
 4. To run the compiled example, execute the `Game` binary.
 
-```sh
-./bin-game/Game
-```
+    ```sh
+    ./bin-game/Game
+    ```
 
 ### 2D example
 
 1. It can be build by using the helper `build` script.
 
-```sh
-sh ./scripts/build -o bin-game2d -b Release gen-build game2d
-```
+    ```sh
+    sh ./scripts/build -o bin-game2d -b Release gen-build game2d
+    ```
 
 2. Or by manually invoking `cmake` commands.
 
-```sh
-cmake -S game2d -B bin-game2d
-cmake --build bin-game2d -j4
-```
+    ```sh
+    cmake -S game2d -B bin-game2d
+    cmake --build bin-game2d -j4
+    ```
 
 3. To run the compiled example, execute the `Game` binary.
 
-```sh
-./bin-game2d/game_2d
-```
+    ```sh
+    ./bin-game2d/game_2d
+    ```
 
 
 ## Folder structure:
