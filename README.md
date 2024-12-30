@@ -37,7 +37,7 @@ Simple game engine in C++.
     ```sh
     git clone https://github.com/Bleskocvok/frog-engine.git
     cd frog-engine
-    sh ./scripts/libraries.sh
+    sh ./script/libraries.sh
     ```
 
     Folder `game` contains an example 3D game and folder `game2d` contains a sample of
@@ -52,7 +52,7 @@ Simple game engine in C++.
 2. It can be build by using the helper `build` script.
 
     ```sh
-    sh ./scripts/build -o bin-game -b Release gen-build game
+    sh ./script/build -o bin-game -b Release gen-build game
     ```
 
 3. Or by manually invoking `cmake` commands.
@@ -73,7 +73,7 @@ Simple game engine in C++.
 1. It can be build by using the helper `build` script.
 
     ```sh
-    sh ./scripts/build -o bin-game2d -b Release gen-build game2d
+    sh ./script/build -o bin-game2d -b Release gen-build game2d
     ```
 
 2. Or by manually invoking `cmake` commands.
