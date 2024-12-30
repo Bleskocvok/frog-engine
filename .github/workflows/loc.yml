@@ -1,0 +1,29 @@
+name: Lines of code
+run-name: Counting lines of code for push by ${{ github.actor }}
+on: [push]
+
+jobs:
+  run-loc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - name: Count lines of code
+        uses: djdefi/cloc-action@main
+        with:
+          options: --csv --report-file=cloc.md "--include-lang=C/C++ Header,C,C++" --exclude-dir=libraries,game,game2d
+      - run: cat cloc.md | tail -n1 | cut -d, -f5 | tee cloc_num
+      - run: LC_ALL="C.UTF-8" awk -v lines="$(cat cloc_num)" 'BEGIN {printf "%6.1fk\n", lines/1000}' | sed 's/^ *//' | tee loc
+      - name: Print LoC
+        run: |
+          cat cloc.md
+          cat loc
+      - name: Put LoC into an environment variable
+        run: echo "LOC=$(cat loc)" >> $GITHUB_ENV
+      - name: Build-A-Badge
+        uses: peterrhodesdev/build-a-badge@v1.3.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          filename: lines
+          label: Lines of code
+          color: green
+          message: ${{ env.LOC }}

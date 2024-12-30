@@ -1,11 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
-#files="src/ engine/src/ CMakeLists.txt engine/CMakeLists.txt engine/tests"
+set -eo pipefail
 
-files="$(git ls-files | fgrep -v libraries)"
+lines="$(cloc --quiet --csv engine/src/ | tail -n1 | cut -d, -f5)"
 
-cloc $files
-
-for i in $(seq 80); do printf '#'; done
-
-scc $files
+LC_ALL="C.UTF-8" awk -v lines="$lines" 'BEGIN {printf "%6.1fk\n", lines/1000}' | sed 's/^ *//'
