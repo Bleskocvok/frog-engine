@@ -11,11 +11,11 @@ jobs:
         uses: djdefi/cloc-action@main
         with:
           options: --md --report-file=cloc.md "--include-lang=C/C++ Header,C,C++" --exclude-dir=libraries,game,game2d
+      - run: LC_ALL="C.UTF-8" awk -v lines="$(cat cloc.md | tail -n1 | cut -d, -f5)" 'BEGIN {printf "%6.1fk\n", lines/1000}' | sed 's/^ *//' | tee loc
       - name: Print LoC
         run: |
-            cat cloc.md
-            cat loc
-      - run: LC_ALL="C.UTF-8" awk -v lines="$(cat cloc.md | tail -n1 | cut -d, -f5)" 'BEGIN {printf "%6.1fk\n", lines/1000}' | sed 's/^ *//' | tee loc
+          cat cloc.md
+          cat loc
       - name: Put LoC into an environment variable
         run: echo "LOC=$(cat loc)" >> $GITHUB_ENV
       - name: Build-A-Badge
