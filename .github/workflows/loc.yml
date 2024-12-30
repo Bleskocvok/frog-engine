@@ -1,6 +1,8 @@
 name: Lines of code
 run-name: Counting lines of code for push by ${{ github.actor }}
-on: [push]
+on:
+    - push:
+        branches: [master]
 
 jobs:
   run-loc:
