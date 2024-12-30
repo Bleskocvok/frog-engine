@@ -13,23 +13,37 @@ Simple game engine in C++.
 
 [![coverage badge](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/wiki/Bleskocvok/frog-engine/lines.md)](https://github.com/Bleskocvok/frog-engine/actions/workflows/loc.yml)
 
+
 ## Table of contents
 
-[[_TOC_]]
+-   [frog-engine](#frog-engine){#toc-frog-engine}
+    -   [Table of contents](#table-of-contents){#toc-table-of-contents}
+    -   [Build examples](#build-examples){#toc-build-examples}
+        -   [3D example](#d-example){#toc-d-example}
+        -   [2D example](#d-example-1){#toc-d-example-1}
+    -   [Folder structure:](#folder-structure){#toc-folder-structure}
+        -   [1. Engine](#engine){#toc-engine}
+        -   [2. Game](#game){#toc-game}
+    -   [Notes](#notes){#toc-notes}
+        -   [Windows build
+            instructions](#windows-build-instructions){#toc-windows-build-instructions}
+    -   [Misc](#misc){#toc-misc}
+    -   [Development
+        tracking](#development-tracking){#toc-development-tracking}
 
 
 ## Build examples
 
 1. Clone repository and install engine dependencies.
 
-```sh
-git clone https://github.com/Bleskocvok/frog-engine.git
-cd frog-engine
-sh ./scripts/libraries.sh
-```
+    ```sh
+    git clone https://github.com/Bleskocvok/frog-engine.git
+    cd frog-engine
+    sh ./scripts/libraries.sh
+    ```
 
-Folder `game` contains an example 3D game and folder `game2d` contains a sample of
-2D game code.
+    Folder `game` contains an example 3D game and folder `game2d` contains a sample of
+    2D game code.
 
 ### 3D example
 
