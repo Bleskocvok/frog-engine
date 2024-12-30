@@ -15,8 +15,9 @@ jobs:
       - name: Put LoC into an environment variable
         run: echo "LOC=$(cat loc)" >> $GITHUB_ENV
       - name: Print LoC
-        run: cat cloc.csv
-        run: cat loc
+        run: |
+            cat cloc.csv
+            cat loc
       - name: Build-A-Badge
         uses: peterrhodesdev/build-a-badge@v1.3.1
         with:
