@@ -1,0 +1,22 @@
+name: Lines of code
+run-name: Counting lines of code for push by ${{ github.actor }}
+on: [push]
+
+jobs:
+  run-loc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - run: sh script/count_lines.sh | tee loc
+      - name: Put LoC into an environment variable
+        run: echo "LOC=$(cat loc | tail -n1)" >> $GITHUB_ENV
+      - name: Print LoC
+        run: cat loc
+      - name: Build-A-Badge
+        uses: peterrhodesdev/build-a-badge@v1.3.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          filename: lines
+          label: Lines of code
+          color: green
+          message: ${{ env.LOC }}
