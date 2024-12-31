@@ -11,3 +11,12 @@ jobs:
         run: ./script/libraries.sh
       - name: Perform build
         run: ./script/build -o bin-game2d -b Release gen-build game2d
+
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - name: Build tests
+        run: make -C engine/tests
+      - name: Run tests
+        run: make -C engine/tests run_all -j
