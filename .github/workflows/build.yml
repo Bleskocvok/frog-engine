@@ -1,0 +1,13 @@
+name: Build
+run-name: Perform build for push by ${{ github.actor }}
+on: [push]
+
+jobs:
+  run-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - name: Get dependencies
+        run: ./script/libraries.sh
+      - name: Perform build
+        run: ./script/build -o bin-game2d -b Release gen-build game2d

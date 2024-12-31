@@ -32,7 +32,7 @@ gen()
 build()
 {
     [ -d "$out" ] || gen
-    cmake --build "$out" -j4
+    cmake --build "$out" -j
 }
 
 
