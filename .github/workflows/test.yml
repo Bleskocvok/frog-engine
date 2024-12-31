@@ -1,0 +1,13 @@
+name: Tests
+run-name: Run tests for push by ${{ github.actor }}
+on: [push]
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - name: Build tests
+        run: make -C engine/tests
+      - name: Run tests
+        run: make -C engine/tests run_all -j
