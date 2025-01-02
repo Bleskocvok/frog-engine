@@ -7,7 +7,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
-      - name: Get dependencies
-        run: ./script/libraries.sh
+
+      - name: Build cache setup
+        id: build-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+              engine/libraries
+              bin-game2d
+          key: ${{ runner.os }}-${{ hashFiles('script/libraries.sh') }}-${{ hashFiles('engine/CMakeLists.txt') }}-${{ hashFiles('game2d/CMakeLists.txt') }}
+
+      - name: Generate build cache
+        if: steps.build-cache.outputs.cache-hit != 'true'
+        run: |
+            ./script/libraries.sh
+            ./script/build -o bin-game2d -b Release gen game2d
+            cmake --build bin-game2d -t SDL2 SDL2-static SDL2_net SDL2_image SDL2_ttf SDL2_mixer
+
       - name: Perform build
-        run: ./script/build -o bin-game2d -b Release gen-build game2d
+        run: ./script/build -o bin-game2d -b Release build game2d
