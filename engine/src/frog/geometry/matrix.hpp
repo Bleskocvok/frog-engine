@@ -189,9 +189,9 @@ public:
         {
             for (unsigned x = 0; x < Width; x++)
             {
-                if (x == div_x)
+                if (int(x) == div_x)
                     continue;
-                if (x > div_x)
+                if (int(x) > div_x)
                     result.at(x - 1, y - 1) = at(x, y);
                 else
                     result.at(x, y - 1) = at(x, y);
@@ -326,7 +326,6 @@ public:
             return i_max;
         };
 
-        constexpr auto Size = Height;
         auto m = Height;
         auto n = Width;
         Idx h = 0;
@@ -346,9 +345,6 @@ public:
                 for (Idx i = h + 1; i < m; ++i)
                 {
                     auto f = mat.at(k, i) / mat.at(k, h);
-                    // mat.at(k, i) = 0;
-                    // for (Idx j = k + 1; j < n; ++j)
-                    //     mat.at(j, i) -= mat.at(j, h) * f;
                     add_row_multiple(mat, h, -f, i);
                     add_row_multiple(ide, h, -f, i);
                     mat.at(k, i) = 0;
