@@ -110,8 +110,8 @@ public:
         geo::vec2 units = { 1.0f / atlas_size.x(), 1.0f / atlas_size.y() };
         geo::ivec2 pos = { frame_, current().index };
 
-        img.tex.pos = { units.x() / 2 + pos.x() * units.x(),
-                        units.y() / 2 + pos.y() * units.y() };
+        img.tex.pos = { pos.x() * units.x(),
+                        pos.y() * units.y() };
         img.tex.size = units;
         img.flipped = current().flipped;
         return img;

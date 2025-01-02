@@ -1,7 +1,11 @@
 #include "physics.hpp"
 
+#include "circle.hpp"
+#include "collision.hpp"
+#include "polar.hpp"
+#include "general.hpp"
+
 #include <utility>          // pair
-#include <cstddef>          // size_t
 #include <algorithm>        // max, min, clamp, find
 #include <vector>
 
@@ -189,12 +193,17 @@ void soft_physics2d::verlet_solve()
         for (auto& [i, pt] : points())
             grid.add_to_touching(circle(pt.pos, pt.radius), { i, &pt });
 
-        for (auto& [i, pt] : points())
+        for (auto& elem : points())
+        {
+            auto& i = elem.first;
+            auto& pt = elem.second;
+
             grid.for_each_around(circle(pt.pos, pt.radius), [&](std::pair<idx_t, point*> other)
                 {
                     if (other.first > i)
                         solve_collision(pt, *other.second);
                 });
+        }
 
         for (auto&[idx, j] : joints())
             solve_joint(j);

@@ -5,7 +5,6 @@
 #include "frog/gx3d/include.hpp"
 
 #include "frog/geometry/camera.hpp"
-#include "frog/graphics/renderer3d.hpp"
 #include "frog/graphics/assets.hpp"
 #include "frog/gx3d/texture.hpp"
 #include "frog/gx3d/mesh.hpp"
@@ -15,13 +14,11 @@
 #include "frog/utils/ptr.hpp"
 
 #include "engine_base.hpp"
-#include "scene_manager.hpp"
 #include "game_object.hpp"
 #include "settings.hpp"
 #include "state.hpp"
 
 #include <string_view>
-#include <utility>      // move
 
 
 namespace frog {
@@ -35,6 +32,7 @@ class engine : public engine_base<engine, game_object, os::timer>
     void draw_ui(double between) override;
 
     void update_controls() override;
+    void reset_controls() override;
 
     void stable_update() override;
     void frame_update() override;

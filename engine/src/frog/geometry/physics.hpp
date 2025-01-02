@@ -2,10 +2,7 @@
 
 #include "vector.hpp"
 #include "rectangle.hpp"
-#include "collision.hpp"
 #include "basic.hpp"        // Pi
-#include "general.hpp"
-#include "polar.hpp"
 
 #include <utility>          // move, pair, forward
 #include <cstddef>          // size_t
@@ -13,10 +10,6 @@
 #include <sstream>          // stringstream
 #include <vector>           // vector
 #include <algorithm>        // remove_if
-
-#include "frog/utils/debug.hpp"
-
-#include "frog/utils/exception.hpp"
 
 namespace frog::geo
 {
@@ -142,7 +135,7 @@ public:
             }
         }
 
-        template<template<typename> typename Vec>
+        template<template<typename...> typename Vec>
         void remove(const Vec<idx_t>& vec)
         {
             if (vec.empty())

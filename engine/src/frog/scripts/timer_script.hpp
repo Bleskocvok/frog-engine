@@ -1,8 +1,6 @@
 #pragma once
 
 #include "frog/core/script.hpp"
-#include "frog/gx2d/sprite.hpp"
-#include "frog/utils/ptr.hpp"
 
 namespace frog {
 
@@ -68,6 +66,7 @@ public:
             accum_ += engine.global->stable_frame_time();
 
         activated = 0;
+        // TODO: Make this non-exponential, lol.
         while (accum_ >= period_)
         {
             accum_ -= period_;

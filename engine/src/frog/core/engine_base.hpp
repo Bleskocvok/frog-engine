@@ -1,20 +1,13 @@
 #pragma once
 
 #include "frog/graphics/renderer_base.hpp"
-#include "frog/graphics/assets.hpp"
 
 #include "frog/os/window_base.hpp"
-#include "frog/os/input.hpp"
-#include "frog/os/timer.hpp"
-
 #include "frog/utils/ptr.hpp"
 
 #include "scene_manager.hpp"
-#include "settings.hpp"
 #include "state.hpp"
-#include "script.hpp"
 
-#include <string_view>
 #include <utility>      // move
 
 
@@ -38,26 +31,20 @@ protected:
     virtual void draw_ui(double between) = 0;
 
     virtual void update_controls() = 0;
+    virtual void reset_controls() = 0;
     virtual void frame_update() { scenes->frame_update(get()); }
 
     virtual void stable_update()
     {
         scenes->stable_update(get());
+        scenes->end_update(get());
         scenes->cleanup(get());
     }
 
-    // template<typename Engine>
-    // static void stable_update_t(Engine& eng)
-    // {
-    //     eng.scenes->stable_update(eng);
-    //     eng.scenes->cleanup(eng);
-    // }
-
-    // template<typename Engine>
-    // static void frame_update_t(Engine& eng)
-    // {
-    //     eng.scenes->frame_update(eng);
-    // }
+    void end_frame_update()
+    {
+        scenes->end_frame_update(get());
+    }
 
     virtual void render(double between)
     {
@@ -99,14 +86,21 @@ public:
 
         while (!global->quit && !window->should_close())
         {
+            update_controls();
             frame_update();
 
             // int i = 0;
             while (accum >= decltype(accum)(delta))
             {
-                update_controls();
+                // Instead of updating controls directly before every
+                // ‹stable_update›, let's do it in a way that ‹frame_update› has
+                // access to the newest events, while ‹stable_update› does not
+                // miss any.
                 stable_update();
+                reset_controls();
+                update_controls();
                 accum -= delta;
+
                 // TODO: Consider the situation when stable_update takes longer
                 // than delta. That way, accum keeps increasing, leading to a
                 // drastic FPS drop. How solve?
@@ -116,6 +110,8 @@ public:
                 //     break;
                 // }
             }
+
+            end_frame_update();
 
             auto frame = timer.reset_duration_us();
             global->frame_time_us = frame;

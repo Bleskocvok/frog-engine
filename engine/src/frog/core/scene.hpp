@@ -2,9 +2,7 @@
 
 #include "game_object_base.hpp"
 #include "frog/utils/ptr.hpp"
-#include "engine_base.hpp"
 
-#include <memory>       // unique_ptr
 #include <utility>      // move
 #include <algorithm>    // remove_if, for_each, find_if
 #include <vector>
@@ -165,6 +163,11 @@ public:
     void frame_update(Engine& eng)
     {
         for_each_object([&](auto& obj) { obj.frame_update(eng); });
+    }
+
+    void end_frame_update(Engine& eng)
+    {
+        for_each_object([&](auto& obj) { obj.end_frame_update(eng); });
     }
 };
 

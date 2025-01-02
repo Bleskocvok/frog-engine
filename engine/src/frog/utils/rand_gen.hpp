@@ -49,12 +49,12 @@ public:
 
     Int uniform_int(Int min, Int max)
     {
-        return frog::uniform_int(min, max)(gen);
+        return frog::uniform_int<Int>(min, max)(gen);
     }
 
     Float uniform_float(Float min, Float max)
     {
-        return frog::uniform_float(min, max)(gen);
+        return frog::uniform_float<Float>(min, max)(gen);
     }
 };
 

@@ -1,6 +1,6 @@
-#ifndef NOT_FROG_BUILD_2D
-
 #pragma once
+
+#ifndef NOT_FROG_BUILD_2D
 
 #include "frog/graphics/renderer_base.hpp"
 #include "frog/lib2d/window.hpp"

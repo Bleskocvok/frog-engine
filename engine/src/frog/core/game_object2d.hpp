@@ -1,8 +1,9 @@
-#ifndef NOT_FROG_BUILD_2D
-
 #pragma once
 
+#ifndef NOT_FROG_BUILD_2D
+
 #include "game_object_base.hpp"
+#include "script.hpp"
 #include "frog/gx2d/sprite.hpp"
 
 

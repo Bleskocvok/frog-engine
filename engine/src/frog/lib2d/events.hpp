@@ -36,6 +36,7 @@ namespace frog::lib2d::gx
 
         void k_reset();
         void f_reset();
+        void m_reset();
         void reset();
 
     private:

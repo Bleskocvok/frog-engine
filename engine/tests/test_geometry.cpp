@@ -16,8 +16,6 @@ using doctest::Approx;
 #include "frog/geometry/ray.hpp"
 #include "frog/geometry/transform.hpp"
 
-#include "frog/utils/debug.hpp"
-
 #include <iostream>
 #include <functional>   // std::plus
 #include <algorithm>    // std::equal

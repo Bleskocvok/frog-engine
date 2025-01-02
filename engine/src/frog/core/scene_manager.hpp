@@ -1,7 +1,6 @@
 #pragma once
 
 #include "scene.hpp"
-#include "engine_base.hpp"
 #include "frog/utils/ptr.hpp"
 
 #include <string>
@@ -40,15 +39,6 @@ public:
     scene_manager() = default;
 
     bool empty() const { return _current.empty(); }
-
-    // Scene* add(std::string name, ptr<Scene> sc);
-    // bool remove(const std::string& name);
-    // void cleanup(engine& eng);
-    // void init(engine&);
-    // void stable_update(engine&);
-    // void end_update(engine&);
-    // void frame_update(engine&);
-    // void switch_scene(std::string name);
 
     const Scene& current() const { return *scenes.at(_current); }
           Scene& current()       { return *scenes.at(_current); }
@@ -122,6 +112,14 @@ public:
             return;
 
         current().frame_update(eng);
+    }
+
+    void end_frame_update(Engine& eng)
+    {
+        if (empty())
+            return;
+
+        current().end_frame_update(eng);
     }
 
     void switch_scene(std::string name)

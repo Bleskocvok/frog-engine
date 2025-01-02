@@ -2,18 +2,9 @@
 
 #include "engine3d.hpp"
 
-#include "frog/os/timer.hpp"
-
-#include "frog/geometry/transform.hpp"
 #include "frog/graphics/renderer3d.hpp"
 #include "frog/gx3d/program.hpp"
 #include "frog/gx3d/location.hpp"
-#include "frog/gx3d/shape.hpp"
-#include "frog/gx3d/mesh.hpp"
-#include "frog/gx3d/material.hpp"
-#include "frog/gx3d/model.hpp"
-
-#include "frog/utils/debug.hpp"
 
 #include <utility>      // std::move
 #include <algorithm>    // std::find
@@ -94,7 +85,8 @@ void frog::engine::frame_update()
 
 void frog::engine::update_controls()
 {
-    input->reset();
+    // This was moved to the new method ‹reset_controls›.
+    // input->reset();
     glfw.poll_events();
 
     // resize renderer if window has been resized
@@ -105,6 +97,11 @@ void frog::engine::update_controls()
         renderer->viewport(w, h);
         camera.screen_size(w, h);
     }
+}
+
+void frog::engine::reset_controls()
+{
+    input->reset();
 }
 
 

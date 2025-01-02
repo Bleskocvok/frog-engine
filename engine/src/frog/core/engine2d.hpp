@@ -1,19 +1,17 @@
-#ifndef NOT_FROG_BUILD_2D
-
 #pragma once
 
-#include "frog/gx2d/renderer2d.hpp"
+#ifndef NOT_FROG_BUILD_2D
+
 #include "frog/graphics/assets.hpp"
 
 #include "frog/geometry/rectangle.hpp"
 #include "frog/utils/ptr.hpp"
 
 // bits, please
-#include "frog/lib2d/bits.hpp"
+#include "frog/lib2d/bits.hpp"      // initializer
 
 #include "engine_base.hpp"
 #include "game_object2d.hpp"
-#include "scene_manager.hpp"
 #include "settings.hpp"
 #include "state.hpp"
 
@@ -36,6 +34,7 @@ class engine2d : public engine_base<engine2d, game_object2d, lib2d::os::timer>
     void draw_ui(double between) override;
 
     void update_controls() override;
+    void reset_controls() override;
 
     void stable_update() override;
     void frame_update() override;
@@ -52,6 +51,8 @@ class engine2d : public engine_base<engine2d, game_object2d, lib2d::os::timer>
 
     void draw_ui_sprite(const lib2d::gx::texture& tex, geo::rect dest, geo::rect uv,
                         gx::rgba_t color);
+
+    void prepend_path_prefix(std::string& path);
 
     // Friends and family.
     friend font::atlas;
@@ -70,6 +71,11 @@ public:
 
     engine2d(settings set, ptr<state> global);
 
+    geo::vec2 mouse_pos_in_camera()
+    {
+        return camera_coords(input->mouse().x, input->mouse().y);
+    }
+
     geo::vec2 camera_coords(const lib2d::gx::events::mouse_t& m)
     {
         return camera_coords(m.x, m.y);
@@ -79,6 +85,12 @@ public:
 
     bool add_texture(const std::string& tag, const std::string& path);
     bool remove_texture(const std::string& name);
+
+    bool add_atlas_font(const std::string& tag, std::string path,
+                        const std::string& config);
+
+    bool add_truetype_font(const std::string& tag, std::string path,
+                           int size = 256, bool outline = false);
 };
 
 

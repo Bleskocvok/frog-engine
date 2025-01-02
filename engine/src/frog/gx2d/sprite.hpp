@@ -18,7 +18,7 @@ struct sprite
     float angle = 0;
     bool flipped = false;
 
-    geo::rect tex = { 0.5, 0.5, 1, 1 };
+    geo::rect tex = { 0, 0, 1, 1 };
 
     // lower layer = rendered earlier
     unsigned layer = 0;

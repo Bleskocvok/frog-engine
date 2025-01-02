@@ -2,14 +2,14 @@
 
 #include "engine2d.hpp"
 
+#include "frog/gx2d/renderer2d.hpp"
 #include "frog/graphics/color.hpp"
+#include "frog/font/atlas.hpp"
+#include "frog/font/truetype.hpp"
 
 #include <utility>      // move
 #include <vector>
 #include <tuple>        // tie
-
-#include "frog/font/atlas.hpp"
-#include "frog/font/truetype.hpp"
 
 using namespace frog::geo;
 using namespace frog;
@@ -36,6 +36,35 @@ void engine2d::init()
     fonts.add("default", mk_ptr<font::atlas>(*this, prefix + "font.png", "oogabooga.ini"));
 }
 
+bool engine2d::add_atlas_font(const std::string& tag, std::string path,
+                              const std::string& config)
+{
+    bool has = fonts.contains(tag);
+
+    prepend_path_prefix(path);
+    fonts.add(tag, mk_ptr<font::atlas>(*this, path, config));
+    return has;
+}
+
+bool engine2d::add_truetype_font(const std::string& tag, std::string path,
+                                 int size, bool outline)
+{
+    bool has = fonts.contains(tag);
+
+    prepend_path_prefix(path);
+    fonts.add(tag, mk_ptr<font::truetype>(path, size, outline));
+
+    return has;
+}
+
+void engine2d::prepend_path_prefix(std::string& path)
+{
+    if (path.empty())
+        return;
+
+    if (path.front() != '/')
+        path = global->asset_path() + "/" + path;
+}
 
 void engine2d::update_controls()
 {
@@ -53,6 +82,10 @@ void engine2d::update_controls()
         global->quit = true;
 }
 
+void engine2d::reset_controls()
+{
+    input->reset();
+}
 
 void engine2d::stable_update()
 {
@@ -134,9 +167,9 @@ void engine2d::draw_objects(double /* between */)
             const auto& tex = *it;
 
             auto uv_size = geo::vec2{ float(tex.w()), float(tex.h()) } * model->tex.size;
-            auto uv = ( model->tex.pos - model->tex.size * 0.5f )
-                    * geo::vec2{ float(tex.w()), float(tex.h()) };
-
+            // auto uv = ( model->tex.pos - model->tex.size * 0.5f )
+            //         * geo::vec2{ float(tex.w()), float(tex.h()) };
+            auto uv = ( model->tex.pos ) * geo::vec2{ float(tex.w()), float(tex.h()) };
             gx::rgba_t color = model->color;
             win_raw->draw_colored_rotated(tex, uv.x(), uv.y(), uv_size.x(), uv_size.y(),
                                           top_left.x(), top_left.y(),
@@ -207,7 +240,7 @@ void engine2d::draw_ui_sprite(const lib2d::gx::texture& tex, geo::rect dest,
 
     uv.pos *= geo::vec2(tex.w(), tex.h());
     uv.size *= geo::vec2(tex.w(), tex.h());
-    uv.pos -= uv.size * 0.5;
+    // uv.pos -= uv.size * 0.5;
 
     win_raw->draw_colored_rotated(tex, uv.pos.x(), uv.pos.y(),
                                   uv.size.x(), uv.size.y(),
