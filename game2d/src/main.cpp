@@ -225,6 +225,7 @@ void add_objects(frog::engine2d& eng)
 
     eng.scenes->add("main", mk_ptr<scene<game_object2d>>());
 
+
     auto gobj = mk_ptr<game_object2d>();
     gobj->add_script(mk_ptr<balls>());
     gobj->add_script(mk_ptr<fps_script>());
