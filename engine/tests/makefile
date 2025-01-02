@@ -5,7 +5,7 @@ INCLUDES = -I../libraries/doctest/ \
 
 CXXFLAGS += $(INCLUDES)
 
-TESTS = test_engine test_fixed
+TESTS = test_geometry test_fixed test_string
 
 GEO_DEPS = ../src/frog/geometry/general.cpp \
            ../src/frog/geometry/camera.cpp \
@@ -14,6 +14,9 @@ GEO_DEPS = ../src/frog/geometry/general.cpp \
            ../src/frog/geometry/physics.cpp \
            ../src/frog/geometry/polar.cpp \
            ../src/frog/geometry/transform.cpp
+
+STR_DEPS = ../src/frog/utils/string.cpp \
+           ../src/frog/utils/ini.cpp
 
 RUN_TESTS = $(TESTS:%=run.%)
 
@@ -25,10 +28,13 @@ run.%: %
 run_all: $(RUN_TESTS)
 	@echo "Tests ok"
 
-test_engine: test_engine.cpp $(GEO_DEPS)
+test_geometry: test_geometry.cpp $(GEO_DEPS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
 test_fixed: fixed/test_fixed.cpp
+	$(CXX) $(CXXFLAGS) -o $@ $^
+
+test_string: test_string.cpp $(STR_DEPS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
 clean:
