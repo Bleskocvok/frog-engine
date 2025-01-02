@@ -22,7 +22,7 @@ jobs:
         run: |
             ./script/libraries.sh
             ./script/build -o bin-game2d -b Release gen game2d
-            cmake --build bin-game2d -t SDL2 SDL2_net SDL2_image SDL2_ttf SDL2_mixer
+            cmake --build bin-game2d -t SDL2 SDL2-static SDL2_net SDL2_image SDL2_ttf SDL2_mixer
 
       - name: Perform build
         run: ./script/build -o bin-game2d -b Release build game2d
