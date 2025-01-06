@@ -42,6 +42,13 @@ public:
                 std::forward<Args>(args)...);
     }
 
+    template<typename U>
+    constexpr vec(vec<U, Dim> v)
+    {
+        for (size_t i = 0; i < Dim; i++)
+            Base::data[i] = v.data[i];
+    }
+
     constexpr vec(vec<T, Dim - 1> v, T&& val)
     {
         for (size_t i = 0; i < Dim - 1; i++)
