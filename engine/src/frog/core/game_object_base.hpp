@@ -56,8 +56,9 @@ private:
     const Derived& get() const  { return *static_cast<const Derived*>(this); }
           Derived& get()        { return *static_cast<      Derived*>(this); }
 
-    void addition_removal()
+    bool addition_removal()
     {
+        bool added = !added_scripts.empty();
         for (ptr<Script>& script : added_scripts)
             scripts.push_back(std::move(script));
         added_scripts.clear();
@@ -68,8 +69,11 @@ private:
                 return std::find(removed_scripts.begin(), removed_scripts.end(),
                                  scr.get()) != removed_scripts.end();
             });
+        bool deleted = rem_it != scripts.end();
         scripts.erase(rem_it, scripts.end());
         removed_scripts.clear();
+
+        return added || deleted;
     }
 
 public:
