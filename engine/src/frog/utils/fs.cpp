@@ -31,7 +31,12 @@ std::string frog::load_file(const std::string& filename)
 
 std::string frog::load_file(const std::string& filename)
 {
-    return lib2d::fs::file_read(filename.c_str(), lib2d::fs::mode::Text);
+    return lib2d::fs::file_read(filename.c_str(), lib2d::fs::mode::Binary);
+}
+
+void frog::save_file(const std::string& filename, const std::string& content)
+{
+    lib2d::fs::file_write(filename.c_str(), content, lib2d::fs::mode::Binary);
 }
 
 #endif

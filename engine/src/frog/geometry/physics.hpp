@@ -255,15 +255,9 @@ public:
     const auto& angles() const { return angles_.data; }
           auto& angles()       { return angles_.data; }
 
-    idx_t add_point(point pt)
-    {
-        return points_.push(pt);
-    }
-
-    idx_t add_joint(joint j)
-    {
-        return joints_.push(j);
-    }
+    idx_t add_point(point pt) { return points_.push(pt); }
+    idx_t add_joint(joint j) { return joints_.push(j); }
+    idx_t add_angle(angle a) { return angles_.push(a); }
 
     idx_t add_joint_between(idx_t a, idx_t b)
     {
@@ -275,25 +269,11 @@ public:
         });
     }
 
-    idx_t add_angle(angle a)
-    {
-        return angles_.push(a);
-    }
+    void remove_point(idx_t i) { points_removal.push_back(i); }
+    void remove_joint(idx_t i) { joints_removal.push_back(i); }
+    void remove_angle(idx_t i) { angles_removal.push_back(i); }
 
-    void remove_point(idx_t i)
-    {
-        points_removal.push_back(i);
-    }
-
-    void remove_joint(idx_t i)
-    {
-        joints_removal.push_back(i);
-    }
-
-    void remove_angle(idx_t i)
-    {
-        angles_removal.push_back(i);
-    }
+    void push(idx_t point, vec2 delta);
 };
 
 

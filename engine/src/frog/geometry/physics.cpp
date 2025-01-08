@@ -240,5 +240,9 @@ void soft_physics2d::remove()
     angles_removal.clear();
 }
 
+void soft_physics2d::push(idx_t point, vec2 delta)
+{
+    point_at(point).prev -= delta;
+}
 
 }  // namespace frog::geo

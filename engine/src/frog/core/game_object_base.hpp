@@ -2,7 +2,11 @@
 
 #include "frog/graphics/ui_element.hpp"
 #include "frog/utils/ptr.hpp"
+#include "frog/utils/assert.hpp"
+#include "frog/utils/debug.hpp"
+#include "frog/utils/utils.hpp"
 
+#include <stdexcept>
 #include <vector>
 #include <algorithm>    // for_each
 #include <string>
@@ -30,8 +34,11 @@ class game_object_base
 {
 private:
     bool _destroyed = false;
+    bool initialized = false;
 
     std::vector<ptr<Script>> scripts;
+    std::vector<ptr<Script>> added_scripts;
+    std::vector<Script*> removed_scripts;
     std::vector<ptr<gx::ui_element>> _elements;
 
     std::string _tag;
@@ -39,15 +46,35 @@ private:
     template<typename Func>
     void for_each_script(Func func)
     {
-        std::for_each(scripts.begin(), scripts.end(), [&](auto& ptr)
-            {
-                assert(ptr);
-                func(*ptr);
-            });
+        for (auto& ptr : scripts)
+        {
+            frog_assert(ptr);
+            func(*ptr);
+        }
     }
 
     const Derived& get() const  { return *static_cast<const Derived*>(this); }
           Derived& get()        { return *static_cast<      Derived*>(this); }
+
+    bool addition_removal()
+    {
+        bool added = !added_scripts.empty();
+        for (ptr<Script>& script : added_scripts)
+            scripts.push_back(std::move(script));
+        added_scripts.clear();
+
+        auto rem_it = std::remove_if(scripts.begin(), scripts.end(),
+            [&](const auto& scr)
+            {
+                return std::find(removed_scripts.begin(), removed_scripts.end(),
+                                 scr.get()) != removed_scripts.end();
+            });
+        bool deleted = rem_it != scripts.end();
+        scripts.erase(rem_it, scripts.end());
+        removed_scripts.clear();
+
+        return added || deleted;
+    }
 
 public:
     virtual ~game_object_base() = default;
@@ -86,9 +113,13 @@ public:
 
     Script* add_script(ptr<Script> scr)
     {
+        frog_assert(scr);
         scr->object_ = &get();
-        scripts.push_back(std::move(scr));
-        return scripts.back().get();
+        Script* res = scr.get();
+        added_scripts.push_back(std::move(scr));
+        if (!initialized)
+            addition_removal();
+        return res;
     }
 
     template<typename T, typename... Args>
@@ -102,14 +133,9 @@ public:
 
     bool remove_script(Script* scr)
     {
-        auto rem_it = std::remove_if(scripts.begin(), scripts.end(),
-            [=](const auto& ptr) { return ptr.get() == scr; });
-
-        bool result = rem_it != scripts.end();
-
-        scripts.erase(rem_it, scripts.end());
-
-        return result;
+        removed_scripts.push_back(scr);
+        return std::find_if(scripts.begin(), scripts.end(),
+                [&](const auto& s){ return s.get() == scr; }) != scripts.end();
     }
 
     gx::ui_element* add_element(ptr<gx::ui_element> el)
@@ -132,6 +158,8 @@ public:
 
     void init(Engine& engine)
     {
+        initialized = true;
+        addition_removal();
         // TODO: try_init could be solved better.
         for_each_script([&](auto& sc){ sc.try_init(get(), engine); });
     }
