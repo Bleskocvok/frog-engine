@@ -11,7 +11,8 @@
 
 Simple game engine in C++.
 
-[![Build](https://github.com/Bleskocvok/frog-engine/actions/workflows/build.yml/badge.svg)](https://github.com/Bleskocvok/frog-engine/actions/workflows/build.yml)
+[![Build 2D](https://github.com/Bleskocvok/frog-engine/actions/workflows/build.yml/badge.svg)](https://github.com/Bleskocvok/frog-engine/actions/workflows/build.yml)
+[![Build 3D](https://github.com/Bleskocvok/frog-engine/actions/workflows/build-3d.yml/badge.svg)](https://github.com/Bleskocvok/frog-engine/actions/workflows/build-3d.yml)
 [![Tests](https://github.com/Bleskocvok/frog-engine/actions/workflows/test.yml/badge.svg)](https://github.com/Bleskocvok/frog-engine/actions/workflows/test.yml)
 [![coverage badge](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/wiki/Bleskocvok/frog-engine/lines.md)](https://github.com/Bleskocvok/frog-engine/actions/workflows/loc.yml)
 
