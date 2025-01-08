@@ -1,0 +1,15 @@
+name: Build 3D
+run-name: Build engine & 3D game for push by ${{ github.actor }}
+on: [push]
+
+jobs:
+  run-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+
+      - name: Install required system packages
+        run: sudo apt install libgl1-mesa-dev mesa-common-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev
+
+      - name: Build 3d game
+        run: ./script/build -o bin-game -b Release gen-build game

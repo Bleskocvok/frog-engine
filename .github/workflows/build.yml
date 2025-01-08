@@ -1,5 +1,5 @@
-name: Build
-run-name: Perform build for push by ${{ github.actor }}
+name: Build 2D
+run-name: Build engine & 2D game for push by ${{ github.actor }}
 on: [push]
 
 jobs:
