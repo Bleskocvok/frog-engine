@@ -7,6 +7,8 @@
 #include "frog/font/atlas.hpp"
 #include "frog/font/truetype.hpp"
 
+#include "frog/lib2d/structs.hpp"
+
 #include <utility>      // move
 #include <vector>
 #include <tuple>        // tie
@@ -25,6 +27,13 @@ engine2d::engine2d(settings set, ptr<state> _global)
     , win_raw(static_cast<lib2d::gx::window*>(window.get()))
 {
     renderer = mk_ptr<gx::renderer2d>(static_cast<lib2d::gx::window*>(window.get()));
+
+    if (set.window_icon)
+    {
+        std::string filename = *set.window_icon;
+        lib2d::detail::surface img = lib2d::detail::load_img(filename);
+        win_raw->set_icon( img );
+    }
 }
 
 

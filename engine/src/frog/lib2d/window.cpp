@@ -103,6 +103,12 @@ void window::swap_buffers()
 }
 
 
+void window::set_icon( lib2d::detail::surface& surface )
+{
+    SDL_SetWindowIcon( win.get(), surface.get() );
+}
+
+
 texture window::make_texture( const char* filename ) const
 {
     return texture( renderer, filename );
