@@ -30,7 +30,7 @@ engine2d::engine2d(settings set, ptr<state> _global)
 
     if (set.window_icon)
     {
-        std::string filename = *set.window_icon;
+        std::string filename = global->asset_path() + "/" + *set.window_icon;
         lib2d::detail::surface img = lib2d::detail::load_img(filename);
         win_raw->set_icon( img );
     }
