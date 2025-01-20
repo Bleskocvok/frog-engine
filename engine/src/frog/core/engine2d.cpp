@@ -42,6 +42,7 @@ void engine2d::init()
     scenes->init(*this);
 
     auto prefix = global->asset_path() + "/";
+    // TODO: Load font settings from provided .ini file.
     fonts.add("default", mk_ptr<font::atlas>(*this, prefix + "font.png", "oogabooga.ini"));
 }
 
