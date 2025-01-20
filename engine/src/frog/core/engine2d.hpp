@@ -18,6 +18,7 @@
 #include "frog/font/base.hpp"
 
 #include <string>
+// NOLINTNEXTLINE
 #include <stdexcept>    // exception
 #include <utility>      // move, pair
 

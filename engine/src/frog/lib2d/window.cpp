@@ -8,7 +8,6 @@
 #include <stdexcept>    // runtime_error
 #include <string>       // ""s
 
-#include "frog/utils/debug.hpp"
 namespace frog::lib2d::gx
 {
 

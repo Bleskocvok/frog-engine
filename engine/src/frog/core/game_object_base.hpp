@@ -3,10 +3,7 @@
 #include "frog/graphics/ui_element.hpp"
 #include "frog/utils/ptr.hpp"
 #include "frog/utils/assert.hpp"
-#include "frog/utils/debug.hpp"
-#include "frog/utils/utils.hpp"
 
-#include <stdexcept>
 #include <vector>
 #include <algorithm>    // for_each
 #include <string>
