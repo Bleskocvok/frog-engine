@@ -4,6 +4,7 @@
 
 #include "frog/core/engine2d.hpp"
 
+#include <utility>      // move
 
 namespace frog::font {
 
@@ -26,12 +27,22 @@ void truetype::draw(frog::engine2d& engine, const std::string& str,
 {
     pos.x() += size(str, height).x() / 2;
 
-    // TODO: Figure out a good OOP way to make this not horribly inefficient.
-    auto surf = font_.render_text(str, color.r(), color.g(), color.b(), color.a());
-    auto texture = engine.win_raw->make_texture(surf);
+    auto* cached = texture_cache.get(str);
+    if (cached)
+    {
+        engine.draw_sprite(*cached, { pos, size(str, height) }, { 0, 0, 1, 1 },
+                           color);
+    }
+    else
+    {
+        auto surf = font_.render_text(str, 255, 255, 255, 255);
+        auto texture = engine.win_raw->make_texture(surf);
 
-    engine.draw_sprite(texture, { pos, size(str, height) }, { 0, 0, 1, 1 },
-                       gx::colors::white);
+        engine.draw_sprite(texture, { pos, size(str, height) }, { 0, 0, 1, 1 },
+                           color);
+
+        texture_cache.put(str, std::move(texture));
+    }
 }
 
 
