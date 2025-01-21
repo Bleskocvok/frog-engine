@@ -191,10 +191,11 @@ void engine2d::draw_objects(double /* between */)
 }
 
 
-void engine2d::draw_text(const std::string& str, geo::vec2 pos, float height,
-                         gx::rgba_t color, bool centered)
+void engine2d::draw_text(const std::string& font_name, const std::string& str,
+                         geo::vec2 pos, float height, gx::rgba_t color,
+                         bool centered)
 {
-    auto& font = fonts.at("default");
+    auto& font = fonts.at(font_name);
 
     if (centered)
         pos.x() -= font.size(str, height).x() / 2;
@@ -278,7 +279,8 @@ void engine2d::draw_ui(double)
 
             if (elem->label)
             {
-                draw_text(elem->label->str,
+                draw_text(elem->label->font,
+                          elem->label->str,
                           elem->pos(),
                           elem->size().y() * elem->label->height,
                           elem->label->color,

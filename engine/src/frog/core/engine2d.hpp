@@ -44,8 +44,8 @@ class engine2d : public engine_base<engine2d, game_object2d, lib2d::os::timer>
 
     std::pair<geo::vec2, geo::vec2> scale_shift() const;
 
-    void draw_text(const std::string& str, geo::vec2 pos, float height,
-                   gx::rgba_t color, bool centered);
+    void draw_text(const std::string& font_name, const std::string& str,
+                   geo::vec2 pos, float height, gx::rgba_t color, bool centered);
 
     void draw_sprite(const lib2d::gx::texture& tex, geo::rect dest, geo::rect uv,
                      gx::rgba_t color);
