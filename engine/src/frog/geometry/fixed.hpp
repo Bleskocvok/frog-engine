@@ -52,6 +52,32 @@ public:
         *this /= denominator;
     }
 
+    static fixed min()
+    {
+        fixed n;
+        unsigned char* data = reinterpret_cast< unsigned char* >( &n.value );
+
+        int end = 1;
+        // little or big endian
+        if ( reinterpret_cast< unsigned char* >( &end )[ 0 ] == 1 )
+            data[ sizeof( Integral ) - 1 ] = 0x80;
+        else
+            data[ 0 ] = 0x80;
+        return n;
+    }
+
+    static fixed max()
+    {
+        fixed n;
+        n.value = 1;
+        for ( unsigned i = 0; i < sizeof( Integral ) * 8 - 2; i++ )
+        {
+            n.value <<= 1;
+            n.value += 1;
+        }
+        return n;
+    }
+
     operator double() const
     {
         Integral n = to< Integral >();
