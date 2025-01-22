@@ -24,6 +24,7 @@ class fixed
     static_assert( Integral( -4 ) >> 1 == -2,
         "Necessary for arithmetics to work." );
 
+    // and neither is this
     static_assert( 1 + ~Integral( 0xABCD ) == -0xABCD,
         "This platform must be using two's complement" );
 
@@ -236,6 +237,7 @@ public:
 
     friend std::ostream& operator<<( std::ostream& out, fixed a )
     {
+        // TODO: Actually convert it digit by digit and print it exactly.
         return out << double( a );
     }
 };
