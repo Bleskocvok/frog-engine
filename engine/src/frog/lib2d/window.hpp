@@ -60,6 +60,8 @@ namespace frog::lib2d::gx
 
         texture make_texture( lib2d::detail::surface& surface ) const;
 
+        void set_icon( lib2d::detail::surface& surface );
+
         void draw( const texture& tex, int u, int v, int cut_width, int cut_height,
                 int x, int y, int tex_width, int tex_height );
 

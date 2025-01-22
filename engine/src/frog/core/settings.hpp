@@ -2,6 +2,7 @@
 
 #include <filesystem>   // path
 #include <string>
+#include <optional>
 
 
 namespace frog
@@ -42,6 +43,7 @@ struct settings
     std::string save_path;
     std::string asset_path;
 
+    std::optional<std::string> window_icon;
 
     void assign_path(const fs::path& executable)
     {

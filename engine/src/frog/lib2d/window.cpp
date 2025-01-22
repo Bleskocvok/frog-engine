@@ -8,7 +8,6 @@
 #include <stdexcept>    // runtime_error
 #include <string>       // ""s
 
-#include "frog/utils/debug.hpp"
 namespace frog::lib2d::gx
 {
 
@@ -100,6 +99,12 @@ void window::clear()
 void window::swap_buffers()
 {
     SDL_RenderPresent( renderer.get() );
+}
+
+
+void window::set_icon( lib2d::detail::surface& surface )
+{
+    SDL_SetWindowIcon( win.get(), surface.get() );
 }
 
 

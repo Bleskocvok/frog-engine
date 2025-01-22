@@ -18,8 +18,7 @@ struct text
     float height = 1;   // relative to its parent's height
     bool centered = false;
     gx::rgba_t color = gx::colors::white;
-    // TODO: Add font setting.
-    // std::string font;
+    std::string font = "default";
 };
 
 

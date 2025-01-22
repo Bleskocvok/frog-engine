@@ -7,6 +7,8 @@
 #include "frog/font/atlas.hpp"
 #include "frog/font/truetype.hpp"
 
+#include "frog/lib2d/structs.hpp"
+
 #include <utility>      // move
 #include <vector>
 #include <tuple>        // tie
@@ -25,6 +27,13 @@ engine2d::engine2d(settings set, ptr<state> _global)
     , win_raw(static_cast<lib2d::gx::window*>(window.get()))
 {
     renderer = mk_ptr<gx::renderer2d>(static_cast<lib2d::gx::window*>(window.get()));
+
+    if (set.window_icon)
+    {
+        std::string filename = global->asset_path() + "/" + *set.window_icon;
+        lib2d::detail::surface img = lib2d::detail::load_img(filename);
+        win_raw->set_icon( img );
+    }
 }
 
 
@@ -33,6 +42,7 @@ void engine2d::init()
     scenes->init(*this);
 
     auto prefix = global->asset_path() + "/";
+    // TODO: Load font settings from provided .ini file.
     fonts.add("default", mk_ptr<font::atlas>(*this, prefix + "font.png", "oogabooga.ini"));
 }
 
@@ -181,10 +191,11 @@ void engine2d::draw_objects(double /* between */)
 }
 
 
-void engine2d::draw_text(const std::string& str, geo::vec2 pos, float height,
-                         gx::rgba_t color, bool centered)
+void engine2d::draw_text(const std::string& font_name, const std::string& str,
+                         geo::vec2 pos, float height, gx::rgba_t color,
+                         bool centered)
 {
-    auto& font = fonts.at("default");
+    auto& font = fonts.at(font_name);
 
     if (centered)
         pos.x() -= font.size(str, height).x() / 2;
@@ -268,7 +279,8 @@ void engine2d::draw_ui(double)
 
             if (elem->label)
             {
-                draw_text(elem->label->str,
+                draw_text(elem->label->font,
+                          elem->label->str,
                           elem->pos(),
                           elem->size().y() * elem->label->height,
                           elem->label->color,

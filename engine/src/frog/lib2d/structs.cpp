@@ -19,6 +19,21 @@ namespace frog::lib2d::detail
     // TTF
     void deleter::operator()( TTF_Font* font ) { TTF_CloseFont(font); }
 
+    surface load_img( const std::string& filename )
+    {
+        using namespace std::string_literals;
+        surface img{ IMG_Load( filename.c_str() ) };
+        if ( !img )
+        {
+            throw std::runtime_error( ( "load_img: Cannot load file '"s )
+                                        + filename
+                                        + "': "
+                                        + IMG_GetError() );
+        }
+
+        return img;
+    }
+
 }  // namespace frog::lib2d::detail
 
 #endif

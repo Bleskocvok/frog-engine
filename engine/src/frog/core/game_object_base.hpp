@@ -3,10 +3,7 @@
 #include "frog/graphics/ui_element.hpp"
 #include "frog/utils/ptr.hpp"
 #include "frog/utils/assert.hpp"
-#include "frog/utils/debug.hpp"
-#include "frog/utils/utils.hpp"
 
-#include <stdexcept>
 #include <vector>
 #include <algorithm>    // for_each
 #include <string>
@@ -122,6 +119,7 @@ public:
         return res;
     }
 
+    /// Create script in-place.
     template<typename T, typename... Args>
     T* mk_script(Args&&... args)
     {
@@ -138,6 +136,8 @@ public:
                 [&](const auto& s){ return s.get() == scr; }) != scripts.end();
     }
 
+    // TODO: Add create_element(Args... args) method (or mk_element, whichever
+    // fits better my naming).
     gx::ui_element* add_element(ptr<gx::ui_element> el)
     {
         _elements.push_back(std::move(el));

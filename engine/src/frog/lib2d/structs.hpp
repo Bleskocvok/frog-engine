@@ -7,6 +7,7 @@
 // #include SDL_TTF_HEADER
 
 #include <memory>       // unique_ptr
+#include <string>
 
 struct SDL_Surface;
 struct SDL_Texture;
@@ -44,6 +45,8 @@ namespace frog::lib2d::detail
 
     // TTF
     using font = std::unique_ptr<TTF_Font, deleter>;
+
+    surface load_img( const std::string& filename );
 
 }  // namespace frog::lib2d::detail
 
