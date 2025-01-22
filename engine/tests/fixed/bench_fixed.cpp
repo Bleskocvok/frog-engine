@@ -5,13 +5,12 @@
 #include <cstdio>       // printf
 #include <chrono>       // chrono::*
 #include <vector>       // vector
-#include <cmath>        // fabs
 #include <iomanip>      // setw, setprecision
 
 
 template< typename T >
-T plus( [[maybe_unused]] double a,
-        [[maybe_unused]] double b, T x, T y )
+T plus( [[maybe_unused]] T a,
+        [[maybe_unused]] T b, T x, T y )
 {
     T sum = 0;
     sum += x + y;
@@ -21,31 +20,58 @@ T plus( [[maybe_unused]] double a,
 
 
 template< typename T >
-T mult( double a, double b, T x, T y )
+T minus( [[maybe_unused]] T a,
+         [[maybe_unused]] T b, T x, T y )
+{
+    T sum = 0;
+    sum += -x - x;
+    sum -= y - x + y;
+    return sum;
+}
+
+
+template< typename T >
+T mult( [[maybe_unused]] T a, [[maybe_unused]] T b, T x, T y )
 {
     T sum = 0;
     sum += x * y;
     sum += y * x;
-    if ( std::fabs( b ) >= 0.5 ) sum += x / y;
-    if ( std::fabs( a ) >= 0.5 ) sum += y / x;
+    return sum;
+}
+
+
+template< typename T >
+T mult_div( T a, T b, T x, T y )
+{
+    T sum = 0;
+    sum += x * y;
+    sum += y * x;
+    auto top = T( 1 ) / T( 2 );
+    auto bottom = -top;
+    if ( b <= bottom || b >= top ) sum += x / y;
+    if ( a <= bottom || a >= top ) sum += y / x;
     return sum;
 }
 
 
 template< typename T, typename Op >
-void bench( double min, double max, double step, Op op )
+void bench( T min, T step, long long count, Op op )
 {
     using namespace std;
 
-    long long count = ( ( max - min ) / step );
-    auto results = std::vector< T >( count, T( 0 ) );
+    step = T( 1 ) / step;
+
+    auto results = std::vector< T >();
+    results.reserve(count);
 
     auto start = chrono::steady_clock::now();
 
-    for ( double a = min; a <= max; a += step )
+    T a = min;
+    for ( long long i = 0; i < count; a += step, i++)
     {
         T sum = 0;
-        for ( double b = min; b <= max; b += step )
+        T b = min;
+        for ( long long j = 0; j < count; b += step, j++)
         {
             T x = a;
             T y = b;
@@ -75,7 +101,7 @@ void bench( double min, double max, double step, Op op )
 #define BENCH( T, op ) \
     {   std::cout << std::setw( 20 ) << #T << " (" \
                   << std::setw( 2 ) << sizeof( T ) << " B)  "; \
-        bench< T >( -100, 100, 0.01, op ); \
+        bench< T >( -100, 100, 20000, op ); \
         std::cout << std::endl;   }
 
 
@@ -84,9 +110,14 @@ int main()
     using namespace frog::geo;
 
     auto pl = [](auto... args){ return plus(args...); };
+    auto mi = [](auto... args){ return minus(args...); };
     auto mul = [](auto... args){ return mult(args...); };
+    auto muldiv = [](auto... args){ return mult_div(args...); };
 
     std::cout.precision( 6 );
+
+    std::cout << "fx32: " << "< " <<  fx32::min() << "; " << fx32::max() << " >" << "\n";
+    std::cout << "fx64: " << "< " <<  fx64::min() << "; " << fx64::max() << " >" << "\n" << std::endl;
 
     std::printf( "PLUS\n" );
     BENCH( fx64, pl );
@@ -95,12 +126,26 @@ int main()
     BENCH( float, pl );
     BENCH( long double, pl );
 
+    std::printf( "MINUS\n" );
+    BENCH( fx64, mi );
+    BENCH( fx32, mi );
+    BENCH( double, mi );
+    BENCH( float, mi );
+    BENCH( long double, mi );
+
     std::printf( "MULT\n" );
     BENCH( fx64, mul );
     BENCH( fx32, mul );
     BENCH( double, mul );
     BENCH( float, mul );
     BENCH( long double, mul );
+
+    std::printf( "MULT & DIV\n" );
+    BENCH( fx64, muldiv );
+    BENCH( fx32, muldiv );
+    BENCH( double, muldiv );
+    BENCH( float, muldiv );
+    BENCH( long double, muldiv );
 
     return 0;
 }

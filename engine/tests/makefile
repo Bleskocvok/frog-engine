@@ -34,12 +34,15 @@ test_geometry: test_geometry.cpp $(GEO_DEPS)
 test_fixed: fixed/test_fixed.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
+bench_fixed: fixed/bench_fixed.cpp
+	$(CXX) $(CXXFLAGS) -o $@ $^
+
 test_string: test_string.cpp $(STR_DEPS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
 clean:
 
 distclean:
-	-$(RM) $(TESTS)
+	-$(RM) $(TESTS) bench_fixed
 
 .PHONY: clean distclean all run_all
