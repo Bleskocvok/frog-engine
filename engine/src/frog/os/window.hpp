@@ -11,7 +11,7 @@
 #include <memory>       // unique_ptr
 #include <stdexcept>    // runtime_error
 
-#include "frog/utils/debug.hpp"
+#include "frog/debug.hpp"
 #include "frog/utils/todo.hpp"
 
 namespace frog::os

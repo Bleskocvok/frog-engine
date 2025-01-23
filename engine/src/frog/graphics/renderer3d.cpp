@@ -4,7 +4,7 @@
 
 #include "renderer3d.hpp"
 
-#include "frog/utils/debug.hpp"
+#include "frog/debug.hpp"
 
 
 void frog::gl::renderer3d::gl_settings()
