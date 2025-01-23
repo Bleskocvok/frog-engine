@@ -21,13 +21,19 @@ struct fps_script : frog::script2d
 
     frog::gx::ui_element* display = nullptr;
 
+    frog::geo::vec2 pos = { -0.5, -0.5 };
+
+    explicit fps_script(frog::geo::vec2 pos) : pos(pos) {}
+
+    fps_script() = default;
+
     void init(frog::game_object2d& object, frog::engine2d&) override
     {
         using namespace frog;
 
         display = object.add_element(mk_ptr<gx::ui_element>());
         display->label = { "fps: -", 1 };
-        display->pos() = geo::vec2(-0.5, -0.5 + label_height * 0.5);
+        display->pos() = pos + geo::vec2(0, label_height * 0.5);
         display->size() = { label_height };
     }
 
