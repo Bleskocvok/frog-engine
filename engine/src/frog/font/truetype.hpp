@@ -66,6 +66,7 @@ class truetype : public base
 {
     lib2d::font font_;
 
+    // TODO: Limit the amount of memory cache can take up.
     static constexpr int CACHE_SIZE = 1000;
     cache<std::string, frog::lib2d::gx::texture> texture_cache{ CACHE_SIZE };
 

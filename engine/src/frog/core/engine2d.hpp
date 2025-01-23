@@ -91,7 +91,7 @@ public:
                         const std::string& config);
 
     bool add_truetype_font(const std::string& tag, std::string path,
-                           int size = 256, bool outline = false);
+                           int size = 64, bool outline = false);
 };
 
 
