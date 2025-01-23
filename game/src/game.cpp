@@ -5,7 +5,6 @@
 
 #include "frog/utils/fs.hpp"
 #include "frog/utils/ptr.hpp"
-#include "frog/utils/debug.hpp"
 
 #include "constants.hpp"
 #include "paddle_script.hpp"

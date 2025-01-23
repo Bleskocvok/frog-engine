@@ -8,8 +8,6 @@
 #include "ball_script.hpp"
 #include "constants.hpp"
 
-#include "frog/utils/debug.hpp"
-
 
 struct paddle_script : frog::script
 {

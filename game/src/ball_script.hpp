@@ -1,7 +1,6 @@
 #pragma once
 
 #include "frog/core/script.hpp"
-#include "frog/utils/debug.hpp"
 
 #include "constants.hpp"
 #include "wall_script.hpp"

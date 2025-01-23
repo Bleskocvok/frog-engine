@@ -3,7 +3,6 @@
 #include "frog/core/script.hpp"
 #include "frog/geometry/general.hpp"
 #include "frog/geometry/paddle.hpp"
-#include "frog/utils/debug.hpp"
 
 #include "bounce_script.hpp"
 #include "constants.hpp"

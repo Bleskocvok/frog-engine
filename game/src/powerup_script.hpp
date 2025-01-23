@@ -5,7 +5,6 @@
 #include "frog/geometry/general.hpp"
 #include "frog/geometry/paddle.hpp"
 #include "frog/geometry/polar.hpp"
-#include "frog/utils/debug.hpp"
 
 #include "constants.hpp"
 
