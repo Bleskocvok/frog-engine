@@ -32,7 +32,7 @@ class button_script_base : public Script
 
     enum state_t { idling, hovering, pressing };
 
-    void set_state(state_t next)
+    void set_state(state_t next, typename Script::GameObject& obj)
     {
         if (state == next)
             return;
@@ -44,9 +44,9 @@ class button_script_base : public Script
 
         switch (state)
         {
-            case idling:   style->idle(*ui);  break;
-            case hovering: style->hover(*ui); break;
-            case pressing: style->press(*ui); break;
+            case idling:   style->idle(obj);  break;
+            case hovering: style->hover(obj); break;
+            case pressing: style->press(obj); break;
         }
     }
 
@@ -55,28 +55,31 @@ public:
     frog::gx2d::sprite hover;
     frog::gx2d::sprite press;
     frog::ptr<frog::button_action> action = nullptr;
-    frog::ptr<frog::button_style> style = nullptr;
+    frog::ptr<frog::button_style_base<typename Script::GameObject>> style = nullptr;
 
     state_t state = idling;
 
-    button_script_base(/*frog::gx2d::sprite normal, frog::gx2d::sprite hover,
-                       frog::gx2d::sprite press,*/
-                       frog::ptr<frog::button_action> action = nullptr,
-                       frog::ptr<frog::button_style> style = nullptr)
-        : action(std::move(action)),
-          style(std::move(style)) {}
+    button_script_base(frog::ptr<frog::button_action> b_action = nullptr,
+                       decltype(style) b_style = nullptr)
+        : action(std::move(b_action)),
+          style(std::move(b_style)) {}
 
     void init(typename Script::GameObject& obj, typename Script::Engine&) override
     {
         using namespace frog;
 
-        // TODO: Refactor this.
+        if (style)
+        {
+            style->init(obj);
+            style->idle(obj);
+        }
+
+        // TODO: Still not happy about this. It's strange to use the rectangle
+        // from ui for button dimensions.
         if (obj.elements().empty())
-            ui = obj.add_element(mk_ptr<gx::ui_element>());
+            ui = obj.add_element(frog::mk_ptr<gx::ui_element>());
         else
             ui = obj.elements().front().get();
-
-        if (style) style->idle(*ui);
     }
 
     void frame_update(typename Script::GameObject& obj, typename Script::Engine& engine) override
@@ -103,17 +106,20 @@ public:
             if (action) action->frame_holding();
 
         if (down)
-            set_state(pressing);
+            set_state(pressing, obj);
         else if (collides)
-            set_state(hovering);
+            set_state(hovering, obj);
         else
-            set_state(idling);
+            set_state(idling, obj);
     }
 
     void stable_update(typename Script::GameObject& obj, typename Script::Engine& engine) override
     {
         if (down)
             if (action) action->stable_holding();
+
+        if (style)
+            style->stable_update(obj);
     }
 
     bool is_down() const
