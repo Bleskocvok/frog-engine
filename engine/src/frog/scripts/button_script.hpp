@@ -54,12 +54,12 @@ public:
     frog::gx2d::sprite normal;
     frog::gx2d::sprite hover;
     frog::gx2d::sprite press;
-    frog::ptr<frog::button_action> action = nullptr;
+    frog::ptr<frog::button_action_base<typename Script::GameObject>> action = nullptr;
     frog::ptr<frog::button_style_base<typename Script::GameObject>> style = nullptr;
 
     state_t state = idling;
 
-    button_script_base(frog::ptr<frog::button_action> b_action = nullptr,
+    button_script_base(decltype(action) b_action = nullptr,
                        decltype(style) b_style = nullptr)
         : action(std::move(b_action)),
           style(std::move(b_style)) {}
@@ -113,7 +113,8 @@ public:
             set_state(idling, obj);
     }
 
-    void stable_update(typename Script::GameObject& obj, typename Script::Engine& engine) override
+    void stable_update(typename Script::GameObject& obj,
+                       typename Script::Engine& engine) override
     {
         if (down)
             if (action) action->stable_holding();

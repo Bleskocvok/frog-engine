@@ -1,7 +1,6 @@
 #pragma once
 
 #include "frog/core/script.hpp"
-#include "frog/graphics/ui_element.hpp"
 
 
 namespace frog
