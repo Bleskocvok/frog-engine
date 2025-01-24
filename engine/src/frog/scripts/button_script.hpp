@@ -54,7 +54,8 @@ public:
     frog::gx2d::sprite normal;
     frog::gx2d::sprite hover;
     frog::gx2d::sprite press;
-    frog::ptr<frog::button_action_base<typename Script::GameObject>> action = nullptr;
+    frog::ptr<frog::button_action_base<typename Script::GameObject,
+                                       typename Script::Engine>> action = nullptr;
     frog::ptr<frog::button_style_base<typename Script::GameObject>> style = nullptr;
 
     state_t state = idling;
@@ -82,7 +83,8 @@ public:
             ui = obj.elements().front().get();
     }
 
-    void frame_update(typename Script::GameObject& obj, typename Script::Engine& engine) override
+    void frame_update(typename Script::GameObject& obj,
+                      typename Script::Engine& engine) override
     {
         using namespace frog;
 
@@ -99,11 +101,19 @@ public:
         if (l_released)
         {
             if (down && collides)
-                if (action) action->action();
+                if (action)
+                {
+                    action->action();
+                    action->action(obj, engine);
+                }
             down = false;
         }
         else if (down)
-            if (action) action->frame_holding();
+            if (action)
+            {
+                action->frame_holding();
+                action->frame_holding(obj, engine);
+            }
 
         if (down)
             set_state(pressing, obj);
@@ -117,7 +127,11 @@ public:
                        typename Script::Engine& engine) override
     {
         if (down)
-            if (action) action->stable_holding();
+            if (action)
+            {
+                action->stable_holding();
+                action->stable_holding(obj, engine);
+            }
 
         if (style)
             style->stable_update(obj);
