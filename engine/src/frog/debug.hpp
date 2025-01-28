@@ -6,6 +6,7 @@
 
 #define LOGX(x) frog::log_ln(#x, "→", x)
 #define LOG(...) frog::log_ln(__VA_ARGS__ )
+#define LOG_FUNC(...) frog::log_ln("Log function:", __func__  __VA_OPT__(,) __VA_ARGS__)
 
 
 namespace frog
