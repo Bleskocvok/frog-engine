@@ -3,10 +3,12 @@
 #include "frog/graphics/ui_element.hpp"
 #include "frog/utils/ptr.hpp"
 
+#include <tuple>
+
 namespace frog {
 
 template<typename GameObject>
-void build_frame(frog::geo::rect rect, GameObject& obj,
+auto build_frame(frog::geo::rect rect, GameObject& obj,
                  const std::string& image_tag, float around = 0)
 {
     using namespace frog::geo;
@@ -63,6 +65,10 @@ void build_frame(frog::geo::rect rect, GameObject& obj,
 
     br->sprite.rect.pos = rect.bot_right();
     br->sprite.tex.pos = { 1 - tex_size.x(), 1 - tex_size.y() };
+
+    // Clockwise: 0 1 2 3 4 5 6 7
+    //            ↑ ↗ → ↘ ↓ ↙ ← ↖
+    return std::tuple{ t, tr, r, br, b, bl, l, tl };
 }
 
 } // namespace frog
