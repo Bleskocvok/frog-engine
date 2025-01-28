@@ -3,7 +3,7 @@
 #include "frog/graphics/ui_element.hpp"
 #include "frog/utils/ptr.hpp"
 
-#include <tuple>
+#include <array>
 
 namespace frog {
 
@@ -68,7 +68,7 @@ auto build_frame(frog::geo::rect rect, GameObject& obj,
 
     // Clockwise: 0 1 2 3 4 5 6 7
     //            ↑ ↗ → ↘ ↓ ↙ ← ↖
-    return std::tuple{ t, tr, r, br, b, bl, l, tl };
+    return std::array<frog::gx::ui_element*, 8>{ t, tr, r, br, b, bl, l, tl };
 }
 
 } // namespace frog
