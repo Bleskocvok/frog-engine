@@ -18,7 +18,11 @@ void log(Arg&& arg, Args&& ... args)
 {
     auto& out = std::clog;
 
-    if constexpr (std::is_same_v<std::decay_t<Arg>, std::string>)
+    if constexpr (std::is_same_v<std::decay_t<Arg>, bool>)
+    {
+        out << (arg ? "true" : "false");
+    }
+    else if constexpr (std::is_same_v<std::decay_t<Arg>, std::string>)
     {
         out << arg;
     }
