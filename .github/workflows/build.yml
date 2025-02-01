@@ -9,7 +9,9 @@ jobs:
       - uses: actions/checkout@main
 
       - name: Install system dependencies
-        run: sudo apt install libfreetype-dev
+        run: |
+            sudo apt update
+            sudo apt install libfreetype-dev
 
       - name: Build cache setup
         id: build-cache
