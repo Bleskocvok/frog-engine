@@ -9,7 +9,9 @@ jobs:
       - uses: actions/checkout@main
 
       - name: Install required system packages
-        run: sudo apt install libgl1-mesa-dev mesa-common-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev
+        run: |
+            sudo apt update
+            sudo apt install libgl1-mesa-dev mesa-common-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev
 
       - name: Build 3d game
         run: ./script/build -o bin-game -b Release gen-build game
