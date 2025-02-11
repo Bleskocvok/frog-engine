@@ -3,9 +3,10 @@
 #include <iostream>         // clog
 #include <type_traits>      // is_same_v
 #include <string>           // string
+#include <ostream>          // ostream
 
 #define LOGX(x) frog::log_ln(#x, "→", x)
-#define LOG(...) frog::log_ln(__VA_ARGS__ )
+#define LOG(...) frog::log_ln(__VA_ARGS__)
 #define LOG_FUNC(...) frog::log_ln("Log function:", __func__  __VA_OPT__(,) __VA_ARGS__)
 
 
@@ -14,10 +15,8 @@ namespace frog
 
 
 template<typename Arg, typename ... Args>
-void log(Arg&& arg, Args&& ... args)
+void log(std::ostream& out, Arg&& arg, Args&& ... args)
 {
-    auto& out = std::clog;
-
     if constexpr (std::is_same_v<std::decay_t<Arg>, bool>)
     {
         out << (arg ? "true" : "false");
@@ -29,9 +28,9 @@ void log(Arg&& arg, Args&& ... args)
     else if constexpr (requires{ arg.first; arg.second; })
     {
         out << "< ";
-        log(arg.first);
+        log(out, arg.first);
         out << ", ";
-        log(arg.second);
+        log(out, arg.second);
         out << " >";
     }
     else if constexpr (requires{ arg.begin(); arg.end(); })
@@ -44,7 +43,7 @@ void log(Arg&& arg, Args&& ... args)
             {
                 out << del;
                 del = ", ";
-                log(*it);
+                log(out, *it);
             }
             out << " ]";
         }
@@ -57,7 +56,7 @@ void log(Arg&& arg, Args&& ... args)
     if constexpr (sizeof...(Args) != 0)
     {
         out << " ";
-        log(std::forward<Args>(args)...);
+        log(out, std::forward<Args>(args)...);
     }
 }
 
@@ -65,7 +64,7 @@ void log(Arg&& arg, Args&& ... args)
 template<typename ... Args>
 void log_ln(Args&& ... args)
 {
-    log(std::forward<Args>(args)...);
+    log(std::clog, std::forward<Args>(args)...);
     std::clog << "\n" << std::flush;
 }
 
