@@ -2,12 +2,13 @@
 
 #include <iostream>         // clog
 #include <type_traits>      // is_same_v
-#include <string>           // string
 #include <ostream>          // ostream
 
 #define LOGX(x) frog::log_ln(#x, "→", x)
 #define LOG(...) frog::log_ln(__VA_ARGS__)
 #define LOG_FUNC(...) frog::log_ln("Log function:", __func__  __VA_OPT__(,) __VA_ARGS__)
+// Just because it sounds funny.
+#define FLOG(x) frog::log_ln(#x, "→", x)
 
 
 namespace frog
@@ -21,7 +22,7 @@ void log(std::ostream& out, Arg&& arg, Args&& ... args)
     {
         out << (arg ? "true" : "false");
     }
-    else if constexpr (std::is_same_v<std::decay_t<Arg>, std::string>)
+    else if constexpr (requires{ out << arg; })
     {
         out << arg;
     }
@@ -43,6 +44,7 @@ void log(std::ostream& out, Arg&& arg, Args&& ... args)
             {
                 out << del;
                 del = ", ";
+                // TODO: Make sure this cannot loop forever.
                 log(out, *it);
             }
             out << " ]";
@@ -51,7 +53,7 @@ void log(std::ostream& out, Arg&& arg, Args&& ... args)
             out << "[]";
     }
     else
-        out << arg;
+        []<bool kil = true>{ static_assert(!kil, "cannot log this type (Arg)"); };
 
     if constexpr (sizeof...(Args) != 0)
     {
