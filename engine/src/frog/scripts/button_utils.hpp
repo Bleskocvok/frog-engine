@@ -9,12 +9,12 @@ namespace frog {
 
 template<typename GameObject>
 auto build_frame(frog::geo::rect rect, GameObject& obj,
-                 const std::string& image_tag, float around = 0)
+                 const std::string& image_tag,
+                 frog::geo::vec2 tex_size = { 5 / 32.0, 5 / 16.0 },
+                 frog::geo::vec2 elem_size = { 0.02, 0.02 },
+                 float around = 0)
 {
     using namespace frog::geo;
-
-    const vec2 tex_size = { 5 / 32.0, 5 / 16.0 };
-    const vec2 elem_size = { 0.02, 0.02 };
 
     rect.size -= elem_size;
     rect.size += around * elem_size * 2;
