@@ -2,21 +2,34 @@
 
 #include <iostream>         // clog
 #include <type_traits>      // is_same_v
-#include <ostream>          // ostream
 
-#define LOGX(x) frog::log_ln(#x, "→", x)
 #define LOG(...) frog::log_ln(__VA_ARGS__)
 #define LOG_FUNC(...) frog::log_ln("Log function:", __func__  __VA_OPT__(,) __VA_ARGS__)
 // Just because it sounds funny.
 #define FLOG(x) frog::log_ln(#x, "→", x)
 
+#define FROG_UNWRAPE(x, ...) "err", [](){ static_assert(false, "maximum ten arguments supported"); return 1; }()
+#define FROG_UNWRAP9(x, ...) #x, x __VA_OPT__(, FROG_UNWRAPE( __VA_ARGS__ ))
+#define FROG_UNWRAP8(x, ...) #x, x __VA_OPT__(, FROG_UNWRAP9( __VA_ARGS__ ))
+#define FROG_UNWRAP7(x, ...) #x, x __VA_OPT__(, FROG_UNWRAP8( __VA_ARGS__ ))
+#define FROG_UNWRAP6(x, ...) #x, x __VA_OPT__(, FROG_UNWRAP7( __VA_ARGS__ ))
+#define FROG_UNWRAP5(x, ...) #x, x __VA_OPT__(, FROG_UNWRAP6( __VA_ARGS__ ))
+#define FROG_UNWRAP4(x, ...) #x, x __VA_OPT__(, FROG_UNWRAP5( __VA_ARGS__ ))
+#define FROG_UNWRAP3(x, ...) #x, x __VA_OPT__(, FROG_UNWRAP4( __VA_ARGS__ ))
+#define FROG_UNWRAP2(x, ...) #x, x __VA_OPT__(, FROG_UNWRAP3( __VA_ARGS__ ))
+#define FROG_UNWRAP1(x, ...) #x, x __VA_OPT__(, FROG_UNWRAP2( __VA_ARGS__ ))
+#define FROG_UNWRAP0(x, ...) #x, x __VA_OPT__(, FROG_UNWRAP1( __VA_ARGS__ ))
 
-namespace frog
-{
+#define LOGX(...) frog::log_vars(FROG_UNWRAP0(__VA_ARGS__))
 
+#define FROG_VERBOSE() frog::log<false>(std::clog, __FILE__, ":", __LINE__, " (", __func__, "): ")
+#define LOGV(...)  ( FROG_VERBOSE(),  LOG(__VA_ARGS__) )
+#define LOGVX(...) ( FROG_VERBOSE(), LOGX(__VA_ARGS__) )
 
-template<typename Arg, typename ... Args>
-void log(std::ostream& out, Arg&& arg, Args&& ... args)
+namespace frog {
+
+template<bool Space, typename Out, typename Arg, typename ... Args>
+void log(Out& out, Arg&& arg, Args&& ... args)
 {
     if constexpr (std::is_same_v<std::decay_t<Arg>, bool>)
     {
@@ -57,8 +70,9 @@ void log(std::ostream& out, Arg&& arg, Args&& ... args)
 
     if constexpr (sizeof...(Args) != 0)
     {
-        out << " ";
-        log(out, std::forward<Args>(args)...);
+        if constexpr (Space)
+            out << " ";
+        log<Space>(out, std::forward<Args>(args)...);
     }
 }
 
@@ -66,10 +80,28 @@ void log(std::ostream& out, Arg&& arg, Args&& ... args)
 template<typename ... Args>
 void log_ln(Args&& ... args)
 {
-    log(std::clog, std::forward<Args>(args)...);
+    log<true>(std::clog, std::forward<Args>(args)...);
     std::clog << "\n" << std::flush;
 }
 
 
-} // namespace frog
+template<typename Val, typename... Args>
+void log_vars_rec(const char* var, Val&& val, Args&&... args)
+{
+    log<true>(std::clog, var, "→", val);
 
+    if constexpr (sizeof...(Args) != 0)
+    {
+        log<false>(std::clog, ", ");
+        log_vars_rec(std::forward<Args>(args)...);
+    }
+}
+
+template<typename... Args>
+void log_vars(Args&&... args)
+{
+    log_vars_rec(std::forward<Args>(args)...);
+    std::clog << "\n" << std::flush;
+}
+
+} // namespace frog
