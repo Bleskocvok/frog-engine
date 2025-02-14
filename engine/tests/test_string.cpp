@@ -97,3 +97,36 @@ escape = " escape \" these "
 
     REQUIRE_EQ(std::string(ini), std::string(to_str));
 }
+
+#include "frog/debug.hpp"
+#include <sstream>
+#include <utility>
+
+struct looper
+{
+    int val = 0;
+
+    looper begin() const { return *this; }
+    looper end()          const { return { .val = 1, }; }
+
+    friend bool operator==(looper a, looper b) { return a.val == b.val; }
+    friend bool operator!=(looper a, looper b) { return !(a == b); }
+
+    auto& operator++() { val++; return *this; }
+    auto& operator*() { return *this; }
+};
+
+TEST_CASE("debug")
+{
+    {
+        auto out = std::ostringstream{};
+        frog::log<true, 10>(out, std::pair{ 1, "a" }, std::vector{ 1, 2, 3 });
+        REQUIRE_EQ(out.str(), "< 1, a > [ 1, 2, 3 ]");
+    }
+
+    {
+        auto out = std::ostringstream{};
+        frog::log<true, 10>(out, looper{});
+        REQUIRE_EQ(out.str(), "[ [ [ [ [ [ [ [ [ [ ... ] ] ] ] ] ] ] ] ] ]");
+    }
+}
