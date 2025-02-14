@@ -3,10 +3,10 @@
 #include <iostream>         // clog
 #include <type_traits>      // is_same_v
 
-#define LOG(...) frog::log_ln(__VA_ARGS__)
+#define LOG(...)      frog::log_ln(__VA_ARGS__)
 #define LOG_FUNC(...) frog::log_ln("Log function:", __func__  __VA_OPT__(,) __VA_ARGS__)
 // Just because it sounds funny.
-#define FLOG(x) frog::log_ln(#x, "→", x)
+#define FLOG(x)       frog::log_ln(#x, "→", x)
 
 #define FROG_UNWRAPE(x, ...) "err", [](){ static_assert(false, "maximum ten arguments supported"); return 1; }()
 #define FROG_UNWRAP9(x, ...) #x, x __VA_OPT__(, FROG_UNWRAPE( __VA_ARGS__ ))
@@ -22,16 +22,22 @@
 
 #define LOGX(...) frog::log_vars(FROG_UNWRAP0(__VA_ARGS__))
 
-#define FROG_VERBOSE() frog::log<false>(std::clog, __FILE__, ":", __LINE__, " (", __func__, "): ")
+#define FROG_VERBOSE() frog::log<false, 10>(std::clog, __FILE__, ":", __LINE__, " (", __func__, "): ")
 #define LOGV(...)  ( FROG_VERBOSE(),  LOG(__VA_ARGS__) )
 #define LOGVX(...) ( FROG_VERBOSE(), LOGX(__VA_ARGS__) )
 
 namespace frog {
 
-template<bool Space, typename Out, typename Arg, typename ... Args>
+// Depth is to avoid looping forever for a cyclic Arg. (Arg.begin() leading back
+// to itself would cause it.)
+template<bool Space, int Depth, typename Out, typename Arg, typename ... Args>
 void log(Out& out, Arg&& arg, Args&& ... args)
 {
-    if constexpr (std::is_same_v<std::decay_t<Arg>, bool>)
+    if constexpr (Depth <= 0)
+    {
+        out << "...";
+    }
+    else if constexpr (std::is_same_v<std::decay_t<Arg>, bool>)
     {
         out << (arg ? "true" : "false");
     }
@@ -42,9 +48,9 @@ void log(Out& out, Arg&& arg, Args&& ... args)
     else if constexpr (requires{ arg.first; arg.second; })
     {
         out << "< ";
-        log(out, arg.first);
+        log<Space, Depth - 1>(out, arg.first);
         out << ", ";
-        log(out, arg.second);
+        log<Space, Depth - 1>(out, arg.second);
         out << " >";
     }
     else if constexpr (requires{ arg.begin(); arg.end(); })
@@ -58,7 +64,7 @@ void log(Out& out, Arg&& arg, Args&& ... args)
                 out << del;
                 del = ", ";
                 // TODO: Make sure this cannot loop forever.
-                log(out, *it);
+                log<Space, Depth - 1>(out, *it);
             }
             out << " ]";
         }
@@ -72,7 +78,7 @@ void log(Out& out, Arg&& arg, Args&& ... args)
     {
         if constexpr (Space)
             out << " ";
-        log<Space>(out, std::forward<Args>(args)...);
+        log<Space, Depth - 1>(out, std::forward<Args>(args)...);
     }
 }
 
@@ -80,7 +86,7 @@ void log(Out& out, Arg&& arg, Args&& ... args)
 template<typename ... Args>
 void log_ln(Args&& ... args)
 {
-    log<true>(std::clog, std::forward<Args>(args)...);
+    log<true, 10>(std::clog, std::forward<Args>(args)...);
     std::clog << "\n" << std::flush;
 }
 
@@ -88,11 +94,11 @@ void log_ln(Args&& ... args)
 template<typename Val, typename... Args>
 void log_vars_rec(const char* var, Val&& val, Args&&... args)
 {
-    log<true>(std::clog, var, "→", val);
+    log<true, 10>(std::clog, var, "→", val);
 
     if constexpr (sizeof...(Args) != 0)
     {
-        log<false>(std::clog, ", ");
+        log<false, 10>(std::clog, ", ");
         log_vars_rec(std::forward<Args>(args)...);
     }
 }
