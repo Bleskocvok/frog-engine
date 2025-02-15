@@ -1,7 +1,9 @@
 #pragma once
 
 #include <iostream>         // clog
+#include <ostream>
 #include <type_traits>      // is_same_v
+#include <variant>
 
 #define LOG(...)      frog::log_ln(__VA_ARGS__)
 #define LOG_FUNC(...) frog::log_ln("Log function:", __func__  __VA_OPT__(,) __VA_ARGS__)
@@ -26,7 +28,45 @@
 #define LOGV(...)  ( FROG_VERBOSE(),  LOG(__VA_ARGS__) )
 #define LOGVX(...) ( FROG_VERBOSE(), LOGX(__VA_ARGS__) )
 
+#include <optional>     // optional, nullopt
+#include <variant>      // variant, visit
+#include <tuple>        // tuple, tuple_size, get
+
 namespace frog {
+
+template<typename... Args>
+void from_variant(const std::variant<Args...>&) {}
+
+template<typename... Args>
+void from_optional(const std::optional<Args...>&) {}
+
+template<typename... Args>
+void from_tuple(const std::tuple<Args...>&) {}
+
+template<typename T>
+struct tuple_printer
+{
+    const T& x;
+
+    explicit tuple_printer(const T& x) : x(x) {}
+
+    template<typename Printer, int Idx = 0>
+    void operator()(Printer printer)
+    {
+        if constexpr (Idx == 0)
+            printer("<");
+
+        printer(std::get<Idx>(x));
+
+        if constexpr (Idx + 1 < std::tuple_size<T>::value)
+        {
+            printer(", ");
+            this->operator()<Printer, Idx + 1>(printer);
+        }
+        else
+            printer(">");
+    }
+};
 
 // Depth is to avoid looping forever for a cyclic Arg. (arg.begin() leading back
 // to itself would cause it.)
@@ -45,13 +85,31 @@ void log(Out& out, Arg&& arg, Args&& ... args)
     {
         out << arg;
     }
+    else if constexpr (requires{ from_optional(arg); })
+    {
+        out << "(";
+        if (arg)
+            log<Space, Depth - 1>(out, arg.value());
+        else
+            out << "nullopt";
+        out << ")";
+    }
+    else if constexpr (requires{ from_variant(arg); })
+    {
+        std::visit([&](const auto& x){ out << "("; log<Space, Depth-1>(out, x); out << ")"; }, arg);
+    }
+    else if constexpr (requires{ from_tuple(arg); })
+    {
+        tuple_printer printer(arg);
+        printer([&]<typename T>(const T& x){ log<Space, Depth-1>(out, x); });
+    }
     else if constexpr (requires{ arg.first; arg.second; })
     {
-        out << "< ";
+        out << "<";
         log<Space, Depth - 1>(out, arg.first);
         out << ", ";
         log<Space, Depth - 1>(out, arg.second);
-        out << " >";
+        out << ">";
     }
     else if constexpr (requires{ arg.begin(); arg.end(); })
     {
