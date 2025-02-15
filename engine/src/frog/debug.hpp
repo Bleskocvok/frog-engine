@@ -6,7 +6,7 @@
 #define LOG(...)      frog::log_ln(__VA_ARGS__)
 #define LOG_FUNC(...) frog::log_ln("Log function:", __func__  __VA_OPT__(,) __VA_ARGS__)
 // Just because it sounds funny.
-#define FLOG(x)       frog::log_ln(#x, "→", x)
+#define FLOG(...)       LOG(__VA_ARGS__)
 
 #define FROG_UNWRAPE(x, ...) "err", [](){ static_assert(false, "maximum ten arguments supported"); return 1; }()
 #define FROG_UNWRAP9(x, ...) #x, x __VA_OPT__(, FROG_UNWRAPE( __VA_ARGS__ ))
@@ -28,7 +28,7 @@
 
 namespace frog {
 
-// Depth is to avoid looping forever for a cyclic Arg. (Arg.begin() leading back
+// Depth is to avoid looping forever for a cyclic Arg. (arg.begin() leading back
 // to itself would cause it.)
 template<bool Space, int Depth, typename Out, typename Arg, typename ... Args>
 void log(Out& out, Arg&& arg, Args&& ... args)
@@ -63,7 +63,6 @@ void log(Out& out, Arg&& arg, Args&& ... args)
             {
                 out << del;
                 del = ", ";
-                // TODO: Make sure this cannot loop forever.
                 log<Space, Depth - 1>(out, *it);
             }
             out << " ]";
@@ -72,7 +71,7 @@ void log(Out& out, Arg&& arg, Args&& ... args)
             out << "[]";
     }
     else
-        []<bool kil = true>{ static_assert(!kil, "cannot log this type (Arg)"); };
+        struct fail { static_assert(false, "cannot log this type (Arg)"); };
 
     if constexpr (sizeof...(Args) != 0)
     {
