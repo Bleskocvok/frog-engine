@@ -1,9 +1,11 @@
 #pragma once
 
 #include <iostream>         // clog
-#include <ostream>
 #include <type_traits>      // is_same_v
-#include <variant>
+#include <utility>          // forward
+#include <optional>         // optional, nullopt
+#include <variant>          // variant, visit
+#include <tuple>            // tuple, tuple_size, get
 
 #define LOG(...)      frog::log_ln(__VA_ARGS__)
 #define LOG_FUNC(...) frog::log_ln("Log function:", __func__  __VA_OPT__(,) __VA_ARGS__)
@@ -28,20 +30,16 @@
 #define LOGV(...)  ( FROG_VERBOSE(),  LOG(__VA_ARGS__) )
 #define LOGVX(...) ( FROG_VERBOSE(), LOGX(__VA_ARGS__) )
 
-#include <optional>     // optional, nullopt
-#include <variant>      // variant, visit
-#include <tuple>        // tuple, tuple_size, get
-
 namespace frog {
 
 template<typename... Args>
-void from_variant(const std::variant<Args...>&) {}
+void is_variant(const std::variant<Args...>&) {}
 
 template<typename... Args>
-void from_optional(const std::optional<Args...>&) {}
+void is_optional(const std::optional<Args...>&) {}
 
 template<typename... Args>
-void from_tuple(const std::tuple<Args...>&) {}
+void is_tuple(const std::tuple<Args...>&) {}
 
 template<typename T>
 struct tuple_printer
@@ -85,7 +83,7 @@ void log(Out& out, Arg&& arg, Args&& ... args)
     {
         out << arg;
     }
-    else if constexpr (requires{ from_optional(arg); })
+    else if constexpr (requires{ is_optional(arg); })
     {
         out << "(";
         if (arg)
@@ -94,11 +92,11 @@ void log(Out& out, Arg&& arg, Args&& ... args)
             out << "nullopt";
         out << ")";
     }
-    else if constexpr (requires{ from_variant(arg); })
+    else if constexpr (requires{ is_variant(arg); })
     {
         std::visit([&](const auto& x){ out << "("; log<Space, Depth-1>(out, x); out << ")"; }, arg);
     }
-    else if constexpr (requires{ from_tuple(arg); })
+    else if constexpr (requires{ is_tuple(arg); })
     {
         tuple_printer printer(arg);
         printer([&]<typename T>(const T& x){ log<Space, Depth-1>(out, x); });
