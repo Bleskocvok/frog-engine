@@ -72,7 +72,7 @@ public:
         {
             accum -= delay;
             ++frame_;
-            if (frame_ >= ( current().length == -1 ? atlas_size.x() : current().length ))
+            if (frame_ >= length_of(current()))
                 set(next);
         }
     }
@@ -97,7 +97,12 @@ public:
 
     float frame_duration(const std::string& f) const
     {
-        return at(f).length * delay;
+        return length_of(at(f)) * delay;
+    }
+
+    int length_of(const animation_frame& f) const
+    {
+        return f.length == -1 ? atlas_size.x() : f.length;
     }
 
     const std::string& current_name() const { return current_; }
