@@ -121,12 +121,54 @@ TEST_CASE("debug")
     {
         auto out = std::ostringstream{};
         frog::log<true, 10>(out, std::pair{ 1, "a" }, std::vector{ 1, 2, 3 });
-        REQUIRE_EQ(out.str(), "< 1, a > [ 1, 2, 3 ]");
+        REQUIRE_EQ(out.str(), "<1, a> [ 1, 2, 3 ]");
     }
 
     {
         auto out = std::ostringstream{};
         frog::log<true, 10>(out, looper{});
         REQUIRE_EQ(out.str(), "[ [ [ [ [ [ [ [ [ [ ... ] ] ] ] ] ] ] ] ] ]");
+    }
+}
+
+#include <optional>
+#include <variant>
+#include <tuple>
+#include <string>
+#include <map>
+
+TEST_CASE("debug_std")
+{
+    {
+        auto out = std::ostringstream{};
+        frog::log<true, 10>(out, std::optional<int>{ 1337 },
+                                 std::optional<int>{ std::nullopt },
+                                 std::optional<std::string>{ "string" },
+                                 std::optional<std::string>{ std::nullopt },
+                                 std::optional{ std::vector<int>{ 1, 2, 3 } });
+        REQUIRE_EQ(out.str(), "(1337) (nullopt) (string) (nullopt) ([ 1, 2, 3 ])");
+    }
+
+    {
+        using var = std::variant<int, std::string, bool>;
+        auto out = std::ostringstream{};
+        frog::log<true, 10>(out, var{ 1 }, var{ "variant" }, var{ false });
+        REQUIRE_EQ(out.str(), "(1) (variant) (false)");
+    }
+
+    {
+        auto map = std::map<std::string, int>{ { "aa", 1 },
+                                               { "bbb", 2 },
+                                               { "cccc", 3 } };
+
+        auto out = std::ostringstream{};
+        frog::log<true, 10>(out, map);
+        REQUIRE_EQ(out.str(), "[ <aa, 1>, <bbb, 2>, <cccc, 3> ]");
+    }
+
+    {
+        auto out = std::ostringstream{};
+        frog::log<true, 10>(out, std::tuple{ 1, true, std::vector{ 1, 2, 3 } });
+        REQUIRE_EQ(out.str(), "<1, true, [ 1, 2, 3 ]>");
     }
 }
