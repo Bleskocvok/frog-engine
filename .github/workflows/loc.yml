@@ -16,7 +16,7 @@ jobs:
       - name: Count lines of code
         run: ./script/count_lines.sh | tee cloc.md
 
-      - run: cat cloc.md | tail -n1 | cut -d, -f5 | tee cloc_num
+      - run: cat cloc.md | tail -n1 | tee cloc_num
       - run: LC_ALL="C.UTF-8" awk -v lines="$(cat cloc_num)" 'BEGIN {printf "%6.1fk\n", lines/1000}' | sed 's/^ *//' | tee loc
       - name: Print LoC
         run: |
