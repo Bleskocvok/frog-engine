@@ -9,10 +9,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
+
+      - name: Install cloc
+        run: sudo apt install cloc
+
       - name: Count lines of code
-        uses: djdefi/cloc-action@main
-        with:
-          options: --csv --report-file=cloc.md "--include-lang=C/C++ Header,C,C++" --exclude-dir=libraries,game,game2d
+        run: ./script/count_lines.sh | tee cloc.md
+
       - run: cat cloc.md | tail -n1 | cut -d, -f5 | tee cloc_num
       - run: LC_ALL="C.UTF-8" awk -v lines="$(cat cloc_num)" 'BEGIN {printf "%6.1fk\n", lines/1000}' | sed 's/^ *//' | tee loc
       - name: Print LoC
