@@ -11,6 +11,11 @@
 /bin-game-*/
 /bin-game2d-*/
 
+# test binaries
+/engine/tests/test_fixed
+/engine/tests/test_geometry
+/engine/tests/test_string
+
 # libraries that don't belong in the repository
 /engine/libraries/SDL2*/
 /engine/libraries/SDL2_image*/
