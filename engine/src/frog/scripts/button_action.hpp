@@ -10,9 +10,12 @@ struct button_action_base;
 using button_action   = button_action_base<game_object, engine>;
 using button_action2d = button_action_base<game_object2d, engine2d>;
 
-template<typename GameObject, typename Engine>
+template<typename GObject, typename EEngine>
 struct button_action_base
 {
+    using GameObject = GObject;
+    using Engine = EEngine;
+
     virtual ~button_action_base() = default;
 
     virtual void action(GameObject&, Engine&) {}
