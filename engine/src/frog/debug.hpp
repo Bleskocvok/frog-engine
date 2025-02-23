@@ -6,6 +6,7 @@
 #include <optional>         // optional, nullopt
 #include <variant>          // variant, visit
 #include <tuple>            // tuple, tuple_size, get
+#include <source_location>  // source_location
 
 #define LOG(...)      frog::log_ln(__VA_ARGS__)
 #define LOG_FUNC(...) frog::log_ln("Log function:", __func__  __VA_OPT__(,) __VA_ARGS__)
@@ -26,9 +27,8 @@
 
 #define LOGX(...) frog::log_vars(FROG_UNWRAP0(__VA_ARGS__))
 
-#define FROG_VERBOSE() frog::log<false, 10>(std::clog, __FILE__, ":", __LINE__, " (", __func__, "): ")
-#define LOGV(...)  ( FROG_VERBOSE(),  LOG(__VA_ARGS__) )
-#define LOGVX(...) ( FROG_VERBOSE(), LOGX(__VA_ARGS__) )
+#define LOGV(...)  ( frog::verbose_prefix(),  LOG(__VA_ARGS__) )
+#define LOGVX(...) ( frog::verbose_prefix(), LOGX(__VA_ARGS__) )
 
 namespace frog {
 
@@ -163,6 +163,22 @@ void log_vars(Args&&... args)
 {
     log_vars_rec(std::forward<Args>(args)...);
     std::clog << "\n" << std::flush;
+}
+
+inline void verbose_prefix(const std::source_location loc
+                            = std::source_location::current())
+{
+    std::string file = loc.file_name();
+    auto base = file.find_last_of("/");
+    if (base != file.npos)
+        file.erase(0, base + 1);
+
+    std::string func = loc.function_name();
+    auto retval = func.find(" ");
+    if (retval != func.npos)
+        func.erase(0, retval + 1);
+
+    frog::log<false, 10>(std::clog, file, ":", loc.line(), " [", func, "]: ");
 }
 
 } // namespace frog
