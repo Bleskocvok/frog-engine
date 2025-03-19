@@ -216,3 +216,4 @@ Link to the original repository [pa199-project](https://gitlab.fi.muni.cz/xbrabl
 - [TODO](TODO.md)
 
 
+Life is pointless.
