@@ -217,3 +217,9 @@ Link to the original repository [pa199-project](https://gitlab.fi.muni.cz/xbrabl
 
 
 Life is pointless.
+
+## TODO
+
+- Fixed floating type arithmetic functions (sin, cos, sqrt, …)
+- Android build support
+- Net code support for multiplayer
