@@ -98,12 +98,12 @@ struct balls : frog::script2d
 
         if (engine.input->k_at(SDL_SCANCODE_F).down)
         {
-            if (!physics.limit_reached())
+            if (not physics.limit_reached())
                 add_screw(engine);
 
             if (engine.input->k_at(SDL_SCANCODE_LSHIFT).down)
                 for (int i = 0; i < 10; ++i)
-                    if (!physics.limit_reached())
+                    if (not physics.limit_reached())
                         add_screw(engine);
         }
 
@@ -120,12 +120,12 @@ struct balls : frog::script2d
 
         if (engine.input->k_at(SDL_SCANCODE_B).down)
         {
-            if (!babies.empty())
+            if (not babies.empty())
                 delete_screw(rand() % babies.size());
 
             if (engine.input->k_at(SDL_SCANCODE_LSHIFT).down)
                 for (int i = 0; i < 9; ++i)
-                    if (!babies.empty())
+                    if (not babies.empty())
                         delete_screw(rand() % babies.size());
         }
 
