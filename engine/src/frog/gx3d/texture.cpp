@@ -38,7 +38,7 @@ GLuint load_file(const std::string& filename)
                   desired_channels)
     };
 
-    if (!img)
+    if (not img)
         throw std::runtime_error("Cannot load texture '" + filename + "': "
                                  + stbi_failure_reason());
 

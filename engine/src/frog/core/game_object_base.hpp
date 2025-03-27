@@ -55,7 +55,7 @@ private:
 
     bool addition_removal()
     {
-        bool added = !added_scripts.empty();
+        bool added = not added_scripts.empty();
         for (ptr<Script>& script : added_scripts)
             scripts.push_back(std::move(script));
         added_scripts.clear();
@@ -114,7 +114,7 @@ public:
         scr->object_ = &get();
         Script* res = scr.get();
         added_scripts.push_back(std::move(scr));
-        if (!initialized)
+        if (not initialized)
             addition_removal();
         return res;
     }

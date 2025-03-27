@@ -26,7 +26,7 @@ struct script_base
 
     void try_init(GameObject& o, Engine& e)
     {
-        if (!initialized)
+        if (not initialized)
         {
             init(o, e);
             initialized = true;

@@ -85,7 +85,7 @@ bool frog::geo::sphere::collides(aabb o) const
                     && sgn_b * sph2d.orig[b] > sgn_b * pt2d[b])
                 continue;
 
-            if (!sph2d.collides(pt2d))
+            if (not sph2d.collides(pt2d))
                 return false;
         }
     }

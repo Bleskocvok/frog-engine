@@ -98,7 +98,7 @@ public:
 
             idx_t i;
 
-            if (!free.empty())
+            if (not free.empty())
             {
                 i = free.back();
                 free.pop_back();

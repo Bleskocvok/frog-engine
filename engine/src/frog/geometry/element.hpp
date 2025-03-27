@@ -206,7 +206,7 @@ public:
 
     constexpr friend bool operator!=(const Derived& one, const Derived& other)
     {
-        return !(one == other);
+        return not (one == other);
     }
 };
 

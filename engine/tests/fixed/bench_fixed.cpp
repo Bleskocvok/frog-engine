@@ -91,7 +91,7 @@ void bench( T min, T step, long long count, Op op )
     for ( const T& x : results )
     {
         sum += b ? x : -x;
-        b = !b;
+        b = not b;
     }
 
     std::cout << "T= " << std::setw( 10 ) << ms.count() << " ms;  "

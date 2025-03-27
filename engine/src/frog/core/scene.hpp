@@ -140,7 +140,7 @@ public:
         objects_.erase(std::remove_if(
                         objects_.begin(),
                         objects_.end(),
-                        [&](const auto& ptr) { return !ptr; }),
+                        [&](const auto& ptr) { return not ptr; }),
                     objects_.end());
 
         add_objects(eng);
@@ -150,7 +150,7 @@ public:
     {
         for (size_t i = 0; i < to_add.size(); i++)
         {
-            if (!to_add[i])
+            if (not to_add[i])
                 continue;
 
             to_add[i]->init(eng);

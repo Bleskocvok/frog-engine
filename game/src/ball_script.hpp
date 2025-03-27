@@ -69,7 +69,7 @@ struct ball_script : frog::script
 
             auto found = wall.get_script<bounce_script>();
 
-            if (!found)
+            if (not found)
                 return;
 
             auto paddle = found->paddle;

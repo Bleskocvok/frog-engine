@@ -78,7 +78,7 @@ public:
     }
 
     template<typename T>
-    bool is_up(T but) const { return !is_down(but); }
+    bool is_up(T but) const { return not is_down(but); }
 
     template<typename T>
     bool is_pressed(T but) const

@@ -18,7 +18,7 @@ font::font(const std::string& path, int size)
 {
     using namespace std::string_literals;
 
-    if (!font_)
+    if (not font_)
         throw std::runtime_error("cannot load font: "s + TTF_GetError());
 }
 
@@ -30,7 +30,7 @@ detail::surface font::render_text(const std::string& text, std::uint8_t r,
 
     SDL_Color fg = { r, g, b, a };
     auto res = detail::surface{ TTF_RenderUTF8_Blended(font_.get(), text.c_str(), fg) };
-    if (!res)
+    if (not res)
         throw std::runtime_error("cannot render text: "s + TTF_GetError());
     return res;
 }

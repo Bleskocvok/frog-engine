@@ -84,7 +84,7 @@ public:
 
         init();
 
-        while (!global->quit && !window->should_close())
+        while (not global->quit && not window->should_close())
         {
             update_controls();
             frame_update();

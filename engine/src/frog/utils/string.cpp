@@ -17,10 +17,10 @@ void frog::trim(std::string_view& str)
 {
     auto space = [](unsigned char c){ return std::isspace(c); };
 
-    while (!str.empty() && space(str.back()))
+    while (not str.empty() && space(str.back()))
         str.remove_suffix(1);
 
-    while (!str.empty() && space(str.front()))
+    while (not str.empty() && space(str.front()))
         str.remove_prefix(1);
 }
 
@@ -28,7 +28,7 @@ void frog::trim(std::string& str)
 {
     auto space = [](unsigned char c){ return std::isspace(c); };
 
-    while (!str.empty() && space(str.back()))
+    while (not str.empty() && space(str.back()))
         str.pop_back();
 
     auto it = str.begin();

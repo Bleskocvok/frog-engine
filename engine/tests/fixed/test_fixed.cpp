@@ -12,7 +12,7 @@
 bool equal( int a, int b )
 {
     bool res = a == b;
-    if ( !res )
+    if ( not res )
         std::printf( "a=%d\nb=%d\n", a, b );
     return res;
 }
@@ -24,7 +24,7 @@ constexpr double FloatDelta  = 3 * 10e-3;
 bool is_close( double a, double b, double D = DoubleDelta )
 {
     bool res = std::fabs( a - b ) <= D;
-    if ( !res )
+    if ( not res )
         std::printf( "a=%f\nb=%f\n", a, b );
     return res;
 }
@@ -33,7 +33,7 @@ bool is_close( double a, double b, double D = DoubleDelta )
 bool is_close( float a, float b, float D = FloatDelta )
 {
     bool res = std::fabs( a - b ) <= D;
-    if ( !res )
+    if ( not res )
         std::printf( "a=%f\nb=%f\n", a, b );
     return res;
 }

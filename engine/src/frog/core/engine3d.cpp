@@ -141,7 +141,7 @@ void frog::engine::draw_ui(double)
     {
         for (const auto& elem : obj.elements())
         {
-            if (!elem->sprite.image_tag.empty())
+            if (not elem->sprite.image_tag.empty())
             {
                 draw_sprite(ui,
                             elem->sprite.image_tag,

@@ -76,7 +76,7 @@ struct wall_script : frog::script
 
     void create_powerup(frog::engine& engine)
     {
-        if (!powerup)
+        if (not powerup)
             return;
 
         frog::object_builder builder;

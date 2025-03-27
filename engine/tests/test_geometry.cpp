@@ -352,10 +352,10 @@ TEST_CASE("rectangle collision")
     CHECK(is_collision(a, a));
     CHECK(is_collision(b, b));
 
-    CHECK(!is_collision(rect{ vec2{ 0, 0 },   vec2{ 100, 90 } },
+    CHECK(not is_collision(rect{ vec2{ 0, 0 },   vec2{ 100, 90 } },
                         rect{ vec2{ 93, 93 }, vec2{ 100, 90 } }));
 
-    CHECK(!is_collision(rect{ vec2{ 69, 100 }, vec2{ 100, 90 } },
+    CHECK(not is_collision(rect{ vec2{ 69, 100 }, vec2{ 100, 90 } },
                         rect{ vec2{ 48,   6 }, vec2{ 100, 90 } }));
 
     CHECK(is_collision(rect{ vec2{ 53, 71 }, vec2{ 72, 90 } },

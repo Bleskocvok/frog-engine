@@ -165,11 +165,11 @@ public:
     friend fixed operator*( fixed a, fixed b ) { return a *= b; }
     friend fixed operator/( fixed a, fixed b ) { return a /= b; }
     friend bool operator<(  fixed a, fixed b ) { return a.value < b.value; }
-    friend bool operator>=( fixed a, fixed b ) { return !( a < b ); }
+    friend bool operator>=( fixed a, fixed b ) { return not ( a < b ); }
     friend bool operator>(  fixed a, fixed b ) { return a.value > b.value; }
-    friend bool operator<=( fixed a, fixed b ) { return !( a > b ); }
+    friend bool operator<=( fixed a, fixed b ) { return not ( a > b ); }
     friend bool operator==( fixed a, fixed b ) { return a.value == b.value; }
-    friend bool operator!=( fixed a, fixed b ) { return !( a == b ); }
+    friend bool operator!=( fixed a, fixed b ) { return not ( a == b ); }
 
     // :: fixed -> T -> fixed/bool
 
@@ -189,19 +189,19 @@ public:
     friend bool operator<(  fixed a, T b ) { return a < fixed( b ); }
 
     template< typename T >
-    friend bool operator>=( fixed a, T b ) { return !( a < b ); }
+    friend bool operator>=( fixed a, T b ) { return not ( a < b ); }
 
     template< typename T >
     friend bool operator>(  fixed a, T b ) { return a > fixed( b ); }
 
     template< typename T >
-    friend bool operator<=( fixed a, T b ) { return !( a > b ); }
+    friend bool operator<=( fixed a, T b ) { return not ( a > b ); }
 
     template< typename T >
     friend bool operator==( fixed a, T b ) { return a == fixed( b ); }
 
     template< typename T >
-    friend bool operator!=( fixed a, T b ) { return !( a == b ); }
+    friend bool operator!=( fixed a, T b ) { return not ( a == b ); }
 
     // :: T -> fixed -> fixed/bool
 
@@ -221,19 +221,19 @@ public:
     friend bool operator<(  T a, fixed b ) { return fixed( a ) < b; }
 
     template< typename T >
-    friend bool operator>=( T a, fixed b ) { return !( a < b ); }
+    friend bool operator>=( T a, fixed b ) { return not ( a < b ); }
 
     template< typename T >
     friend bool operator>(  T a, fixed b ) { return fixed( a ) > b; }
 
     template< typename T >
-    friend bool operator<=( T a, fixed b ) { return !( a > b ); }
+    friend bool operator<=( T a, fixed b ) { return not ( a > b ); }
 
     template< typename T >
     friend bool operator==( T a, fixed b ) { return fixed( a ) == b; }
 
     template< typename T >
-    friend bool operator!=( T a, fixed b ) { return !( a == b ); }
+    friend bool operator!=( T a, fixed b ) { return not ( a == b ); }
 
     friend std::ostream& operator<<( std::ostream& out, fixed a )
     {

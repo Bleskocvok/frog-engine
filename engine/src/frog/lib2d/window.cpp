@@ -55,12 +55,12 @@ window::window( int width, int height, const char* title,
                                                  width,
                                                  height,
                                                  win_flags ) );
-    if ( !win )
+    if ( not win )
         throw std::runtime_error( "Create window: "s += SDL_GetError() );
 
     renderer = lib2d::detail::renderer( SDL_CreateRenderer( win.get(), -1,
                                                           ren_flags ) );
-    if ( !renderer )
+    if ( not renderer )
         throw std::runtime_error( "Create Renderer: "s
                                     += SDL_GetError() );
 
@@ -124,7 +124,7 @@ void window::draw( const texture& tex, int u, int v,
         int cut_width, int cut_height,
         int x, int y, int tex_width, int tex_height )
 {
-    if ( !tex.src() ) throw std::runtime_error( "draw empty texture" );
+    if ( not tex.src() ) throw std::runtime_error( "draw empty texture" );
 
     SDL_Rect src = { u, v, cut_width, cut_height };
     SDL_Rect dest = { x, y, tex_width, tex_height };
@@ -135,7 +135,7 @@ void window::draw( const texture& tex, int u, int v,
 void window::draw( const texture& tex, int x, int y,
             int tex_width, int tex_height )
 {
-    if ( !tex.src() ) throw std::runtime_error( "draw empty texture" );
+    if ( not tex.src() ) throw std::runtime_error( "draw empty texture" );
 
     SDL_Rect dest = { x, y, tex_width, tex_height };
     SDL_RenderCopy( renderer.get(), tex.src(), nullptr, &dest );
@@ -148,7 +148,7 @@ void window::draw_rotated( const texture& tex, int u, int v,
                     int pivot_x, int pivot_y,
                     float angle, bool flipped )
 {
-    if ( !tex.src() ) throw std::runtime_error( "draw empty texture" );
+    if ( not tex.src() ) throw std::runtime_error( "draw empty texture" );
 
     SDL_Rect src = { u, v, cut_width, cut_height };
     SDL_Rect dest = { x, y, tex_width, tex_height };
@@ -167,7 +167,7 @@ void window::draw_colored( const texture& tex, int u, int v,
                            int tex_width, int tex_height,
                            std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a )
 {
-    if ( !tex.src() ) throw std::runtime_error( "draw empty texture" );
+    if ( not tex.src() ) throw std::runtime_error( "draw empty texture" );
 
     SDL_SetTextureColorMod( tex.src(), r, g, b );
     SDL_SetTextureAlphaMod( tex.src(), a );
@@ -189,7 +189,7 @@ void window::draw_colored( const texture& tex, int u, int v,
 //                             int pivot_x, int pivot_y, float angle,
 //                             bool flipped )
 // {
-//     if ( !tex.src() ) throw std::runtime_error( "draw empty texture" );
+//     if ( not tex.src() ) throw std::runtime_error( "draw empty texture" );
 
 //     SDL_SetTextureColorMod( tex.src(), r, g, b );
 //     SDL_SetTextureAlphaMod( tex.src(), a );
@@ -217,7 +217,7 @@ void window::draw_colored_rotated( const texture& tex, int u, int v,
                             float pivot_x, float pivot_y, float angle,
                             bool flipped )
 {
-    if ( !tex.src() ) throw std::runtime_error( "draw empty texture" );
+    if ( not tex.src() ) throw std::runtime_error( "draw empty texture" );
 
     SDL_SetTextureColorMod( tex.src(), r, g, b );
     SDL_SetTextureAlphaMod( tex.src(), a );

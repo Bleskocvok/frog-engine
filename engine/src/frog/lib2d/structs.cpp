@@ -23,7 +23,7 @@ namespace frog::lib2d::detail
     {
         using namespace std::string_literals;
         surface img{ IMG_Load( filename.c_str() ) };
-        if ( !img )
+        if ( not img )
         {
             throw std::runtime_error( ( "load_img: Cannot load file '"s )
                                         + filename

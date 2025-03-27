@@ -59,7 +59,7 @@ static void load_file(const std::string& filename)
         true                // triangulate = true
     );
 
-    if (!ok)
+    if (not ok)
     {
         throw std::runtime_error("could not load model, file '" + filename
                                  + "'; errors: " + errors);

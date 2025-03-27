@@ -22,7 +22,7 @@ texture::texture( const lib2d::detail::renderer& renderer, const char* filename 
     tex_height = img->h;
     tex = lib2d::detail::texture(
             SDL_CreateTextureFromSurface( renderer.get(), img.get() ) );
-    if ( !tex )
+    if ( not tex )
     {
         throw std::runtime_error( ( "texture: Cannot convert file '"s )
                                     + filename + "' to texture: "
@@ -38,7 +38,7 @@ texture::texture( const lib2d::detail::renderer& renderer,
     tex_height = img ? img->h : 1;
     tex = lib2d::detail::texture( SDL_CreateTextureFromSurface(
                                     renderer.get(), img.get() ) );
-    if ( !tex && img )
+    if ( not tex && img )
     {
         throw std::runtime_error(
                     ( "texture: Cannot convert surface to texture: "s )

@@ -10,7 +10,7 @@
 std::string frog::load_file(const std::string& filename)
 {
     auto in = std::ifstream{ filename };
-    if (!in)
+    if (not in)
     {
         throw std::runtime_error("file not found: '" + filename + "'");
     }

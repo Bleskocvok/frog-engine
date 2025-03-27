@@ -11,7 +11,7 @@ using namespace frog;
 void ini_file::add_section(std::string name)
 {
     auto[it, ins] = sec_map.emplace(name, sections_.size());
-    if (!ins)
+    if (not ins)
     {
         // TODO: Section already present.
     }

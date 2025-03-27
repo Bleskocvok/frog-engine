@@ -172,7 +172,7 @@ void engine2d::draw_objects(double /* between */)
             auto top_left = rect.top_left();
 
             const auto& it = textures.find(model->image_tag);
-            if (!it)
+            if (not it)
                 throw std::runtime_error("invalid texture '" + model->image_tag + "'");
             const auto& tex = *it;
 
@@ -269,7 +269,7 @@ void engine2d::draw_ui(double)
     {
         for (const auto& elem : obj.elements())
         {
-            if (!elem->sprite.image_tag.empty())
+            if (not elem->sprite.image_tag.empty())
             {
                 draw_ui_sprite(textures.at(elem->sprite.image_tag),
                             elem->sprite.rect,

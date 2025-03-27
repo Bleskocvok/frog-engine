@@ -13,7 +13,7 @@ class GLFW
 public:
     GLFW()
     {
-        if (!glfwInit())
+        if (not glfwInit())
         {
             throw std::runtime_error("could not initialize GLFW");
         }
@@ -106,14 +106,14 @@ int main()
 
     // create window
     Window window(glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr));
-    if (!window)
+    if (not window)
     {
         throw std::runtime_error("could not create a window");
     }
     glfwMakeContextCurrent(window.get());
 
     // load opengl extensions
-    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
+    if (not gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
     {
         throw std::runtime_error("could not initialize opengl extensions");
     }
@@ -147,7 +147,7 @@ int main()
         /*
          * Main loop.
          */
-        while (!glfwWindowShouldClose(window.get()) /*&& !app.has_quit()*/)
+        while (not glfwWindowShouldClose(window.get()) /*&& not app.has_quit()*/)
         {
             // update
             while (accum >= delta)
@@ -168,5 +168,5 @@ int main()
             time = current;
         }
         // restart the game
-    } while (!quit);
+    } while (not quit);
 }

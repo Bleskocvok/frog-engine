@@ -59,7 +59,7 @@ struct paddle_script : frog::script
     {
         using namespace frog;
 
-        if (!ball_magnet)
+        if (not ball_magnet)
             return;
 
         bool release = engine.input->is_released(os::key{ GLFW_KEY_SPACE });

@@ -110,7 +110,7 @@ struct looper
     looper end()          const { return { .val = 1, }; }
 
     friend bool operator==(looper a, looper b) { return a.val == b.val; }
-    friend bool operator!=(looper a, looper b) { return !(a == b); }
+    friend bool operator!=(looper a, looper b) { return not (a == b); }
 
     auto& operator++() { val++; return *this; }
     auto& operator*() { return *this; }

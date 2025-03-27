@@ -4,7 +4,7 @@
 
 #define frog_assert( expr ) \
     do {                    \
-        if ( !( expr )) \
+        if ( not ( expr )) \
             throw frog::error( "assert failed ", __FILE__, ":", __LINE__,   \
                             ": frog_assert( ", #expr, " )" );               \
     } while (false)

@@ -42,7 +42,7 @@ struct GLFW
 {
     GLFW()
     {
-        if (!glfwInit())
+        if (not glfwInit())
         {
             glfw::throw_error();
         }
@@ -71,7 +71,7 @@ public:
     window(int w, int h, const std::string& title)
         : _window(glfwCreateWindow(w, h, title.c_str(), nullptr, nullptr))
     {
-        if (!_window)
+        if (not _window)
         {
             glfw::throw_error();
         }

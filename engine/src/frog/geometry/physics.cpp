@@ -216,7 +216,7 @@ void soft_physics2d::verlet_solve()
 void soft_physics2d::remove()
 {
     // TODO: Consider how this could be made more efficient.
-    if (!points_removal.empty())
+    if (not points_removal.empty())
     {
         auto has = [](const auto& cont, const auto& elem)
         {

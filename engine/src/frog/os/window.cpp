@@ -21,7 +21,7 @@ std::string frog::os::glfw::get_error()
 void frog::os::glfw::throw_error()
 {
     auto err = get_error();
-    if (!err.empty())
+    if (not err.empty())
     {
         throw std::runtime_error(err);
     }

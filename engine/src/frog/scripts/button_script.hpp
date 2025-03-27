@@ -39,7 +39,7 @@ class button_script_base : public Script
 
         state = next;
 
-        if (! style)
+        if (not  style)
             return;
 
         switch (state)

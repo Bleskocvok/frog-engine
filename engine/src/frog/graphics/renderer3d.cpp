@@ -27,7 +27,7 @@ frog::gl::renderer3d::renderer3d(int major, int minor, bool vsync)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
     LOG("pre-glad");
-    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
+    if (not gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
     {
         throw std::runtime_error("could not initialize OpenGL extensions");
     }
