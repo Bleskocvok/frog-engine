@@ -223,3 +223,4 @@ Life is pointless.
 - Fixed floating type arithmetic functions (sin, cos, sqrt, …)
 - Android build support
 - Net code support for multiplayer
+- Refactor to use more namespaces
