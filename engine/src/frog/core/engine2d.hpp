@@ -101,38 +101,57 @@ int run_engine2d(settings set, ptr<state> global, InitAssets init_assets,
 {
     using BaseException = std::exception;
 
+    auto handle_exception = [&]<typename T>(const T& ex, const char* title)
+    {
+        if constexpr (requires{ ex.stacktrace; })
+        {
+            auto str = ex.what() + std::string("\n\n") + ex.stacktrace;
+            lib2d::os::error_box(title, str);
+        }
+        else
+        {
+            auto str = ex.what() + std::string("\n\n");
+            lib2d::os::error_box(title, str);
+        }
+    };
+
+    auto with_catch = [&](const char* title, auto func) -> bool
+    {
+        try
+        {
+            func();
+        }
+        catch (frog::error& ex)
+        {
+            handle_exception(ex, title);
+            return false;
+        }
+        catch (BaseException& ex)
+        {
+            handle_exception(ex, title);
+            return false;
+        }
+        return true;
+    };
+
     auto engine = frog::ptr<frog::engine2d>{ nullptr };
 
-    try
-    {
-        engine = frog::mk_ptr<frog::engine2d>(std::move(set), std::move(global));
-    }
-    catch (BaseException& ex)
-    {
-        lib2d::os::error_box("FATAL ERROR: engine creation failed: ", ex.what());
+    if (not with_catch("FATAL ERROR: engine creation failed",
+                    [&](){
+                        engine = frog::mk_ptr<frog::engine2d>(std::move(set), std::move(global));
+                    })
+     || not with_catch("ERROR: engine failed during loading",
+                    [&](){
+                        init_assets(*engine);
+                        add_objects(*engine);
+                     })
+     || not with_catch("ERROR: engine crashed",
+                    [&](){
+                        engine->play();
+                    })
+     )
         return 1;
-    }
 
-    try
-    {
-        init_assets(*engine);
-        add_objects(*engine);
-    }
-    catch (BaseException& ex)
-    {
-        lib2d::os::error_box("ERROR: engine failed during loading", ex.what());
-        return 1;
-    }
-
-    try
-    {
-        engine->play();
-    }
-    catch (BaseException& ex)
-    {
-        lib2d::os::error_box("ERROR: engine crashed", ex.what());
-        return 1;
-    }
     return 0;
 }
 
