@@ -111,10 +111,14 @@ set(SRC_TESTS
     src/frog/geometry/physics.cpp
     src/frog/geometry/polar.cpp
     src/frog/geometry/transform.cpp
-    src/frog/utils/exception.cpp
 )
 
-set(SRC_STRING_TEST tests/test_string.cpp src/frog/utils/string.cpp src/frog/utils/ini.cpp)
+set(SRC_STRING_TEST
+    tests/test_string.cpp
+    src/frog/utils/string.cpp
+    src/frog/utils/ini.cpp
+    src/frog/utils/exception.cpp
+)
 
 set(SRC_FIXED_TEST tests/fixed/test_fixed.cpp)
 set(SRC_FIXED_BENCH tests/fixed/bench_fixed.cpp)
