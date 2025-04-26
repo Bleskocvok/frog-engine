@@ -111,6 +111,7 @@ set(SRC_TESTS
     src/frog/geometry/physics.cpp
     src/frog/geometry/polar.cpp
     src/frog/geometry/transform.cpp
+    src/frog/utils/exception.cpp
 )
 
 set(SRC_STRING_TEST tests/test_string.cpp src/frog/utils/string.cpp src/frog/utils/ini.cpp)
