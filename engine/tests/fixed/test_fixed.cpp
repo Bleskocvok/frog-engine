@@ -6,7 +6,8 @@
 #include <cassert>      // assert
 #include <cmath>        // fabs
 #include <cstdio>       // printf
-#include <iostream>     // count
+#include <iostream>     // cout
+#include <sstream>      // stringstream
 
 
 bool equal( int a, int b )
@@ -49,6 +50,31 @@ int main()
     a = 45LU;
     a = float( 45.01f );
     a = double( 45.01 );
+
+    // string conversion tests
+
+    auto str = [](auto a)
+    {
+        std::stringstream o;
+        o << a;
+        return o.str();
+    };
+
+    auto assert_eq = [](auto a, auto b)
+    {
+        if (a != b)
+        {
+            std::cerr << a << " != " << b << std::endl;
+            std::abort();
+        }
+    };
+
+    {
+        fx32 a = fx32( 1, 2 ) + fx32( 1, 4 ) + fx32( 1, 8 ) + fx32( 1, 16 );
+        std::cout << a << std::endl;
+        assert_eq( str( a ), "0.9375" );
+    }
+    return 0;
 
     assert( equal( fx32( 100 ), 100 ) );
     assert( equal( fx32( 13 ), 13 ) );

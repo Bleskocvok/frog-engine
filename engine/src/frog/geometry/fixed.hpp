@@ -237,8 +237,50 @@ public:
 
     friend std::ostream& operator<<( std::ostream& out, fixed a )
     {
-        // TODO: Actually convert it digit by digit and print it exactly.
-        return out << double( a );
+        using buf_t = std::uint64_t;
+        buf_t digits = 0;
+        buf_t exp10 = 10;
+        buf_t exp2 = 2;
+
+        bool negative = false;
+        Integral val = a.value;
+
+        if ( val < 0 )
+        {
+            val = ~val;
+            val += 1;
+            negative = true;
+        }
+
+        val &= Mask;
+
+        for ( int i = 0; i < Decimals; i++ )
+        {
+            digits *= 10;
+
+            auto bit = ( val >> ( Decimals - 1 - i ) ) & 0x1;
+            if ( bit )
+            {
+                auto frac = exp10 / exp2;
+                digits += frac;
+            }
+
+            exp10 *= 10;
+            exp2 *= 2;
+        }
+
+        // remove rightmost zeroes
+        auto normalize = [](auto n)
+        {
+            while ( n > 1 && n % 10 == 0 )
+                n /= 10;
+            return n;
+        };
+
+        return out << Integral( negative ? -a : a ) << "." << normalize( digits );
+
+        // // TODO: Actually convert it digit by digit and print it exactly.
+        // return out << double( a );
     }
 };
 
