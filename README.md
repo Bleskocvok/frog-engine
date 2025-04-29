@@ -224,3 +224,4 @@ Life is pointless.
 - Android build support
 - Net code support for multiplayer
 - Refactor to use more namespaces
+- Test fixed thoroughly
