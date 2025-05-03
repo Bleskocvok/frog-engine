@@ -285,6 +285,11 @@ public:
 
     void from_str( std::string_view str )
     {
+        if ( str.empty() )
+            return;
+
+        bool negative = str.front() == '-';
+
         auto error = [&]()
         {
             return std::runtime_error( "invalid number string \""
@@ -292,7 +297,7 @@ public:
         };
 
         bool dot = false;
-        for ( unsigned i = 0; i < str.size(); i++ )
+        for ( unsigned i = negative ? 1 : 0; i < str.size(); i++ )
         {
             char c = str[ i ];
             if ( c == '.' )
@@ -305,7 +310,7 @@ public:
                 throw error();
         }
 
-        unsigned i = 0;
+        unsigned i = negative ? 1 : 0;
 
         for ( ; i < str.size(); i++ )
         {
