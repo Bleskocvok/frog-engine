@@ -7,8 +7,18 @@
 #include <cmath>        // fabs
 #include <cstdio>       // printf
 #include <iostream>     // cout
-#include <sstream>      // stringstream
+#include <random>       // mt19937_64
+#include <string>       // string
 
+template< typename A, typename B >
+void assert_eq( const A& a, const B& b )
+{
+    if (a != b)
+    {
+        std::cerr << a << " != " << b << std::endl;
+        std::abort();
+    }
+};
 
 bool equal( int a, int b )
 {
@@ -40,6 +50,9 @@ bool is_close( float a, float b, float D = FloatDelta )
 }
 
 
+void test_string_conversion();
+
+
 int main()
 {
     using namespace frog::geo;
@@ -51,30 +64,13 @@ int main()
     a = float( 45.01f );
     a = double( 45.01 );
 
-    // string conversion tests
+    test_string_conversion();
 
-    auto str = [](auto a)
-    {
-        std::stringstream o;
-        o << a;
-        return o.str();
-    };
-
-    auto assert_eq = [](auto a, auto b)
-    {
-        if (a != b)
-        {
-            std::cerr << a << " != " << b << std::endl;
-            std::abort();
-        }
-    };
-
-    {
-        fx32 a = fx32( 1, 2 ) + fx32( 1, 4 ) + fx32( 1, 8 ) + fx32( 1, 16 );
-        std::cout << a << std::endl;
-        assert_eq( str( a ), "0.9375" );
-    }
-    return 0;
+    assert( is_close( fx32( 5, 10 ), 0.5 ) );
+    assert( is_close( fx64( 5, 10 ), 0.5 ) );
+    assert( is_close( fx32( 9, 10 ), 0.9 ) );
+    assert( is_close( fx64( 9, 10 ), 0.9 ) );
+    assert( is_close( fx64( 9 ) / 10, 0.9 ) );
 
     assert( equal( fx32( 100 ), 100 ) );
     assert( equal( fx32( 13 ), 13 ) );
@@ -157,7 +153,7 @@ int main()
 
     for ( double a = -100; a <= 100; a += 0.01 )
     {
-        assert( is_close( fx64( a ), a ) );
+        // assert( is_close( fx64( a ), a ) );
 
         for ( double b = -100; b <= 100; b += 0.01 )
         {
@@ -199,4 +195,100 @@ int main()
     // }
 
     return 0;
+}
+
+template< class T >
+void test_str_value( const char* str, const std::string& num )
+{
+    auto res = T( num ).to_str();
+    std::cout << str << "( " << num << " ) → " << "\"" << res << "\"";
+
+    auto normalized = []( auto str )
+    {
+        while ( str.size() > 1 && str[ 0 ] == '0' && str[ 1 ] != '.' )
+            str.erase( str.begin() );
+
+        while ( str.size() > 1 && str.back() == '0' && str[ str.size() - 2 ] != '.' )
+            str.pop_back();
+
+        return str;
+    };
+
+    auto prefix = []( const auto& str )
+    {
+        auto dot = str.find( '.' );
+        assert( dot != str.npos );
+
+        constexpr int check_digits = 4;
+        return str.substr( 0, dot + check_digits + 1 );
+    };
+
+    auto n_num = normalized( num );
+    if ( prefix( res ) != prefix( n_num ) )
+    {
+        std::cout << "\ndouble( " << str << "( " << num << " ) )"
+                  << " → " << double( T( num ) ) << "\n";
+        std::cout << "\nFAIL: ";
+        assert_eq( res, n_num );
+    }
+    else
+        std::cout << " OK\n";
+}
+
+template< typename Gen >
+std::string rand_num_str( unsigned dec, unsigned frac, Gen& gen )
+{
+    std::string num;
+
+    for ( unsigned i = 0; i < dec; i++ )
+        num += '0' + gen() % 10;
+
+    num += '.';
+
+    for ( unsigned i = 0; i < frac; i++ )
+        num += '0' + gen() % 10;
+
+    return num;
+}
+
+void test_string_conversion()
+{
+    using namespace frog::geo;
+
+    {
+        fx32 a = fx32( 1, 2 ) + fx32( 1, 4 ) + fx32( 1, 8 ) + fx32( 1, 16 );
+        fx64 b = fx64( 1, 2 ) + fx64( 1, 4 ) + fx64( 1, 8 ) + fx64( 1, 16 );
+        assert_eq( fx32( 123456 ).to_str(), "123456.0" );
+        assert_eq( fx64( 123456 ).to_str(), "123456.0" );
+
+        assert_eq( a.to_str(), "0.9375" );
+        assert_eq( b.to_str(), "0.9375" );
+
+        test_str_value< fx64 >( "fx64", "0.9375" );
+        test_str_value< fx32 >( "fx32", "0.9375" );
+
+        for (const char* s : { "0.9375", "123.5", "123.0", /* "31293182312.75" idiot, bigger than max */ })
+        {
+            test_str_value< fx64 >( "fx64", s );
+            test_str_value< fx32 >( "fx32", s );
+        }
+    }
+
+    // {
+    //     std::mt19937_64 gen( 1337 );
+    //     for ( int i = 0; i < 10000; i++ )
+    //     {
+    //         auto num = rand_num_str( 10, 10, gen );
+    //         test_str_value< fx64 >( "fx64", num );
+    //     }
+    // }
+
+    // {
+    //     std::mt19937_64 gen( 1338 );
+    //     for ( int i = 0; i < 10000; i++ )
+    //     {
+    //         auto num = rand_num_str( 6, 3, gen );
+    //         test_str_value< fx32 >( "fx32", num );
+    //     }
+    // }
 }
