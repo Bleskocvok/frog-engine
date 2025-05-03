@@ -249,11 +249,15 @@ public:
         return o.str();
     }
 
+    constexpr static std::uint64_t buffer_number() { return 100000000000llu; }
+    constexpr static std::uint64_t buffer_number_digits() { return 11; }
+
     friend std::ostream& operator<<( std::ostream& out, fixed a )
     {
         using buf_t = std::uint64_t;
 
-        buf_t stuff = 100000000000llu;
+        // buf_t stuff = 100000000000llu;
+        buf_t stuff = buffer_number();
 
         bool negative = false;
         Integral val = a.value;
@@ -317,18 +321,23 @@ public:
         if ( dot )
         {
             using buf_t = std::uint64_t;
+            buf_t digits = 0;
             buf_t exp10 = 1;
 
-            for ( i++; i < str.size(); i++ )
+            i++;
+            for ( unsigned d = 0; i < str.size() && d < buffer_number_digits(); i++ )
             {
                 char c = str[ i ];
                 buf_t digit = c - '0';
 
                 exp10 *= 10;
-                *this += fixed( digit, exp10 );
+                // *this += fixed( digit, exp10 );
+                digits *= 10;
+                digits += digit;
             }
 
-            // *this += fixed{ digits } / fixed{ exp10 };
+            // *this += fixed( exp10, digits );
+            this->value += digits * Div / exp10;
         }
     }
 };
