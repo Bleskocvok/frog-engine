@@ -1,9 +1,13 @@
 #pragma once
 
 #include <cstdint>      // uint32_t, uint64_t
+#include <stdexcept>
 #include <type_traits>  // is_integral, enable_if
 #include <cmath>        // round
 #include <ostream>      // ostream
+#include <string_view>
+#include <cctype>       // isdigit
+#include <sstream>      // stringstream
 
 
 namespace frog::geo
@@ -37,6 +41,9 @@ public:
     fixed() = default;
 
     fixed( Integral x ) : value( x << Decimals ) {}
+
+    fixed( const char* str ) { from_str( str ); }
+    fixed( const std::string& str ) { from_str( str ); }
 
     template< typename T >
     fixed( T n ) : fixed( Integral( n ) )
@@ -235,12 +242,18 @@ public:
     template< typename T >
     friend bool operator!=( T a, fixed b ) { return not ( a == b ); }
 
+    std::string to_str() const
+    {
+        std::stringstream o;
+        o << *this;
+        return o.str();
+    }
+
     friend std::ostream& operator<<( std::ostream& out, fixed a )
     {
         using buf_t = std::uint64_t;
-        buf_t digits = 0;
-        buf_t exp10 = 10;
-        buf_t exp2 = 2;
+
+        buf_t stuff = 100000000000llu;
 
         bool negative = false;
         Integral val = a.value;
@@ -252,35 +265,71 @@ public:
             negative = true;
         }
 
-        val &= Mask;
-
-        for ( int i = 0; i < Decimals; i++ )
-        {
-            digits *= 10;
-
-            auto bit = ( val >> ( Decimals - 1 - i ) ) & 0x1;
-            if ( bit )
-            {
-                auto frac = exp10 / exp2;
-                digits += frac;
-            }
-
-            exp10 *= 10;
-            exp2 *= 2;
-        }
-
         // remove rightmost zeroes
-        auto normalize = [](auto n)
+        auto normalize = []( auto n )
         {
             while ( n > 1 && n % 10 == 0 )
                 n /= 10;
             return n;
         };
 
-        return out << Integral( negative ? -a : a ) << "." << normalize( digits );
+        auto integral = Integral( negative ? -a : a );
 
-        // // TODO: Actually convert it digit by digit and print it exactly.
-        // return out << double( a );
+        buf_t ds = stuff * ( val & Mask ) / Div;
+        return out << integral << "." << normalize( ds );
+    }
+
+    void from_str( std::string_view str )
+    {
+        auto error = [&]()
+        {
+            return std::runtime_error( "invalid number string \""
+                                       + std::string( str ) + "\"" );
+        };
+
+        bool dot = false;
+        for ( unsigned i = 0; i < str.size(); i++ )
+        {
+            char c = str[ i ];
+            if ( c == '.' )
+            {
+                if ( dot )
+                    throw error();
+                dot = true;
+            }
+            else if ( !std::isdigit( static_cast< unsigned char >( c ) ) )
+                throw error();
+        }
+
+        unsigned i = 0;
+
+        for ( ; i < str.size(); i++ )
+        {
+            char c = str[ i ];
+            if ( c == '.' )
+                break;
+
+            unsigned digit = c - '0';
+            *this *= 10;
+            *this += digit;
+        }
+
+        if ( dot )
+        {
+            using buf_t = std::uint64_t;
+            buf_t exp10 = 1;
+
+            for ( i++; i < str.size(); i++ )
+            {
+                char c = str[ i ];
+                buf_t digit = c - '0';
+
+                exp10 *= 10;
+                *this += fixed( digit, exp10 );
+            }
+
+            // *this += fixed{ digits } / fixed{ exp10 };
+        }
     }
 };
 
