@@ -226,3 +226,4 @@ Life is pointless.
 - Refactor to use more namespaces
 - Test fixed thoroughly
 - Packaging android and linux support
+- More fixed variants (uint-based, or int-based, overflow-safe)
