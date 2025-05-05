@@ -227,3 +227,4 @@ Life is pointless.
 - Test fixed thoroughly
 - Packaging android and linux support
 - More fixed variants (uint-based, or int-based, overflow-safe)
+- Unify 2d/3d interface
