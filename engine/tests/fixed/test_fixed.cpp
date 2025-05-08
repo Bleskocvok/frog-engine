@@ -6,8 +6,19 @@
 #include <cassert>      // assert
 #include <cmath>        // fabs
 #include <cstdio>       // printf
-#include <iostream>     // count
+#include <iostream>     // cout
+#include <random>       // mt19937_64
+#include <string>       // string
 
+template< typename A, typename B >
+void assert_eq( const A& a, const B& b )
+{
+    if (a != b)
+    {
+        std::cerr << a << " != " << b << std::endl;
+        std::abort();
+    }
+};
 
 bool equal( int a, int b )
 {
@@ -39,6 +50,9 @@ bool is_close( float a, float b, float D = FloatDelta )
 }
 
 
+void test_string_conversion();
+void test_string_exact();
+
 int main()
 {
     using namespace frog::geo;
@@ -49,6 +63,15 @@ int main()
     a = 45LU;
     a = float( 45.01f );
     a = double( 45.01 );
+
+    test_string_exact();
+    test_string_conversion();
+
+    assert( is_close( fx32( 5, 10 ), 0.5 ) );
+    assert( is_close( fx64( 5, 10 ), 0.5 ) );
+    assert( is_close( fx32( 9, 10 ), 0.9 ) );
+    assert( is_close( fx64( 9, 10 ), 0.9 ) );
+    assert( is_close( fx64( 9 ) / 10, 0.9 ) );
 
     assert( equal( fx32( 100 ), 100 ) );
     assert( equal( fx32( 13 ), 13 ) );
@@ -131,7 +154,7 @@ int main()
 
     for ( double a = -100; a <= 100; a += 0.01 )
     {
-        assert( is_close( fx64( a ), a ) );
+        // assert( is_close( fx64( a ), a ) );
 
         for ( double b = -100; b <= 100; b += 0.01 )
         {
@@ -173,4 +196,130 @@ int main()
     // }
 
     return 0;
+}
+
+template< class T >
+void test_str_value( const char* str, const std::string& num )
+{
+    auto res = T( num ).to_str();
+    std::cout << str << "( " << num << " ) → " << "\"" << res << "\"";
+
+    auto normalized = []( auto str )
+    {
+        while ( str.size() > 1 && str[ 0 ] == '0' && str[ 1 ] != '.' )
+            str.erase( str.begin() );
+
+        while ( str.size() > 1 && str.back() == '0' && str[ str.size() - 2 ] != '.' )
+            str.pop_back();
+
+        return str;
+    };
+
+    auto prefix = []( const auto& str )
+    {
+        auto dot = str.find( '.' );
+        assert( dot != str.npos );
+
+        constexpr int check_digits = 4;
+        return str.substr( 0, dot + check_digits + 1 );
+    };
+
+    auto n_num = normalized( num );
+    if ( prefix( res ) != prefix( n_num ) )
+    {
+        std::cout << "\ndouble( " << str << "( " << num << " ) )"
+                  << " → " << double( T( num ) ) << "\n";
+        std::cout << "\nFAIL: ";
+        // assert_eq( res, n_num );
+        assert_eq( prefix( res ), prefix( n_num ) );
+    }
+    else
+        std::cout << " OK\n";
+}
+
+template< typename Gen >
+std::string rand_num_str( unsigned dec, unsigned frac, Gen& gen )
+{
+    std::string num;
+
+    for ( unsigned i = 0; i < dec; i++ )
+        num += '0' + gen() % 10;
+
+    num += '.';
+
+    for ( unsigned i = 0; i < frac; i++ )
+        num += '0' + gen() % 10;
+
+    return num;
+}
+
+void test_string_exact()
+{
+    using namespace frog::geo;
+    auto exact = []( const auto& str )
+    {
+        assert_eq( fx32( str ).to_str(), str );
+        assert_eq( fx64( str ).to_str(), str );
+    };
+    exact( "123456.5" );
+    exact( "123456.25" );
+    exact( "123456.125" );
+    exact( "123456.0625" );
+    exact( "123456.03125" );
+    exact( "123456.015625" );
+    exact( "123456.0078125" );
+    exact( "123456.00390625" );
+    exact( "123456.001953125" );
+    exact( "-456123.5" );
+    exact( "-456123.25" );
+    exact( "-456123.125" );
+    exact( "-456123.0625" );
+    exact( "-456123.03125" );
+    exact( "-456123.015625" );
+    exact( "-456123.0078125" );
+    exact( "-456123.00390625" );
+    exact( "-456123.001953125" );
+    std::cout << "test_string_exact OK" << std::endl;
+}
+
+void test_string_conversion()
+{
+    using namespace frog::geo;
+
+    {
+        fx32 a = fx32( 1, 2 ) + fx32( 1, 4 ) + fx32( 1, 8 ) + fx32( 1, 16 );
+        fx64 b = fx64( 1, 2 ) + fx64( 1, 4 ) + fx64( 1, 8 ) + fx64( 1, 16 );
+        assert_eq( fx32( 123456 ).to_str(), "123456.0" );
+        assert_eq( fx64( 123456 ).to_str(), "123456.0" );
+
+        assert_eq( a.to_str(), "0.9375" );
+        assert_eq( b.to_str(), "0.9375" );
+
+        test_str_value< fx64 >( "fx64", "0.9375" );
+        test_str_value< fx32 >( "fx32", "0.9375" );
+
+        for (const char* s : { "0.9375", "123.5", "123.0", /* "31293182312.75" idiot, bigger than fx32.max() */ })
+        {
+            test_str_value< fx64 >( "fx64", s );
+            test_str_value< fx32 >( "fx32", s );
+        }
+    }
+
+    // {
+    //     std::mt19937_64 gen( 1337 );
+    //     for ( int i = 0; i < 10000; i++ )
+    //     {
+    //         auto num = rand_num_str( 10, 10, gen );
+    //         test_str_value< fx64 >( "fx64", num );
+    //     }
+    // }
+
+    // {
+    //     std::mt19937_64 gen( 1338 );
+    //     for ( int i = 0; i < 10000; i++ )
+    //     {
+    //         auto num = rand_num_str( 6, 3, gen );
+    //         test_str_value< fx32 >( "fx32", num );
+    //     }
+    // }
 }

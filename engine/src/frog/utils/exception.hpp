@@ -7,7 +7,6 @@
 #include <utility>          // forward
 #include <type_traits>      // is_base_of_v, decay_t
 
-
 namespace frog {
 
 
@@ -30,14 +29,27 @@ struct error : std::exception
     }
 
     std::string str;
+    std::string stacktrace = "[no stacktrace]";
 
     template<typename... Args>
     error(Args&&... args) : str(mk_str(std::forward<Args>(args)...))
-    { }
+    {
+        init_stacktrace();
+    }
 
     // TODO: noexcept???
     const char* what() const noexcept override { return str.c_str(); }
+
+private:
+    void init_stacktrace();
 };
 
+struct game_error : error {
+
+template<typename... Args>
+explicit game_error(Args&&... args) : error(std::forward<Args>(args)...)
+{ }
+
+};
 
 }  // namespace frog

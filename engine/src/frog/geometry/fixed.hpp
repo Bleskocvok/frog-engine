@@ -1,9 +1,13 @@
 #pragma once
 
 #include <cstdint>      // uint32_t, uint64_t
+#include <stdexcept>
 #include <type_traits>  // is_integral, enable_if
 #include <cmath>        // round
 #include <ostream>      // ostream
+#include <string_view>
+#include <cctype>       // isdigit
+#include <sstream>      // stringstream
 
 
 namespace frog::geo
@@ -37,6 +41,9 @@ public:
     fixed() = default;
 
     fixed( Integral x ) : value( x << Decimals ) {}
+
+    fixed( const char* str ) { from_str( str ); }
+    fixed( const std::string& str ) { from_str( str ); }
 
     template< typename T >
     fixed( T n ) : fixed( Integral( n ) )
@@ -235,10 +242,141 @@ public:
     template< typename T >
     friend bool operator!=( T a, fixed b ) { return not ( a == b ); }
 
+    std::string to_str() const
+    {
+        std::stringstream o;
+        o << *this;
+        return o.str();
+    }
+
+    constexpr static std::uint64_t buffer_number() { return 100000000000llu; }
+    constexpr static std::uint64_t buffer_number_digits() { return 11; }
+
     friend std::ostream& operator<<( std::ostream& out, fixed a )
     {
-        // TODO: Actually convert it digit by digit and print it exactly.
-        return out << double( a );
+        using buf_t = std::uint64_t;
+
+        // buf_t stuff = 100000000000llu;
+        buf_t stuff = buffer_number();
+
+        bool negative = false;
+        Integral val = a.value;
+
+        if ( val < 0 )
+        {
+            val = ~val;
+            val += 1;
+            negative = true;
+        }
+
+        // remove rightmost zeroes
+        auto normalize = []( auto n )
+        {
+            while ( n > 1 && n % 10 == 0 )
+                n /= 10;
+            return n;
+        };
+
+        auto digits = []( std::uint64_t n )
+        {
+        // UINT64_MAX = 18446744073709551615
+            return n >= 10000000000000000000u ? 20
+                 : n >= 1000000000000000000u  ? 19
+                 : n >= 100000000000000000u   ? 18
+                 : n >= 10000000000000000u    ? 17
+                 : n >= 1000000000000000u     ? 16
+                 : n >= 100000000000000u      ? 15
+                 : n >= 10000000000000u       ? 14
+                 : n >= 1000000000000u        ? 13
+                 : n >= 100000000000u         ? 12
+                 : n >= 10000000000u          ? 11
+                 : n >= 1000000000u           ? 10
+                 : n >= 100000000u            ? 9
+                 : n >= 10000000u             ? 8
+                 : n >= 1000000u              ? 7
+                 : n >= 100000u               ? 6
+                 : n >= 10000u                ? 5
+                 : n >= 1000u                 ? 4
+                 : n >= 100u                  ? 3
+                 : n >= 10u                   ? 2
+                 : 1;
+        };
+
+        auto integral = Integral( a );
+
+        out << integral << ".";
+        buf_t ds = stuff * ( val & Mask ) / Div;
+        if ( ds > 0 )
+            for ( int i = 0; i < buffer_number_digits() - digits( ds ); i++ )
+                out << "0";
+        out << normalize( ds );
+        return out;
+    }
+
+    void from_str( std::string_view str )
+    {
+        if ( str.empty() )
+            return;
+
+        bool negative = str.front() == '-';
+
+        auto error = [&]()
+        {
+            return std::runtime_error( "invalid number string \""
+                                       + std::string( str ) + "\"" );
+        };
+
+        bool dot = false;
+        for ( unsigned i = negative ? 1 : 0; i < str.size(); i++ )
+        {
+            char c = str[ i ];
+            if ( c == '.' )
+            {
+                if ( dot )
+                    throw error();
+                dot = true;
+            }
+            else if ( !std::isdigit( static_cast< unsigned char >( c ) ) )
+                throw error();
+        }
+
+        unsigned i = negative ? 1 : 0;
+
+        for ( ; i < str.size(); i++ )
+        {
+            char c = str[ i ];
+            if ( c == '.' )
+                break;
+
+            unsigned digit = c - '0';
+            *this *= 10;
+            *this += digit;
+        }
+
+        if ( dot )
+        {
+            using buf_t = std::uint64_t;
+            buf_t digits = 0;
+            buf_t exp10 = 1;
+
+            i++;
+            for ( unsigned d = 0; i < str.size() && d < buffer_number_digits(); i++ )
+            {
+                char c = str[ i ];
+                buf_t digit = c - '0';
+
+                exp10 *= 10;
+                // *this += fixed( digit, exp10 );
+                digits *= 10;
+                digits += digit;
+            }
+
+            // *this += fixed( exp10, digits );
+            this->value += digits * Div / exp10;
+        }
+
+        if ( negative )
+            this->value = -this->value;
     }
 };
 

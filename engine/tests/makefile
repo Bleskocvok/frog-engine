@@ -16,7 +16,8 @@ GEO_DEPS = ../src/frog/geometry/general.cpp \
            ../src/frog/geometry/transform.cpp
 
 STR_DEPS = ../src/frog/utils/string.cpp \
-           ../src/frog/utils/ini.cpp
+           ../src/frog/utils/ini.cpp \
+           ../src/frog/utils/exception.cpp
 
 RUN_TESTS = $(TESTS:%=run.%)
 
