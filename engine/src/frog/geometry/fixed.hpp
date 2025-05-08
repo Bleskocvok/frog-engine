@@ -277,10 +277,40 @@ public:
             return n;
         };
 
-        auto integral = Integral( negative ? -a : a );
+        auto digits = []( std::uint64_t n )
+        {
+        // UINT64_MAX = 18446744073709551615
+            return n >= 10000000000000000000u ? 20
+                 : n >= 1000000000000000000u  ? 19
+                 : n >= 100000000000000000u   ? 18
+                 : n >= 10000000000000000u    ? 17
+                 : n >= 1000000000000000u     ? 16
+                 : n >= 100000000000000u      ? 15
+                 : n >= 10000000000000u       ? 14
+                 : n >= 1000000000000u        ? 13
+                 : n >= 100000000000u         ? 12
+                 : n >= 10000000000u          ? 11
+                 : n >= 1000000000u           ? 10
+                 : n >= 100000000u            ? 9
+                 : n >= 10000000u             ? 8
+                 : n >= 1000000u              ? 7
+                 : n >= 100000u               ? 6
+                 : n >= 10000u                ? 5
+                 : n >= 1000u                 ? 4
+                 : n >= 100u                  ? 3
+                 : n >= 10u                   ? 2
+                 : 1;
+        };
 
+        auto integral = Integral( a );
+
+        out << integral << ".";
         buf_t ds = stuff * ( val & Mask ) / Div;
-        return out << integral << "." << normalize( ds );
+        if ( ds > 0 )
+            for ( int i = 0; i < buffer_number_digits() - digits( ds ); i++ )
+                out << "0";
+        out << normalize( ds );
+        return out;
     }
 
     void from_str( std::string_view str )
@@ -344,6 +374,9 @@ public:
             // *this += fixed( exp10, digits );
             this->value += digits * Div / exp10;
         }
+
+        if ( negative )
+            this->value = -this->value;
     }
 };
 

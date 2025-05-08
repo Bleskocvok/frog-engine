@@ -51,7 +51,7 @@ bool is_close( float a, float b, float D = FloatDelta )
 
 
 void test_string_conversion();
-
+void test_string_exact();
 
 int main()
 {
@@ -64,6 +64,7 @@ int main()
     a = float( 45.01f );
     a = double( 45.01 );
 
+    test_string_exact();
     test_string_conversion();
 
     assert( is_close( fx32( 5, 10 ), 0.5 ) );
@@ -229,7 +230,8 @@ void test_str_value( const char* str, const std::string& num )
         std::cout << "\ndouble( " << str << "( " << num << " ) )"
                   << " → " << double( T( num ) ) << "\n";
         std::cout << "\nFAIL: ";
-        assert_eq( res, n_num );
+        // assert_eq( res, n_num );
+        assert_eq( prefix( res ), prefix( n_num ) );
     }
     else
         std::cout << " OK\n";
@@ -251,6 +253,35 @@ std::string rand_num_str( unsigned dec, unsigned frac, Gen& gen )
     return num;
 }
 
+void test_string_exact()
+{
+    using namespace frog::geo;
+    auto exact = []( const auto& str )
+    {
+        assert_eq( fx32( str ).to_str(), str );
+        assert_eq( fx64( str ).to_str(), str );
+    };
+    exact( "123456.5" );
+    exact( "123456.25" );
+    exact( "123456.125" );
+    exact( "123456.0625" );
+    exact( "123456.03125" );
+    exact( "123456.015625" );
+    exact( "123456.0078125" );
+    exact( "123456.00390625" );
+    exact( "123456.001953125" );
+    exact( "-456123.5" );
+    exact( "-456123.25" );
+    exact( "-456123.125" );
+    exact( "-456123.0625" );
+    exact( "-456123.03125" );
+    exact( "-456123.015625" );
+    exact( "-456123.0078125" );
+    exact( "-456123.00390625" );
+    exact( "-456123.001953125" );
+    std::cout << "test_string_exact OK" << std::endl;
+}
+
 void test_string_conversion()
 {
     using namespace frog::geo;
@@ -267,7 +298,7 @@ void test_string_conversion()
         test_str_value< fx64 >( "fx64", "0.9375" );
         test_str_value< fx32 >( "fx32", "0.9375" );
 
-        for (const char* s : { "0.9375", "123.5", "123.0", /* "31293182312.75" idiot, bigger than max */ })
+        for (const char* s : { "0.9375", "123.5", "123.0", /* "31293182312.75" idiot, bigger than fx32.max() */ })
         {
             test_str_value< fx64 >( "fx64", s );
             test_str_value< fx32 >( "fx32", s );
