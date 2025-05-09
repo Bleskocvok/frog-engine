@@ -279,6 +279,9 @@ void test_string_exact()
     exact( "-456123.0078125" );
     exact( "-456123.00390625" );
     exact( "-456123.001953125" );
+
+    assert_eq( fx64( 1, 256 ).to_str(), "0.00390625" );
+
     std::cout << "test_string_exact OK" << std::endl;
 }
 
