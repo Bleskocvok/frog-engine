@@ -9,6 +9,28 @@
 #include <iostream>     // cout
 #include <random>       // mt19937_64
 #include <string>       // string
+#include <ostream>
+
+struct thing
+{
+    std::ostream* out = nullptr;
+
+    template< class T >
+    friend thing& operator<<( thing& t, T&& val )
+    {
+        if ( t.out )
+            *t.out << std::forward< T >( val );
+
+        return t;
+    }
+};
+
+inline thing logger;
+
+auto& log()
+{
+    return logger;
+}
 
 template< typename A, typename B >
 void assert_eq( const A& a, const B& b )
@@ -57,6 +79,9 @@ void test_exp();
 int main()
 {
     using namespace frog::geo;
+
+    // Turns on debug logs.
+    // logger.out = &std::cout;
 
     fx32 a = 0;
     a = 45;
@@ -200,11 +225,11 @@ int main()
     return 0;
 }
 
-template< class T >
-void test_str_value( const char* str, const std::string& num )
+template< class T, int CheckDigits = 4 >
+void test_str_value( const char* str, std::string num, const std::string& exp = "" )
 {
     auto res = T( num ).to_str();
-    std::cout << str << "( " << num << " ) → " << "\"" << res << "\"";
+    log() << str << "( " << num << " ) → " << "\"" << res << "\"";
 
     auto normalized = []( auto str )
     {
@@ -233,14 +258,14 @@ void test_str_value( const char* str, const std::string& num )
     auto n_num = normalized( num );
     if ( prefix( res ) != prefix( n_num ) )
     {
-        std::cout << "\ndouble( " << str << "( " << num << " ) )"
+        log() << "\ndouble( " << str << "( " << num << " ) )"
                   << " → " << double( T( num ) ) << "\n";
-        std::cout << "\nFAIL: ";
+        log() << "\nFAIL: ";
         // assert_eq( res, n_num );
         assert_eq( prefix( res ), prefix( n_num ) );
     }
     else
-        std::cout << " OK\n";
+        log() << " OK\n";
 }
 
 template< typename Gen >
