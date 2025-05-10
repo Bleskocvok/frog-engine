@@ -52,6 +52,7 @@ bool is_close( float a, float b, float D = FloatDelta )
 
 void test_string_conversion();
 void test_string_exact();
+void test_exp();
 
 int main()
 {
@@ -66,6 +67,7 @@ int main()
 
     test_string_exact();
     test_string_conversion();
+    test_exp();
 
     assert( is_close( fx32( 5, 10 ), 0.5 ) );
     assert( is_close( fx64( 5, 10 ), 0.5 ) );
@@ -325,4 +327,26 @@ void test_string_conversion()
     //         test_str_value< fx32 >( "fx32", num );
     //     }
     // }
+}
+
+void test_exp()
+{
+    using namespace frog::geo;
+
+    std::uint64_t n = 2;
+    for ( unsigned i = 1; i < 18; i++ )
+    {
+        auto f1 = fx32{ 2 }.exp( i );
+        auto f2 = fx64{ 2 }.exp( i );
+        log() << "2 ^ " << i << " = " << n << "\n"
+              << "  fx32 = " << f1 << "\n"
+              << "  fx64 = " << f2 << "\n";
+        assert_eq( f1, n );
+        assert_eq( f2, n );
+
+        n *= 2;
+    }
+
+    assert_eq( fx32( 2 ).exp( -1 ), fx32( 1, 2 ) );
+    assert_eq( fx64( 2 ).exp( -1 ), fx64( 1, 2 ) );
 }
