@@ -9,6 +9,28 @@
 #include <iostream>     // cout
 #include <random>       // mt19937_64
 #include <string>       // string
+#include <ostream>
+
+struct thing
+{
+    std::ostream* out = nullptr;
+
+    template< class T >
+    friend thing& operator<<( thing& t, T&& val )
+    {
+        if ( t.out )
+            *t.out << std::forward< T >( val );
+
+        return t;
+    }
+};
+
+inline thing logger;
+
+auto& log()
+{
+    return logger;
+}
 
 template< typename A, typename B >
 void assert_eq( const A& a, const B& b )
@@ -52,10 +74,14 @@ bool is_close( float a, float b, float D = FloatDelta )
 
 void test_string_conversion();
 void test_string_exact();
+void test_exp();
 
 int main()
 {
     using namespace frog::geo;
+
+    // Turns on debug logs.
+    // logger.out = &std::cout;
 
     fx32 a = 0;
     a = 45;
@@ -66,6 +92,7 @@ int main()
 
     test_string_exact();
     test_string_conversion();
+    test_exp();
 
     assert( is_close( fx32( 5, 10 ), 0.5 ) );
     assert( is_close( fx64( 5, 10 ), 0.5 ) );
@@ -198,11 +225,11 @@ int main()
     return 0;
 }
 
-template< class T >
-void test_str_value( const char* str, const std::string& num )
+template< class T, int CheckDigits = 4 >
+void test_str_value( const char* str, std::string num, const std::string& exp = "" )
 {
     auto res = T( num ).to_str();
-    std::cout << str << "( " << num << " ) → " << "\"" << res << "\"";
+    log() << str << "( " << num << " ) → " << "\"" << res << "\"";
 
     auto normalized = []( auto str )
     {
@@ -218,23 +245,27 @@ void test_str_value( const char* str, const std::string& num )
     auto prefix = []( const auto& str )
     {
         auto dot = str.find( '.' );
-        assert( dot != str.npos );
 
-        constexpr int check_digits = 4;
-        return str.substr( 0, dot + check_digits + 1 );
+        if ( dot == str.npos )
+            return str;
+
+        return str.substr( 0, dot + CheckDigits + 1 );
     };
+
+    if ( not exp.empty() )
+        num = exp;
 
     auto n_num = normalized( num );
     if ( prefix( res ) != prefix( n_num ) )
     {
-        std::cout << "\ndouble( " << str << "( " << num << " ) )"
+        log() << "\ndouble( " << str << "( " << num << " ) )"
                   << " → " << double( T( num ) ) << "\n";
-        std::cout << "\nFAIL: ";
+        log() << "\nFAIL: ";
         // assert_eq( res, n_num );
         assert_eq( prefix( res ), prefix( n_num ) );
     }
     else
-        std::cout << " OK\n";
+        log() << " OK\n";
 }
 
 template< typename Gen >
@@ -245,7 +276,8 @@ std::string rand_num_str( unsigned dec, unsigned frac, Gen& gen )
     for ( unsigned i = 0; i < dec; i++ )
         num += '0' + gen() % 10;
 
-    num += '.';
+    if ( frac >= 0 )
+        num += '.';
 
     for ( unsigned i = 0; i < frac; i++ )
         num += '0' + gen() % 10;
@@ -279,6 +311,28 @@ void test_string_exact()
     exact( "-456123.0078125" );
     exact( "-456123.00390625" );
     exact( "-456123.001953125" );
+
+    assert_eq( fx64( 1, 256 ).to_str(), "0.00390625" );
+
+    {
+        std::mt19937_64 gen32( 1337 );
+        std::mt19937_64 gen64( 1337 );
+        for ( int i = 0; i < 10000; i++ )
+        {
+            auto n64 = gen64() % std::uint64_t( fx64::max() );
+            auto n32 = gen32() % std::uint32_t( fx32::max() );
+
+            auto str64 = std::to_string( n64 );
+            auto str32 = std::to_string( n32 );
+
+            test_str_value< fx64, 1000 >( "fx64", str64, str64 + ".0" );
+            test_str_value< fx64, 1000 >( "fx64", str64 + ".0" );
+
+            test_str_value< fx32, 1000 >( "fx32", str32, str32 + ".0" );
+            test_str_value< fx32, 1000 >( "fx32", str32 + ".0" );
+        }
+    }
+
     std::cout << "test_string_exact OK" << std::endl;
 }
 
@@ -322,4 +376,26 @@ void test_string_conversion()
     //         test_str_value< fx32 >( "fx32", num );
     //     }
     // }
+}
+
+void test_exp()
+{
+    using namespace frog::geo;
+
+    std::uint64_t n = 2;
+    for ( unsigned i = 1; i < 18; i++ )
+    {
+        auto f1 = fx32{ 2 }.exp( i );
+        auto f2 = fx64{ 2 }.exp( i );
+        log() << "2 ^ " << i << " = " << n << "\n"
+              << "  fx32 = " << f1 << "\n"
+              << "  fx64 = " << f2 << "\n";
+        assert_eq( f1, n );
+        assert_eq( f2, n );
+
+        n *= 2;
+    }
+
+    assert_eq( fx32( 2 ).exp( -1 ), fx32( 1, 2 ) );
+    assert_eq( fx64( 2 ).exp( -1 ), fx64( 1, 2 ) );
 }

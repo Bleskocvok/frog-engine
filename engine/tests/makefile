@@ -1,4 +1,8 @@
-CXXFLAGS ?= -std=c++20 -Wall -Wextra -O2
+CXXFLAGS ?= -std=c++20 -Wall -Wextra
+
+ifdef DEBUG
+    CXXFLAGS += -g
+endif
 
 INCLUDES = -I../libraries/doctest/ \
            -I../src/

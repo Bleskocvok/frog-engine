@@ -153,6 +153,40 @@ public:
 
     fixed recip() const { auto a = *this; a.invert(); return a; }
 
+    fixed exp( int n )
+    {
+        fixed res = 1;
+        fixed x = *this;
+
+        if ( n == 0 )
+            return res;
+
+        bool negative = false;
+        if ( n < 0 )
+        {
+            negative = true;
+            n = -n;
+        }
+
+        while ( n > 1 )
+        {
+            if ( n % 2 == 1 )
+            {
+                res *= x;
+                n -= 1;
+            }
+            x *= x;
+            n /= 2;
+        }
+
+        res *= x;
+
+        if ( negative )
+            res = fixed{ 1 } / res;
+
+        return res;
+    }
+
     template< typename T >
     fixed& operator+=( T b ) { return *this += fixed( b ); }
 
@@ -259,14 +293,12 @@ public:
         // buf_t stuff = 100000000000llu;
         buf_t stuff = buffer_number();
 
-        bool negative = false;
         Integral val = a.value;
 
         if ( val < 0 )
         {
             val = ~val;
             val += 1;
-            negative = true;
         }
 
         // remove rightmost zeroes
@@ -302,12 +334,10 @@ public:
                  : 1;
         };
 
-        auto integral = Integral( a );
-
-        out << integral << ".";
+        out << Integral( a ) << ".";
         buf_t ds = stuff * ( val & Mask ) / Div;
         if ( ds > 0 )
-            for ( int i = 0; i < buffer_number_digits() - digits( ds ); i++ )
+            for ( unsigned i = 0; i < buffer_number_digits() - digits( ds ); i++ )
                 out << "0";
         out << normalize( ds );
         return out;
@@ -366,12 +396,10 @@ public:
                 buf_t digit = c - '0';
 
                 exp10 *= 10;
-                // *this += fixed( digit, exp10 );
                 digits *= 10;
                 digits += digit;
             }
 
-            // *this += fixed( exp10, digits );
             this->value += digits * Div / exp10;
         }
 
