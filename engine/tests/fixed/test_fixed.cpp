@@ -220,11 +220,15 @@ void test_str_value( const char* str, const std::string& num )
     auto prefix = []( const auto& str )
     {
         auto dot = str.find( '.' );
-        assert( dot != str.npos );
 
-        constexpr int check_digits = 4;
-        return str.substr( 0, dot + check_digits + 1 );
+        if ( dot == str.npos )
+            return str;
+
+        return str.substr( 0, dot + CheckDigits + 1 );
     };
+
+    if ( not exp.empty() )
+        num = exp;
 
     auto n_num = normalized( num );
     if ( prefix( res ) != prefix( n_num ) )
@@ -247,7 +251,8 @@ std::string rand_num_str( unsigned dec, unsigned frac, Gen& gen )
     for ( unsigned i = 0; i < dec; i++ )
         num += '0' + gen() % 10;
 
-    num += '.';
+    if ( frac >= 0 )
+        num += '.';
 
     for ( unsigned i = 0; i < frac; i++ )
         num += '0' + gen() % 10;
@@ -283,6 +288,25 @@ void test_string_exact()
     exact( "-456123.001953125" );
 
     assert_eq( fx64( 1, 256 ).to_str(), "0.00390625" );
+
+    {
+        std::mt19937_64 gen32( 1337 );
+        std::mt19937_64 gen64( 1337 );
+        for ( int i = 0; i < 10000; i++ )
+        {
+            auto n64 = gen64() % std::uint64_t( fx64::max() );
+            auto n32 = gen32() % std::uint32_t( fx32::max() );
+
+            auto str64 = std::to_string( n64 );
+            auto str32 = std::to_string( n32 );
+
+            test_str_value< fx64, 1000 >( "fx64", str64, str64 + ".0" );
+            test_str_value< fx64, 1000 >( "fx64", str64 + ".0" );
+
+            test_str_value< fx32, 1000 >( "fx32", str32, str32 + ".0" );
+            test_str_value< fx32, 1000 >( "fx32", str32 + ".0" );
+        }
+    }
 
     std::cout << "test_string_exact OK" << std::endl;
 }
