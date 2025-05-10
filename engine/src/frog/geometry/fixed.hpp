@@ -153,6 +153,40 @@ public:
 
     fixed recip() const { auto a = *this; a.invert(); return a; }
 
+    fixed exp( int n )
+    {
+        fixed res = 1;
+        fixed x = *this;
+
+        if ( n == 0 )
+            return res;
+
+        bool negative = false;
+        if ( n < 0 )
+        {
+            negative = true;
+            n = -n;
+        }
+
+        while ( n > 1 )
+        {
+            if ( n % 2 == 1 )
+            {
+                res *= x;
+                n -= 1;
+            }
+            x *= x;
+            n /= 2;
+        }
+
+        res *= x;
+
+        if ( negative )
+            res = fixed{ 1 } / res;
+
+        return res;
+    }
+
     template< typename T >
     fixed& operator+=( T b ) { return *this += fixed( b ); }
 
