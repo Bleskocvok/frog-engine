@@ -29,6 +29,8 @@ public:
     std::vector<ptr<GameObject>> objects_;
     std::vector<ptr<GameObject>> to_add;
 
+    std::string name;
+
     template <typename Self, typename Func, typename Predicate>
     static void for_each_impl(Self& self, Func func, Predicate pred)
     {
@@ -49,14 +51,17 @@ public:
     {
         auto* ptr = obj.get();
         to_add.push_back(std::move(obj));
+        ptr->scene_name_ = name;
         return ptr;
     }
 
     // For convenience's sake.
     GameObject* create_object()
     {
-        to_add.emplace_back(mk_ptr<GameObject>());
-        return to_add.back().get();
+        return add(mk_ptr<GameObject>());
+        // This was a tiny bit better, perhaps return it.
+        // to_add.emplace_back(mk_ptr<GameObject>());
+        // return to_add.back().get();
     }
 
     /*

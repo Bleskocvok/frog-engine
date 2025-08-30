@@ -59,7 +59,9 @@ public:
         {
             _current = name;
         }
-        return scenes.emplace(std::move(name), std::move(sc)).first->second.get();
+        auto* res = scenes.emplace(name, std::move(sc)).first->second.get();
+        res->name = std::move(name);
+        return res;
     }
 
     bool remove(const std::string& name)

@@ -15,6 +15,10 @@ namespace frog
 {
 
 
+template<typename GameObject>
+class scene;
+
+
 template<typename GameObject, typename Script>
 static Script* go_get_script(GameObject& o)
 {
@@ -39,6 +43,9 @@ private:
     std::vector<ptr<gx::ui_element>> _elements;
 
     std::string _tag;
+    std::string scene_name_;
+
+    friend scene<Derived>;
 
     template<typename Func>
     void for_each_script(Func func)
@@ -86,6 +93,7 @@ public:
     const auto& elements() const { return _elements; }
           auto& elements()       { return _elements; }
 
+    const auto& scene_name() const { return scene_name_; }
 
 
     template<typename S>
