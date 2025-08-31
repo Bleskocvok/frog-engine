@@ -2,6 +2,7 @@
 
 #include "exception.hpp"
 
+// This one stays even with NDEBUG
 #define frog_assert( expr ) \
     do {                    \
         if ( not ( expr )) \
