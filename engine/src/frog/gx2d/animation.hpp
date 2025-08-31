@@ -48,7 +48,9 @@ public:
 
     void add_frame(std::string name, animation_frame frame)
     {
-        map.emplace(std::move(name), std::move(frame));
+        map.emplace(name, std::move(frame));
+        if (current_.empty())
+            set(std::move(name));
     }
 
     void set(std::string name)
