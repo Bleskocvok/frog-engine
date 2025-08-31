@@ -22,7 +22,7 @@ struct simple_button_style_base : button_style_base<GameObject>
 {
     frog::gx::ui_element* ui = nullptr;
 
-    simple_button_style_base(frog::gx::ui_element* ui = nullptr)
+    simple_button_style_base(frog::gx::ui_element* ui)
         : ui(ui) {}
 
     void init(GameObject& obj) override
