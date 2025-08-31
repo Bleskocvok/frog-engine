@@ -2,7 +2,7 @@
 
 #include "frog/core/script.hpp"
 #include "frog/graphics/ui_element.hpp"
-#include "frog/scripts/button_style.hpp"
+#include "frog/scripts/button/button_style.hpp"
 #include "frog/utils/ptr.hpp"
 
 #include "frog/debug.hpp"
@@ -21,16 +21,16 @@ template<typename GameObject>
 struct simple_button_style_base : button_style_base<GameObject>
 {
     frog::gx::ui_element* ui = nullptr;
-    frog::ptr<gx::ui_element> create_elem = nullptr;
 
-    simple_button_style_base(frog::ptr<gx::ui_element> elem = nullptr)
-        : create_elem(std::move(elem)) {}
+    simple_button_style_base(frog::gx::ui_element* ui = nullptr)
+        : ui(ui) {}
 
     void init(GameObject& obj) override
     {
-        if (create_elem)
-            ui = obj.add_element(std::move(create_elem));
-        else if (obj.elements().empty())
+        if (ui)
+            return;
+
+        if (obj.elements().empty())
             ui = obj.add_element(frog::mk_ptr<gx::ui_element>());
         else
             ui = obj.elements().front().get();
