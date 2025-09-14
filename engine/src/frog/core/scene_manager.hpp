@@ -100,6 +100,14 @@ public:
         current().stable_update(eng);
     }
 
+    void pre_update(Engine& eng)
+    {
+        if (empty())
+            return;
+
+        current().pre_update(eng);
+    }
+
     void end_update(Engine& eng)
     {
         if (empty())

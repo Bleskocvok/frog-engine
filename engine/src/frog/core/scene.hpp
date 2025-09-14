@@ -174,6 +174,11 @@ public:
         for_each_object([&](auto& obj) { obj.stable_update(eng); });
     }
 
+    void pre_update(Engine& eng)
+    {
+        for_each_object([&](auto& obj) { obj.pre_update(eng); });
+    }
+
     void end_update(Engine& eng)
     {
         for_each_object([&](auto& obj) { obj.end_update(eng); });

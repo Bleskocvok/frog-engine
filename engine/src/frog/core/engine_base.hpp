@@ -36,6 +36,7 @@ protected:
 
     virtual void stable_update()
     {
+        scenes->pre_update(get());
         scenes->stable_update(get());
         scenes->end_update(get());
         scenes->cleanup(get());
@@ -117,7 +118,7 @@ public:
             global->frame_time_us = frame;
             accum += frame;
 
-            render(frame / static_cast<double>(delta));
+            render(accum / static_cast<double>(delta));
         }
     }
 };

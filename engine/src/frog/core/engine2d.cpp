@@ -133,7 +133,7 @@ std::pair<geo::vec2, geo::vec2> engine2d::scale_shift() const
 
 
 // TODO: unused parameter, use it for extrapolation of movement
-void engine2d::draw_objects(double /* between */)
+void engine2d::draw_objects(double between)
 {
     // TODO: solve in a more appropriate OOP way
     //       also, perhaps create some sort of reference counting with layers
@@ -163,6 +163,23 @@ void engine2d::draw_objects(double /* between */)
         for (const auto& model : layer)
         {
             auto rect = model->rect;
+            float angle = model->angle;
+
+            if (model->interpolation == gx2d::Interpolation::INTERPOLATE)
+            {
+                auto diff = model->rect.pos - model->prev.pos;
+                rect.pos = model->prev.pos + between * diff;
+                // TODO: Wrap around 160, obvi.
+                // angle = model->prev.angle + between * (model->angle - model->prev.angle);
+            }
+            else if (model->interpolation == gx2d::Interpolation::EXTRAPOLATE)
+            {
+                auto diff = model->rect.pos - model->prev.pos;
+                rect.pos = model->rect.pos + between * diff;
+                // TODO: Wrap around 160, obvi.
+                // angle = model->angle + between * (model->angle - model->prev.angle);
+            }
+
             rect.pos.x() *= scale.x();
             rect.pos.y() *= scale.y();
             rect.pos += shift;
@@ -186,7 +203,7 @@ void engine2d::draw_objects(double /* between */)
                                           rect.size.x(), rect.size.y(),
                                           color.r(), color.g(), color.b(), color.a(),
                                           rect.size.x() / 2, rect.size.y() / 2,
-                                          model->angle);
+                                          angle);
         }
 }
 

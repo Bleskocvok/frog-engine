@@ -33,9 +33,11 @@ static Script* go_get_script(GameObject& o)
 template<typename Derived, typename Script, typename Engine>
 class game_object_base
 {
+protected:
+    bool initialized = false;
+
 private:
     bool _destroyed = false;
-    bool initialized = false;
 
     std::vector<ptr<Script>> scripts;
     std::vector<ptr<Script>> added_scripts;
@@ -164,7 +166,7 @@ public:
         return result;
     }
 
-    void init(Engine& engine)
+    virtual void init(Engine& engine)
     {
         initialized = true;
         addition_removal();
@@ -179,6 +181,12 @@ public:
         for_each_script([&](auto& sc){ sc.stable_update(get(), engine); });
     }
 
+    virtual void pre_update(Engine& engine)
+    {
+        init(engine);
+        for_each_script([&](auto& sc){ sc.pre_update(get(), engine); });
+    }
+
     void end_update(Engine& engine)
     {
         init(engine);
@@ -189,6 +197,12 @@ public:
     {
         init(engine);
         for_each_script([&](auto& sc){ sc.frame_update(get(), engine); });
+    }
+
+    void pre_frame_update(Engine& engine)
+    {
+        init(engine);
+        for_each_script([&](auto& sc){ sc.pre_frame_update(get(), engine); });
     }
 
     void end_frame_update(Engine& engine)
