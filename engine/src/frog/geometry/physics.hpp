@@ -255,6 +255,7 @@ public:
     const auto& angles() const { return angles_.data; }
           auto& angles()       { return angles_.data; }
 
+    // TODO: Add limit_reached check.
     idx_t add_point(point pt) { return points_.push(pt); }
     idx_t add_joint(joint j) { return joints_.push(j); }
     idx_t add_angle(angle a) { return angles_.push(a); }
