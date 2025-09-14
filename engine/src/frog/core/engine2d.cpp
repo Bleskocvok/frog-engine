@@ -6,6 +6,8 @@
 #include "frog/graphics/color.hpp"
 #include "frog/font/atlas.hpp"
 #include "frog/font/truetype.hpp"
+#include "frog/geometry/general.hpp"
+#include "frog/geometry/vector.hpp"
 
 #include "frog/lib2d/structs.hpp"
 
@@ -167,10 +169,8 @@ void engine2d::draw_objects(double between)
 
             if (model->interpolation == gx2d::Interpolation::INTERPOLATE)
             {
-                auto diff = model->rect.pos - model->prev.pos;
-                rect.pos = model->prev.pos + between * diff;
-                // TODO: Wrap around 160, obvi.
-                // angle = model->prev.angle + between * (model->angle - model->prev.angle);
+                rect.pos = frog::geo::lerp(model->prev.pos, model->rect.pos, float(between));
+                angle = lerp_deg(model->prev.angle, model->angle, between);
             }
             else if (model->interpolation == gx2d::Interpolation::EXTRAPOLATE)
             {

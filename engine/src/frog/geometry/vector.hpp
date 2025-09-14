@@ -22,6 +22,13 @@ using ivec4 = vec<int, 4>;
 
 
 template<typename T, unsigned Dim>
+vec<T, Dim> lerp(const vec<T, Dim>& a, const vec<T, Dim>& b, const T& t)
+{
+    return a + t * (b - a);
+}
+
+
+template<typename T, unsigned Dim>
 class vec : public element<T, Dim, vec<T, Dim>>
 {
     using Base = element<T, Dim, vec<T, Dim>>;
