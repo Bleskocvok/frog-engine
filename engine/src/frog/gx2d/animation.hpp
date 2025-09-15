@@ -46,6 +46,8 @@ public:
         , current_(std::move(start))
     {}
 
+    const sprite& get_atlas() const { return atlas; }
+
     void add_frame(std::string name, animation_frame frame)
     {
         map.emplace(name, std::move(frame));
