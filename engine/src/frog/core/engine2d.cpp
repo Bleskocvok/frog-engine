@@ -174,10 +174,8 @@ void engine2d::draw_objects(double between)
             }
             else if (model->interpolation == gx2d::Interpolation::EXTRAPOLATE)
             {
-                auto diff = model->rect.pos - model->prev.pos;
-                rect.pos = model->rect.pos + between * diff;
-                // TODO: Wrap around 160, obvi.
-                // angle = model->angle + between * (model->angle - model->prev.angle);
+                rect.pos = frog::geo::lerp(model->prev.pos, model->rect.pos, float(1 + between));
+                angle = lerp_deg(model->prev.angle, model->angle, 1 + between);
             }
 
             rect.pos.x() *= scale.x();
