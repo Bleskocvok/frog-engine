@@ -30,7 +30,7 @@ window::window( int width, int height, const char* title,
 
     if ( mode == Mode::Windowed )
     {
-        win_flags = win_flags;
+        // win_flags = win_flags;
     }
     else if ( mode == Mode::Borderless )
     {

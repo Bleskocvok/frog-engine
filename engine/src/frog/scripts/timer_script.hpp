@@ -48,7 +48,7 @@ public:
 
     float remaining() const { return period() - accum(); }
 
-    void init(typename Script::GameObject& obj, typename Script::Engine&) override
+    void init(typename Script::GameObject&, typename Script::Engine&) override
     {
         using namespace frog;
     }
@@ -60,7 +60,7 @@ public:
     //     using namespace frog;
     // }
 
-    void stable_update(typename Script::GameObject& obj, typename Script::Engine& engine) override
+    void stable_update(typename Script::GameObject&, typename Script::Engine& engine) override
     {
         if (policy == before)
             accum_ += engine.global->stable_frame_time();
