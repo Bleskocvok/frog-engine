@@ -2,6 +2,8 @@
 
 #include "frog/core/script.hpp"
 
+#include <cmath>
+
 namespace frog {
 
 template<typename Script>
@@ -67,10 +69,15 @@ public:
 
         activated = 0;
         // TODO: Make this non-exponential, lol.
-        while (accum_ >= period_)
+        // while (accum_ >= period_)
+        // {
+        //     accum_ -= period_;
+        //     ++activated;
+        // }
+        if (accum_ >= period_ && period_ != 0)
         {
-            accum_ -= period_;
-            ++activated;
+            activated = std::floor(accum_ / period_);
+            accum_ = std::fmodf(accum_, period_);
         }
 
         if (policy == after)
