@@ -64,7 +64,7 @@ struct uniform_float
 
         // TODO: Generate whole words and then read their bits by bit
         // operations. Perhaps std::bitset?
-        auto coin = uniform_int<int>(0, 1);
+        auto coin = uniform_int<unsigned>(0, 1);
 
         for (int i = 0; i < 64 && chunk > zero; i++)
         {
