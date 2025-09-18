@@ -11,6 +11,8 @@ mat4 perspective(float fov, float ratio, float near, float far);
 
 mat4 translate(vec3 vec);
 
+mat3 translate(vec2 vec);
+
 mat4 scale(vec3 magnitude);
 
 mat2 rotate2d(float rad);

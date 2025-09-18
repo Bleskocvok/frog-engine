@@ -7,6 +7,7 @@
 
 
 using frog::geo::mat4;
+using frog::geo::mat3;
 using frog::geo::mat2;
 
 
@@ -45,6 +46,14 @@ mat4 frog::geo::translate(vec3 vec)
         res.at(3, i) = vec[i];
     }
     return res;
+}
+
+
+mat3 frog::geo::translate(vec2 vec)
+{
+    return mat3{ 1, 0, vec.x(),
+                 0, 1, vec.y(),
+                 0, 0, 1 };
 }
 
 
