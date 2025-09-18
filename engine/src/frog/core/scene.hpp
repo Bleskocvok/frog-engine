@@ -120,8 +120,16 @@ public:
         auto f = [&](GameObject& o)
         {
             auto* script = go_get_script<GameObject, S>(o);
-            if (script)
-                func(*script);
+            if constexpr (requires{ func(*script, o); })
+            {
+                if (script)
+                    func(*script, o);
+            }
+            else
+            {
+                if (script)
+                    func(*script);
+            }
         };
 
         for_each_object(pred, f);
