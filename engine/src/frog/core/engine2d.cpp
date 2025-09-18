@@ -123,13 +123,21 @@ geo::vec2 engine2d::camera_coords(int mouse_x, int mouse_y)
 
 std::pair<geo::vec2, geo::vec2> engine2d::scale_shift() const
 {
+    geo::vec2 scale;
+    geo::vec2 shift;
+    std::tie(scale, shift) = ui_scale_shift();
+    shift.x() -= camera.pos.x();
+    shift.y() -= camera.pos.y();
+    return { scale, shift };
+}
+
+std::pair<geo::vec2, geo::vec2> engine2d::ui_scale_shift() const
+{
     geo::vec2 scale = { win_raw->w() / camera.size.x(),
                         win_raw->h() / camera.size.y() };
     geo::vec2 shift = { 0 };
     shift.x() += win_raw->w() * 0.5;
     shift.y() += win_raw->h() * 0.5;
-    shift.x() -= camera.pos.x();
-    shift.y() -= camera.pos.y();
     return { scale, shift };
 }
 
@@ -225,7 +233,7 @@ void engine2d::draw_sprite(const lib2d::gx::texture& tex, geo::rect dest,
 {
     geo::vec2 scale;
     geo::vec2 shift;
-    std::tie(scale, shift) = scale_shift();
+    std::tie(scale, shift) = ui_scale_shift();
 
     dest.pos.x() *= scale.x();
     dest.pos.y() *= scale.y();
@@ -255,7 +263,7 @@ void engine2d::draw_ui_sprite(const lib2d::gx::texture& tex, geo::rect dest,
 {
     geo::vec2 scale;
     geo::vec2 shift;
-    std::tie(scale, shift) = scale_shift();
+    std::tie(scale, shift) = ui_scale_shift();
 
     dest.pos.x() *= scale.x();
     dest.pos.y() *= scale.y();
