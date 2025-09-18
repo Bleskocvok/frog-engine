@@ -112,10 +112,10 @@ void engine2d::frame_update()
 
 geo::vec2 engine2d::camera_coords(int mouse_x, int mouse_y)
 {
-    geo::vec2 scale = { camera.size.x() / win_raw->w(),
-                        camera.size.y() / win_raw->h() };
+    geo::vec2 scale = { camera().size.x() / win_raw->w(),
+                        camera().size.y() / win_raw->h() };
     geo::vec2 shift = { 0 };
-    shift += camera.top_left();
+    shift += camera().top_left();
     return { mouse_x * scale.x() + shift.x(), mouse_y * scale.y() + shift.y() };
 }
 
@@ -126,15 +126,15 @@ std::pair<geo::vec2, geo::vec2> engine2d::scale_shift() const
     geo::vec2 scale;
     geo::vec2 shift;
     std::tie(scale, shift) = ui_scale_shift();
-    shift.x() -= camera.pos.x();
-    shift.y() -= camera.pos.y();
+    shift.x() -= camera().pos.x();
+    shift.y() -= camera().pos.y();
     return { scale, shift };
 }
 
 std::pair<geo::vec2, geo::vec2> engine2d::ui_scale_shift() const
 {
-    geo::vec2 scale = { win_raw->w() / camera.size.x(),
-                        win_raw->h() / camera.size.y() };
+    geo::vec2 scale = { win_raw->w() / camera().size.x(),
+                        win_raw->h() / camera().size.y() };
     geo::vec2 shift = { 0 };
     shift.x() += win_raw->w() * 0.5;
     shift.y() += win_raw->h() * 0.5;

@@ -21,6 +21,7 @@
 // NOLINTNEXTLINE
 #include <stdexcept>    // exception
 #include <utility>      // move, pair
+#include <unordered_map>
 
 
 namespace frog::font { class atlas; class truetype; } // namespace font
@@ -69,9 +70,27 @@ public:
     gx::assets<lib2d::gx::texture> textures;
     gx::assets<font::base> fonts;
 
-    geo::rect camera = { geo::vec2{ 0 }, geo::vec2{ 1, 1 } };
+    // geo::rect camera_ = { geo::vec2{ 0 }, geo::vec2{ 1, 1 } };
+    const geo::rect default_camera = { geo::vec2{ 0 }, geo::vec2{ 1, 1 } };
+    std::unordered_map<std::string, geo::rect> cameras;
 
     engine2d(settings set, ptr<state> global);
+
+    const geo::rect& camera() const
+    {
+        auto it = cameras.find(scenes->current().name);
+        if (it == cameras.end())
+            return default_camera;
+        return it->second;
+    }
+
+    geo::rect& camera()
+    {
+        auto it = cameras.find(scenes->current().name);
+        if (it == cameras.end())
+            return cameras.emplace(scenes->current().name, default_camera).first->second;
+        return it->second;
+    }
 
     geo::vec2 mouse_pos_in_camera()
     {
