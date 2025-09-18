@@ -10,9 +10,10 @@ namespace frog {
 
 // TODO: Create my own type that would be „more deterministic“ across different
 // platforms and that would would with my „fixed“ type.
-template<typename T>
-using uniform_float = std::uniform_real_distribution<T>;
+// template<typename T>
+// using uniform_float = std::uniform_real_distribution<T>;
 
+/// (min, max) Both sides inclusive.
 template<typename T>
 struct uniform_int
 {
@@ -25,6 +26,9 @@ struct uniform_int
     T operator()(Gen& gen)
     {
         constexpr auto GEN_MAX = Gen::max();
+
+        // TODO: Static assert that gen max is at least as large as k.
+
         T k = max_ - min_ + 1;
         T mod = (GEN_MAX + 1) % k;
 
@@ -39,10 +43,45 @@ struct uniform_int
     }
 };
 
-template<typename Int = int, typename Float = float>
+// [min, max) Min inclusive, max exclusive.
+template<typename T>
+struct uniform_float
+{
+    T min_, max_;
+
+    uniform_float(T min_, T max_) : min_(min_), max_(max_)
+    { }
+
+    template<typename Gen>
+    T operator()(Gen& gen)
+    {
+        T chunk = max_ - min_;
+        T two = T( 2 );
+        T zero = T( 0 );
+        chunk /= two;
+
+        T result = min_;
+
+        // TODO: Generate whole words and then read their bits by bit
+        // operations. Perhaps std::bitset?
+        auto coin = uniform_int<int>(0, 1);
+
+        for (int i = 0; i < 64 && chunk > zero; i++)
+        {
+            if (coin(gen) == 0)
+                result += chunk;
+
+            chunk /= two;
+        }
+
+        return result;
+    }
+};
+
+template<typename Gen = std::mt19937, typename Int = int, typename Float = float>
 class rand_gen_t
 {
-    std::mt19937 gen;
+    Gen gen;
 
 public:
     rand_gen_t(std::uint64_t seed) : gen(seed) {}
