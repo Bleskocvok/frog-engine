@@ -76,6 +76,8 @@ public:
 
     geo::ivec2 window_size() const { return { window->width(), window->height() }; }
 
+    void quit() { global->quit = true; }
+
     void play()
     {
         Timer timer;
