@@ -114,6 +114,8 @@ public:
     constexpr const T& a() const { return w(); }
     constexpr       T& a()       { return w(); }
 
+    constexpr vec<T, 2> xy() const { return { x(), y() }; }
+
 
     constexpr void is_color() const
     {

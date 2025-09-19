@@ -114,20 +114,30 @@ geo::vec2 engine2d::camera_coords(int mouse_x, int mouse_y)
 {
     geo::vec2 scale = { camera().size.x() / win_raw->w(),
                         camera().size.y() / win_raw->h() };
-    geo::vec2 shift = { 0 };
-    shift += camera().top_left();
-    return { mouse_x * scale.x() + shift.x(), mouse_y * scale.y() + shift.y() };
+    geo::vec2 shift = camera().top_left();
+    auto mouse = geo::vec2{ float(mouse_x), float(mouse_y) };
+    return shift + mouse * scale;
 }
 
+
+geo::vec2 engine2d::camera_coords_ui(int mouse_x, int mouse_y)
+{
+    const auto& cam = camera();
+    geo::vec2 scale = { cam.size.x() / win_raw->w(),
+                        cam.size.y() / win_raw->h() };
+    geo::rect centered = cam;
+    centered.pos = { 0 };
+    auto shift = centered.top_left();
+    return shift + scale * geo::vec2{ float(mouse_x), float(mouse_y) };
+}
 
 
 std::pair<geo::vec2, geo::vec2> engine2d::scale_shift() const
 {
-    geo::vec2 scale;
-    geo::vec2 shift;
-    std::tie(scale, shift) = ui_scale_shift();
-    shift.x() -= camera().pos.x();
-    shift.y() -= camera().pos.y();
+    geo::vec2 scale = { win_raw->w() / camera().size.x(),
+                        win_raw->h() / camera().size.y() };
+    geo::vec2 shift = { 0 };
+    shift -= camera().top_left();
     return { scale, shift };
 }
 
@@ -187,9 +197,9 @@ void engine2d::draw_objects(double between)
                 angle = lerp_deg(model->prev.angle, model->angle, 1 + between);
             }
 
+            rect.pos += shift;
             rect.pos.x() *= scale.x();
             rect.pos.y() *= scale.y();
-            rect.pos += shift;
 
             rect.size.x() *= scale.x();
             rect.size.y() *= scale.y();

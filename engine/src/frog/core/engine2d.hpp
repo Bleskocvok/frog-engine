@@ -97,12 +97,19 @@ public:
         return camera_coords(input->mouse().x, input->mouse().y);
     }
 
+    geo::vec2 mouse_pos_in_ui()
+    {
+        return camera_coords_ui(input->mouse().x, input->mouse().y);
+    }
+
     geo::vec2 camera_coords(const lib2d::gx::events::mouse_t& m)
     {
         return camera_coords(m.x, m.y);
     }
 
     geo::vec2 camera_coords(int mouse_x, int mouse_y);
+
+    geo::vec2 camera_coords_ui(int mouse_x, int mouse_y);
 
     bool add_texture(const std::string& tag, const std::string& path);
     bool remove_texture(const std::string& name);
