@@ -4,6 +4,7 @@
 #include "rectangle.hpp"
 #include "basic.hpp"        // Pi
 
+#include <memory>
 #include <utility>          // move, pair, forward
 #include <cstddef>          // size_t
 #include <stdexcept>        // runtime_error
@@ -13,6 +14,7 @@
 
 namespace frog::geo
 {
+
 
 class soft_physics2d
 {
@@ -45,6 +47,24 @@ public:
         float radius = 1;
         // 0 = infinite weight
         float inv_weight = 1;
+    };
+
+    class iplugin
+    {
+    public:
+        virtual void solve_point(point& pt, idx_t idx) {}
+
+        virtual void before() {}
+        virtual void after() {}
+
+        virtual void solve_all([[maybe_unused]] int iter,
+                               std::vector<std::pair<idx_t, point>>& points)
+        {
+            for (auto& [i, pt] : points)
+                solve_point(pt, i);
+        }
+
+        virtual ~iplugin() = default;
     };
 
     struct settings
@@ -190,6 +210,8 @@ private:
     std::vector<idx_t> joints_removal;
     std::vector<idx_t> angles_removal;
 
+    std::vector<std::unique_ptr<iplugin>> plugins_;
+
     void apply_inertia(point& pt, float delta);
 
     void encapsulate(point& pt, rect rect);
@@ -224,6 +246,13 @@ public:
     { }
 
     soft_physics2d(limits l = limits{}) : soft_physics2d({}, l) {}
+
+    void add_plugin(std::unique_ptr<iplugin> plugin)
+    {
+        plugins_.push_back(std::move(plugin));
+    }
+
+    const auto& plugins() const { return plugins_; }
 
     const auto& settings() const { return settings_; }
           auto& settings()       { return settings_; }
