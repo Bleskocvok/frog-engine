@@ -101,6 +101,7 @@ void engine2d::reset_controls()
 
 void engine2d::stable_update()
 {
+    camera().prev = camera();
     engine_base::stable_update();
 }
 
@@ -132,12 +133,12 @@ geo::vec2 engine2d::camera_coords_ui(int mouse_x, int mouse_y)
 }
 
 
-std::pair<geo::vec2, geo::vec2> engine2d::scale_shift() const
+std::pair<geo::vec2, geo::vec2> engine2d::scale_shift(geo::rect& cam) const
 {
-    geo::vec2 scale = { win_raw->w() / camera().size.x(),
-                        win_raw->h() / camera().size.y() };
+    geo::vec2 scale = { win_raw->w() / cam.size.x(),
+                        win_raw->h() / cam.size.y() };
     geo::vec2 shift = { 0 };
-    shift -= camera().top_left();
+    shift -= cam.top_left();
     return { scale, shift };
 }
 
@@ -165,7 +166,14 @@ void engine2d::draw_objects(double between)
 
     geo::vec2 scale;
     geo::vec2 shift;
-    std::tie(scale, shift) = scale_shift();
+    std::tie(scale, shift) = scale_shift(camera());
+
+    geo::vec2 prev_scale;
+    geo::vec2 prev_shift;
+    std::tie(prev_scale, prev_shift) = scale_shift(camera().prev);
+
+    scale = frog::geo::lerp(prev_scale, scale, float(between));
+    shift = frog::geo::lerp(prev_shift, shift, float(between));
 
     scenes->for_each_object([&](const auto& obj)
         {

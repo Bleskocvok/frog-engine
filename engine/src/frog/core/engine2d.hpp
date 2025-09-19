@@ -43,7 +43,7 @@ class engine2d : public engine_base<engine2d, game_object2d, lib2d::os::timer>
 
     void init() override;
 
-    std::pair<geo::vec2, geo::vec2> scale_shift() const;
+    std::pair<geo::vec2, geo::vec2> scale_shift(geo::rect& cam) const;
     std::pair<geo::vec2, geo::vec2> ui_scale_shift() const;
 
     void draw_text(const std::string& font_name, const std::string& str,
@@ -70,13 +70,22 @@ public:
     gx::assets<lib2d::gx::texture> textures;
     gx::assets<font::base> fonts;
 
+    struct camera2d : public geo::rect {
+        geo::rect prev;
+
+        camera2d(geo::vec2 pos, geo::vec2 size)
+            : geo::rect(pos, size)
+            , prev(pos, size)
+        { }
+    };
+
     // geo::rect camera_ = { geo::vec2{ 0 }, geo::vec2{ 1, 1 } };
-    const geo::rect default_camera = { geo::vec2{ 0 }, geo::vec2{ 1, 1 } };
-    std::unordered_map<std::string, geo::rect> cameras;
+    const camera2d default_camera = { geo::vec2{ 0 }, geo::vec2{ 1, 1 } };
+    std::unordered_map<std::string, camera2d> cameras;
 
     engine2d(settings set, ptr<state> global);
 
-    const geo::rect& camera() const
+    const camera2d& camera() const
     {
         auto it = cameras.find(scenes->current().name);
         if (it == cameras.end())
@@ -84,7 +93,7 @@ public:
         return it->second;
     }
 
-    geo::rect& camera()
+    camera2d& camera()
     {
         auto it = cameras.find(scenes->current().name);
         if (it == cameras.end())

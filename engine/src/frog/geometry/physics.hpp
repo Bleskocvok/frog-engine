@@ -52,7 +52,7 @@ public:
     class iplugin
     {
     public:
-        virtual void solve_point(point& pt, idx_t idx) {}
+        virtual void solve_point(point&, idx_t) {}
 
         virtual void before() {}
         virtual void after() {}
