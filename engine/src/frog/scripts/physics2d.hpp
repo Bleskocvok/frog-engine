@@ -9,9 +9,9 @@
 #include "frog/geometry/transform.hpp"
 #include "frog/geometry/circle.hpp"
 
-namespace frog {
+namespace frog::scripts {
 
-class physics_script2d : frog::script2d
+class physics2d : public frog::script2d
 {
     frog::geo::soft_physics2d physics_ =
     {
@@ -20,7 +20,7 @@ class physics_script2d : frog::script2d
     };
 
 public:
-    explicit physics_script2d(frog::geo::soft_physics2d physics)
+    explicit physics2d(frog::geo::soft_physics2d physics)
         : physics_(std::move(physics)) {}
 
     void init(frog::game_object2d& object, frog::engine2d&) override
@@ -39,4 +39,4 @@ public:
     frog::geo::soft_physics2d::idx_t add_point(frog::geo::soft_physics2d::point pt);
 };
 
-} // namespace frog
+} // namespace frog::scripts
