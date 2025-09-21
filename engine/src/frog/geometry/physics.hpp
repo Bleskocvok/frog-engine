@@ -4,6 +4,7 @@
 #include "rectangle.hpp"
 #include "basic.hpp"        // Pi
 
+#include <cstdint>          // int64_t
 #include <memory>
 #include <utility>          // move, pair, forward
 #include <cstddef>          // size_t
@@ -19,7 +20,7 @@ namespace frog::geo
 class soft_physics2d
 {
 public:
-    using idx_t = unsigned;
+    using idx_t = std::int64_t;
 
     struct angle
     {
