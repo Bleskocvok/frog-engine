@@ -29,7 +29,7 @@ public:
     const frog::game_object2d* object() const { return obj; }
           frog::game_object2d* object()       { return obj; }
 
-    void init(frog::game_object2d& o, frog::engine2d& e) override
+    void init(frog::game_object2d& o, frog::engine2d&) override
     {
         obj = &o;
 

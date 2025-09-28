@@ -37,7 +37,10 @@ struct uniform_int
         {
             r = gen();
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-compare"
         } while (r > GEN_MAX - mod);
+#pragma GCC diagnostic pop
 
         return (r % k) + min_;
     }

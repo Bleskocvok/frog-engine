@@ -23,12 +23,12 @@ public:
     explicit physics2d(frog::geo::soft_physics2d physics)
         : physics_(std::move(physics)) {}
 
-    void init(frog::game_object2d& object, frog::engine2d&) override
+    void init(frog::game_object2d&, frog::engine2d&) override
     {
         using namespace frog;
     }
 
-    void stable_update(frog::game_object2d&, frog::engine2d& engine) override
+    void stable_update(frog::game_object2d&, frog::engine2d&) override
     {
         physics_.update();
     }
