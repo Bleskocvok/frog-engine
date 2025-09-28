@@ -1,5 +1,6 @@
 #pragma once
 
+#include "frog/debug.hpp"
 #include <sstream>      // ostringstream
 #include <utility>      // move
 
@@ -39,9 +40,12 @@ public:
 template<typename... Args>
 std::string make_string(Args&&... args)
 {
-    str_builder builder;
-    ( builder << ... << args );
-    return builder;
+    // str_builder builder;
+    // ( builder << ... << args );
+    // return builder;
+    std::ostringstream str;
+    frog::log<false, 10>(str, std::forward<Args>(args)...);
+    return std::move(str).str();
 }
 
 
