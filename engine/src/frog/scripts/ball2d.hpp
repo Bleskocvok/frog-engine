@@ -42,6 +42,7 @@ public:
             .inv_weight = inv_weight,
         });
 
+        // TOOD: Figure out how to do this better.
         obj->model().image_tag = "circle";
         obj->model().rect.pos = circle.pos;
         obj->model().rect.size = circle.radius * 2;
