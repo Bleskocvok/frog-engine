@@ -328,7 +328,7 @@ TEST_CASE("collisions")
 
 TEST_CASE("transform")
 {
-    auto a = translate({ 2, 4, 6 }) * vec4(1, 2, 3, 1);
+    auto a = translate(vec3{ 2, 4, 6 }) * vec4(1, 2, 3, 1);
     CHECK(a.is_close({ 3, 6, 9, 1 }));
 }
 

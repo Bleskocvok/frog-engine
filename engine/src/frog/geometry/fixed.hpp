@@ -17,6 +17,8 @@ namespace frog::geo
 template<typename Integral, int Decimals>
 class fixed;
 
+// TODO: Use uint32_t and explicitly negativate numbers.
+// (More determinism/safeness, but probably a bit slower.)
 using fx32 = fixed< std::int32_t, 11 >;
 using fx64 = fixed< std::int64_t, 22 >;
 

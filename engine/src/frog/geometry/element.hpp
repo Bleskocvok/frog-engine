@@ -182,6 +182,12 @@ public:
         return res;
     }
 
+    constexpr friend Derived operator/(T val, Derived res)
+    {
+        detail::for_each([=](auto& u){ u = val / u; }, res.data);
+        return res;
+    }
+
     constexpr friend Derived& operator*=(Derived& one, T val)
     {
         detail::for_each([=](auto& u){ u *= val; }, one.data);
@@ -191,6 +197,12 @@ public:
     constexpr friend Derived& operator/=(Derived& one, T val)
     {
         detail::for_each([=](auto& u){ u /= val; }, one.data);
+        return one;
+    }
+
+    constexpr friend Derived& operator/=(T val, Derived& one)
+    {
+        detail::for_each([=](auto& u){ u = val / u; }, one.data);
         return one;
     }
 

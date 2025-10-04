@@ -1,6 +1,6 @@
 #pragma once
 
-#include "button_action.hpp"
+#include "frog/scripts/button/button_action.hpp"
 
 #include <string>
 

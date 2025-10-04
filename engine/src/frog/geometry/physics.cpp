@@ -183,8 +183,12 @@ void soft_physics2d::verlet_solve()
     auto grid = optimization_grid<std::pair<idx_t, point*>>(
                                     settings_.grid_dim, settings_.universum);
 
+    std::ranges::for_each(plugins_, [](auto& p){ p->before(); });
+
     for (int it = 0; it < settings_.iterations; ++it)
     {
+        std::ranges::for_each(plugins_, [&](auto& p){ p->solve_all(it, points()); });
+
         for (auto& [i, pt] : points())
             encapsulate(pt, settings_.universum);
 
@@ -211,6 +215,8 @@ void soft_physics2d::verlet_solve()
         for (auto&[idx, a] : angles())
             solve_angle(a);
     }
+
+    std::ranges::for_each(plugins_, [](auto& p){ p->after(); });
 }
 
 void soft_physics2d::remove()

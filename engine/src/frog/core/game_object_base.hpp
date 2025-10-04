@@ -15,6 +15,10 @@ namespace frog
 {
 
 
+template<typename GameObject>
+class scene;
+
+
 template<typename GameObject, typename Script>
 static Script* go_get_script(GameObject& o)
 {
@@ -29,9 +33,11 @@ static Script* go_get_script(GameObject& o)
 template<typename Derived, typename Script, typename Engine>
 class game_object_base
 {
+protected:
+    bool initialized = false;
+
 private:
     bool _destroyed = false;
-    bool initialized = false;
 
     std::vector<ptr<Script>> scripts;
     std::vector<ptr<Script>> added_scripts;
@@ -39,6 +45,9 @@ private:
     std::vector<ptr<gx::ui_element>> _elements;
 
     std::string _tag;
+    std::string scene_name_;
+
+    friend scene<Derived>;
 
     template<typename Func>
     void for_each_script(Func func)
@@ -86,6 +95,7 @@ public:
     const auto& elements() const { return _elements; }
           auto& elements()       { return _elements; }
 
+    const auto& scene_name() const { return scene_name_; }
 
 
     template<typename S>
@@ -156,7 +166,7 @@ public:
         return result;
     }
 
-    void init(Engine& engine)
+    virtual void init(Engine& engine)
     {
         initialized = true;
         addition_removal();
@@ -171,6 +181,12 @@ public:
         for_each_script([&](auto& sc){ sc.stable_update(get(), engine); });
     }
 
+    virtual void pre_update(Engine& engine)
+    {
+        init(engine);
+        for_each_script([&](auto& sc){ sc.pre_update(get(), engine); });
+    }
+
     void end_update(Engine& engine)
     {
         init(engine);
@@ -181,6 +197,12 @@ public:
     {
         init(engine);
         for_each_script([&](auto& sc){ sc.frame_update(get(), engine); });
+    }
+
+    void pre_frame_update(Engine& engine)
+    {
+        init(engine);
+        for_each_script([&](auto& sc){ sc.pre_frame_update(get(), engine); });
     }
 
     void end_frame_update(Engine& engine)

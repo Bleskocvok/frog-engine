@@ -1,4 +1,4 @@
-CXXFLAGS ?= -std=c++20 -Wall -Wextra
+CXXFLAGS ?= -std=c++20 -Wall -Wextra -O3
 
 ifdef DEBUG
     CXXFLAGS += -g

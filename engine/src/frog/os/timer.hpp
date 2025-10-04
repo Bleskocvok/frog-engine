@@ -1,5 +1,3 @@
-#ifndef NOT_FROG_BUILD_3D
-
 #pragma once
 
 #include <chrono>
@@ -30,12 +28,14 @@ public:
     }
 
     template<typename T>
+    [[nodiscard]]
     unsigned duration() const
     {
         return std::chrono::duration_cast<T>(clock::now() - point).count();
     }
 
     template<typename T>
+    [[nodiscard]]
     unsigned reset_duration()
     {
         auto pt = point;
@@ -50,12 +50,10 @@ public:
         std::this_thread::sleep_for(time);
     }
 
-    unsigned duration_us() const { return duration<os::us>(); }
-    unsigned reset_duration_us() { return reset_duration<os::us>(); }
+    [[nodiscard]] unsigned duration_us() const { return duration<os::us>(); }
+
+    [[nodiscard]] unsigned reset_duration_us() { return reset_duration<os::us>(); }
 };
 
 
 } // namespace frog
-
-
-#endif

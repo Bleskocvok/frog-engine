@@ -6,6 +6,8 @@
 #include "frog/graphics/color.hpp"
 #include "frog/font/atlas.hpp"
 #include "frog/font/truetype.hpp"
+#include "frog/geometry/general.hpp"
+#include "frog/geometry/vector.hpp"
 
 #include "frog/lib2d/structs.hpp"
 
@@ -99,6 +101,7 @@ void engine2d::reset_controls()
 
 void engine2d::stable_update()
 {
+    camera().prev = camera();
     engine_base::stable_update();
 }
 
@@ -110,31 +113,50 @@ void engine2d::frame_update()
 
 geo::vec2 engine2d::camera_coords(int mouse_x, int mouse_y)
 {
-    geo::vec2 scale = { camera.size.x() / win_raw->w(),
-                        camera.size.y() / win_raw->h() };
-    geo::vec2 shift = { 0 };
-    shift += camera.top_left();
-    return { mouse_x * scale.x() + shift.x(), mouse_y * scale.y() + shift.y() };
+    geo::vec2 scale = { camera().size.x() / win_raw->w(),
+                        camera().size.y() / win_raw->h() };
+    geo::vec2 shift = camera().top_left();
+    auto mouse = geo::vec2{ float(mouse_x), float(mouse_y) };
+    return shift + mouse * scale;
 }
 
 
-
-std::pair<geo::vec2, geo::vec2> engine2d::scale_shift() const
+geo::vec2 engine2d::camera_coords_ui(int mouse_x, int mouse_y)
 {
-    geo::vec2 scale = { win_raw->w() / camera.size.x(),
-                        win_raw->h() / camera.size.y() };
+    const auto& cam = camera();
+    geo::vec2 scale = { cam.size.x() / win_raw->w(),
+                        cam.size.y() / win_raw->h() };
+    geo::rect centered = cam;
+    centered.pos = { 0 };
+    auto shift = centered.top_left();
+    return shift + scale * geo::vec2{ float(mouse_x), float(mouse_y) };
+}
+
+
+std::pair<geo::vec2, geo::vec2> engine2d::scale_shift(geo::rect& cam) const
+{
+    geo::vec2 scale = { win_raw->w() / cam.size.x(),
+                        win_raw->h() / cam.size.y() };
+    geo::vec2 shift = { 0 };
+    shift -= cam.top_left();
+    return { scale, shift };
+}
+
+std::pair<geo::vec2, geo::vec2> engine2d::ui_scale_shift() const
+{
+    geo::vec2 scale = { win_raw->w() / camera().size.x(),
+                        win_raw->h() / camera().size.y() };
     geo::vec2 shift = { 0 };
     shift.x() += win_raw->w() * 0.5;
     shift.y() += win_raw->h() * 0.5;
-    shift.x() -= camera.pos.x();
-    shift.y() -= camera.pos.y();
     return { scale, shift };
 }
 
 
 // TODO: unused parameter, use it for extrapolation of movement
-void engine2d::draw_objects(double /* between */)
+void engine2d::draw_objects(double between)
 {
+    // TODO: Use std::set!
     // TODO: solve in a more appropriate OOP way
     //       also, perhaps create some sort of reference counting with layers
     //       in render queue (i.e. add reference for a new game object, remove for deleted object)
@@ -144,7 +166,14 @@ void engine2d::draw_objects(double /* between */)
 
     geo::vec2 scale;
     geo::vec2 shift;
-    std::tie(scale, shift) = scale_shift();
+    std::tie(scale, shift) = scale_shift(camera());
+
+    geo::vec2 prev_scale;
+    geo::vec2 prev_shift;
+    std::tie(prev_scale, prev_shift) = scale_shift(camera().prev);
+
+    scale = frog::geo::lerp(prev_scale, scale, float(between));
+    shift = frog::geo::lerp(prev_shift, shift, float(between));
 
     scenes->for_each_object([&](const auto& obj)
         {
@@ -163,9 +192,22 @@ void engine2d::draw_objects(double /* between */)
         for (const auto& model : layer)
         {
             auto rect = model->rect;
+            float angle = model->angle;
+
+            if (model->interpolation == gx2d::Interpolation::INTERPOLATE)
+            {
+                rect.pos = frog::geo::lerp(model->prev.pos, model->rect.pos, float(between));
+                angle = lerp_deg(model->prev.angle, model->angle, between);
+            }
+            else if (model->interpolation == gx2d::Interpolation::EXTRAPOLATE)
+            {
+                rect.pos = frog::geo::lerp(model->prev.pos, model->rect.pos, float(1 + between));
+                angle = lerp_deg(model->prev.angle, model->angle, 1 + between);
+            }
+
+            rect.pos += shift;
             rect.pos.x() *= scale.x();
             rect.pos.y() *= scale.y();
-            rect.pos += shift;
 
             rect.size.x() *= scale.x();
             rect.size.y() *= scale.y();
@@ -186,7 +228,7 @@ void engine2d::draw_objects(double /* between */)
                                           rect.size.x(), rect.size.y(),
                                           color.r(), color.g(), color.b(), color.a(),
                                           rect.size.x() / 2, rect.size.y() / 2,
-                                          model->angle);
+                                          angle);
         }
 }
 
@@ -209,7 +251,7 @@ void engine2d::draw_sprite(const lib2d::gx::texture& tex, geo::rect dest,
 {
     geo::vec2 scale;
     geo::vec2 shift;
-    std::tie(scale, shift) = scale_shift();
+    std::tie(scale, shift) = ui_scale_shift();
 
     dest.pos.x() *= scale.x();
     dest.pos.y() *= scale.y();
@@ -239,7 +281,7 @@ void engine2d::draw_ui_sprite(const lib2d::gx::texture& tex, geo::rect dest,
 {
     geo::vec2 scale;
     geo::vec2 shift;
-    std::tie(scale, shift) = scale_shift();
+    std::tie(scale, shift) = ui_scale_shift();
 
     dest.pos.x() *= scale.x();
     dest.pos.y() *= scale.y();

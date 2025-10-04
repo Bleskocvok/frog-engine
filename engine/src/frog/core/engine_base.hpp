@@ -36,6 +36,7 @@ protected:
 
     virtual void stable_update()
     {
+        scenes->pre_update(get());
         scenes->stable_update(get());
         scenes->end_update(get());
         scenes->cleanup(get());
@@ -74,6 +75,8 @@ public:
           global(std::move(global)) {}
 
     geo::ivec2 window_size() const { return { window->width(), window->height() }; }
+
+    void quit() { global->quit = true; }
 
     void play()
     {
@@ -117,7 +120,7 @@ public:
             global->frame_time_us = frame;
             accum += frame;
 
-            render(frame / static_cast<double>(delta));
+            render(accum / static_cast<double>(delta));
         }
     }
 };

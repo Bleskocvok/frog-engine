@@ -22,6 +22,13 @@ using ivec4 = vec<int, 4>;
 
 
 template<typename T, unsigned Dim>
+vec<T, Dim> lerp(const vec<T, Dim>& a, const vec<T, Dim>& b, const T& t)
+{
+    return a + t * (b - a);
+}
+
+
+template<typename T, unsigned Dim>
 class vec : public element<T, Dim, vec<T, Dim>>
 {
     using Base = element<T, Dim, vec<T, Dim>>;
@@ -106,6 +113,8 @@ public:
 
     constexpr const T& a() const { return w(); }
     constexpr       T& a()       { return w(); }
+
+    constexpr vec<T, 2> xy() const { return { x(), y() }; }
 
 
     constexpr void is_color() const

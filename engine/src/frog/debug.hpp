@@ -13,6 +13,8 @@
 // Just because it sounds funny.
 #define FLOG(...)       LOG(__VA_ARGS__)
 
+#define TRACE(...)    ( frog::log_vars(FROG_UNWRAP0(__VA_ARGS__)), __VA_ARGS__ )
+
 #define FROG_UNWRAPE(x, ...) "err", [](){ static_assert(false, "maximum ten arguments supported"); return 1; }()
 #define FROG_UNWRAP9(x, ...) #x, x __VA_OPT__(, FROG_UNWRAPE( __VA_ARGS__ ))
 #define FROG_UNWRAP8(x, ...) #x, x __VA_OPT__(, FROG_UNWRAP9( __VA_ARGS__ ))

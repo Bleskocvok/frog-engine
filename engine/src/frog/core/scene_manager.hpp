@@ -26,6 +26,8 @@ private:
 
     std::optional<std::string> _next = std::nullopt;
 
+    std::optional<std::pair<std::string, std::string>> prev_next = std::nullopt;
+
     template <typename Self, typename Func>
     static void for_each_impl(Self& self, Func func)
     {
@@ -52,6 +54,10 @@ public:
     template<typename Func>
     void for_each_object(Func func)       { for_each_impl(*this, func); }
 
+    const std::optional<std::pair<std::string, std::string>>& just_switched() const
+    {
+        return prev_next;
+    }
 
     Scene* add(std::string name, ptr<scene_manager::Scene> sc)
     {
@@ -59,7 +65,9 @@ public:
         {
             _current = name;
         }
-        return scenes.emplace(std::move(name), std::move(sc)).first->second.get();
+        auto* res = scenes.emplace(name, std::move(sc)).first->second.get();
+        res->name = std::move(name);
+        return res;
     }
 
     bool remove(const std::string& name)
@@ -77,11 +85,17 @@ public:
 
     void init(Engine& eng)
     {
-        // init _all_ scenes
-        for (auto& sc : scenes)
-        {
-            sc.second->init(eng);
-        }
+        if (empty())
+            return;
+
+        current().init(eng);
+
+        // TOOD: Son of a bitch, gotta go figure out if this broke something.
+        // // init _all_ scenes
+        // for (auto& sc : scenes)
+        // {
+        //     sc.second->init(eng);
+        // }
     }
 
     void stable_update(Engine& eng)
@@ -91,11 +105,24 @@ public:
 
         if (_next)
         {
+            prev_next.emplace(_current, *_next);
+
             _current = std::move(*_next);
             _next.reset();
         }
 
         current().stable_update(eng);
+
+        if (prev_next)
+            prev_next.reset();
+    }
+
+    void pre_update(Engine& eng)
+    {
+        if (empty())
+            return;
+
+        current().pre_update(eng);
     }
 
     void end_update(Engine& eng)

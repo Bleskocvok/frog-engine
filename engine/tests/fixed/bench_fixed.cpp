@@ -1,6 +1,7 @@
 
 #include "frog/geometry/fixed.hpp"
 
+#include <ios>
 #include <iostream>     // cout
 #include <cstdio>       // printf
 #include <chrono>       // chrono::*
@@ -94,7 +95,7 @@ void bench( T min, T step, long long count, Op op )
         b = not b;
     }
 
-    std::cout << "T= " << std::setw( 10 ) << ms.count() << " ms;  "
+    std::cout << "T= " << std::setw( 10 ) << std::fixed << std::setprecision(4) << ms.count() << " ms;  "
               << "sum=" << sum << std::endl;
 }
 
@@ -102,7 +103,7 @@ void bench( T min, T step, long long count, Op op )
     {   std::cout << std::setw( 20 ) << #T << " (" \
                   << std::setw( 2 ) << sizeof( T ) << " B)  "; \
         bench< T >( -100, 100, 20000, op ); \
-        std::cout << std::endl;   }
+        std::cout << std::flush;   }
 
 
 int main()

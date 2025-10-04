@@ -15,14 +15,15 @@ namespace frog::gx2d {
 struct animation_frame
 {
     int index = 0;
-    bool flipped = false;
     int length = 1;
     std::string next;
+    bool flipped = false;
 
     animation_frame(int index, int length, std::string next, bool flipped = false)
         : index(index)
         , length(length)
-        , next(std::move(next)) {}
+        , next(std::move(next))
+        , flipped(flipped) {}
 };
 
 
@@ -42,13 +43,17 @@ public:
     animation(sprite atlas, geo::ivec2 atlas_size, float delay = 0.16667, std::string start = "")
         : atlas(std::move(atlas))
         , atlas_size(atlas_size)
-        , delay(delay)
         , current_(std::move(start))
+        , delay(delay)
     {}
+
+    const sprite& get_atlas() const { return atlas; }
 
     void add_frame(std::string name, animation_frame frame)
     {
-        map.emplace(std::move(name), std::move(frame));
+        map.emplace(name, std::move(frame));
+        if (current_.empty())
+            set(std::move(name));
     }
 
     void set(std::string name)

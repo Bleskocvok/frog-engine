@@ -88,7 +88,8 @@ public:
     {
         using namespace frog;
 
-        geo::vec2 pos = engine.camera_coords(engine.input->mouse());
+        geo::vec2 pos = engine.mouse_pos_in_ui();
+        // geo::vec2 pos = engine.mouse_pos_in_camera();
 
         auto rect = ui->sprite.rect;
         bool collides = geo::is_collision(rect, pos);

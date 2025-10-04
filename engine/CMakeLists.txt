@@ -165,9 +165,16 @@ endif(FROG_TEST)
 # the resulting library
 add_library(frog_lib SHARED ${SRC_FILES})
 
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    target_compile_options(frog_lib PRIVATE -fcolor-diagnostics -Wno-unused-command-line-argument)
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(frog_lib PRIVATE -fdiagnostics-color=always)
+endif()
+
 # normal compiler options
 if(NOT MSVC)
-    target_compile_options(frog_lib PRIVATE -Wall -Wextra -pedantic -O2 -Wold-style-cast -fmax-errors=5)
+    target_compile_options(frog_lib PRIVATE -Wall -Wextra -pedantic -O2 -fmax-errors=5)
 else()
     # custom options for MSVC
     # because Microsoft is stupid

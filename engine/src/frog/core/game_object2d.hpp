@@ -28,6 +28,22 @@ public:
 
     const gx2d::sprite& model() const { return img; }
           gx2d::sprite& model()       { return img; }
+
+    virtual void init(Engine& engine) override
+    {
+        bool prev = not initialized;
+        game_object_base<game_object2d, script2d, engine2d>::init(engine);
+
+        if (prev)
+            gx2d::calculate_prev(img);
+    }
+
+    virtual void pre_update(Engine& engine) override
+    {
+        gx2d::calculate_prev(img);
+
+        game_object_base<game_object2d, script2d, engine2d>::pre_update(engine);
+    }
 };
 
 

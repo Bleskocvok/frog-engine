@@ -29,6 +29,8 @@ public:
     std::vector<ptr<GameObject>> objects_;
     std::vector<ptr<GameObject>> to_add;
 
+    std::string name;
+
     template <typename Self, typename Func, typename Predicate>
     static void for_each_impl(Self& self, Func func, Predicate pred)
     {
@@ -49,14 +51,17 @@ public:
     {
         auto* ptr = obj.get();
         to_add.push_back(std::move(obj));
+        ptr->scene_name_ = name;
         return ptr;
     }
 
     // For convenience's sake.
     GameObject* create_object()
     {
-        to_add.emplace_back(mk_ptr<GameObject>());
-        return to_add.back().get();
+        return add(mk_ptr<GameObject>());
+        // This was a tiny bit better, perhaps return it.
+        // to_add.emplace_back(mk_ptr<GameObject>());
+        // return to_add.back().get();
     }
 
     /*
@@ -115,8 +120,16 @@ public:
         auto f = [&](GameObject& o)
         {
             auto* script = go_get_script<GameObject, S>(o);
-            if (script)
-                func(*script);
+            if constexpr (requires{ func(*script, o); })
+            {
+                if (script)
+                    func(*script, o);
+            }
+            else
+            {
+                if (script)
+                    func(*script);
+            }
         };
 
         for_each_object(pred, f);
@@ -167,6 +180,11 @@ public:
     void stable_update(Engine& eng)
     {
         for_each_object([&](auto& obj) { obj.stable_update(eng); });
+    }
+
+    void pre_update(Engine& eng)
+    {
+        for_each_object([&](auto& obj) { obj.pre_update(eng); });
     }
 
     void end_update(Engine& eng)

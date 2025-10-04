@@ -1,6 +1,7 @@
 #pragma once
 
 #include "frog/geometry/rectangle.hpp"
+#include "frog/geometry/vector.hpp"
 #include "frog/graphics/color.hpp"
 
 #include <string>
@@ -8,6 +9,18 @@
 
 namespace frog::gx2d {
 
+struct prev_sprite
+{
+    geo::vec2 pos;
+    float angle = 0;
+};
+
+enum class Interpolation
+{
+    NONE,
+    INTERPOLATE,
+    EXTRAPOLATE
+};
 
 struct sprite
 {
@@ -22,7 +35,17 @@ struct sprite
 
     // lower layer = rendered earlier
     unsigned layer = 0;
+
+    prev_sprite prev;
+    Interpolation interpolation = Interpolation::NONE;
 };
+
+
+inline void calculate_prev(sprite& sprite)
+{
+    sprite.prev.pos = sprite.rect.pos;
+    sprite.prev.angle = sprite.angle;
+}
 
 
 }  // namespace frog::2d

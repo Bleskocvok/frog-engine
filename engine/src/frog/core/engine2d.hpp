@@ -21,6 +21,7 @@
 // NOLINTNEXTLINE
 #include <stdexcept>    // exception
 #include <utility>      // move, pair
+#include <unordered_map>
 
 
 namespace frog::font { class atlas; class truetype; } // namespace font
@@ -42,7 +43,8 @@ class engine2d : public engine_base<engine2d, game_object2d, lib2d::os::timer>
 
     void init() override;
 
-    std::pair<geo::vec2, geo::vec2> scale_shift() const;
+    std::pair<geo::vec2, geo::vec2> scale_shift(geo::rect& cam) const;
+    std::pair<geo::vec2, geo::vec2> ui_scale_shift() const;
 
     void draw_text(const std::string& font_name, const std::string& str,
                    geo::vec2 pos, float height, gx::rgba_t color, bool centered);
@@ -68,13 +70,45 @@ public:
     gx::assets<lib2d::gx::texture> textures;
     gx::assets<font::base> fonts;
 
-    geo::rect camera = { geo::vec2{ 0 }, geo::vec2{ 1, 1 } };
+    struct camera2d : public geo::rect {
+        geo::rect prev;
+
+        camera2d(geo::vec2 pos, geo::vec2 size)
+            : geo::rect(pos, size)
+            , prev(pos, size)
+        { }
+    };
+
+    // geo::rect camera_ = { geo::vec2{ 0 }, geo::vec2{ 1, 1 } };
+    const camera2d default_camera = { geo::vec2{ 0 }, geo::vec2{ 1, 1 } };
+    std::unordered_map<std::string, camera2d> cameras;
 
     engine2d(settings set, ptr<state> global);
+
+    const camera2d& camera() const
+    {
+        auto it = cameras.find(scenes->current().name);
+        if (it == cameras.end())
+            return default_camera;
+        return it->second;
+    }
+
+    camera2d& camera()
+    {
+        auto it = cameras.find(scenes->current().name);
+        if (it == cameras.end())
+            return cameras.emplace(scenes->current().name, default_camera).first->second;
+        return it->second;
+    }
 
     geo::vec2 mouse_pos_in_camera()
     {
         return camera_coords(input->mouse().x, input->mouse().y);
+    }
+
+    geo::vec2 mouse_pos_in_ui()
+    {
+        return camera_coords_ui(input->mouse().x, input->mouse().y);
     }
 
     geo::vec2 camera_coords(const lib2d::gx::events::mouse_t& m)
@@ -83,6 +117,8 @@ public:
     }
 
     geo::vec2 camera_coords(int mouse_x, int mouse_y);
+
+    geo::vec2 camera_coords_ui(int mouse_x, int mouse_y);
 
     bool add_texture(const std::string& tag, const std::string& path);
     bool remove_texture(const std::string& name);

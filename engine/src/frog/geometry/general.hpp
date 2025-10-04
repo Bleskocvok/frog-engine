@@ -17,11 +17,38 @@ inline float canonize(float angle)
     return std::fmod(angle + Pi / 2, 2 * Pi) - Pi / 2;
 }
 
+// TODO: Fucking broken.
 inline float angle_diff(float a, float b)
 {
     float res = canonize(b) - canonize(a) + 2 * Pi;
     res = std::fmod(res + Pi / 2, 2 * Pi) - Pi / 2;
     return res;
+}
+
+
+inline float canonize_deg(float angle)
+{
+    return std::fmod( std::fmod(angle, 360.0f) + 360.0f, 360.0f );
+}
+
+
+inline float angle_diff_deg(float a, float b)
+{
+    a = canonize_deg(a);
+    b = canonize_deg(b);
+
+    float result = a >= b ? a - b : a + 360 - b;
+
+    if (result >= 180)
+        result -= 360;
+
+    return result;
+}
+
+
+inline float lerp_deg(float a, float b, float t)
+{
+    return canonize_deg( a + t * angle_diff_deg(b, a) );
 }
 
 

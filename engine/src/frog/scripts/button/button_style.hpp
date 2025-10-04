@@ -17,15 +17,15 @@ struct button_style_base
 {
     virtual ~button_style_base() = default;
 
-    virtual void init(GameObject& obj) {}
+    virtual void init(GameObject&) {}
 
-    virtual void idle(GameObject& obj) {}
+    virtual void idle(GameObject&) {}
 
-    virtual void hover(GameObject& obj) {}
+    virtual void hover(GameObject&) {}
 
-    virtual void press(GameObject& obj) {}
+    virtual void press(GameObject&) {}
 
-    virtual void stable_update(GameObject& obj) {}
+    virtual void stable_update(GameObject&) {}
 };
 
 

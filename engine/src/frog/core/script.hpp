@@ -37,6 +37,8 @@ struct script_base
 
     virtual void stable_update(GameObject&, Engine&) {}
 
+    virtual void pre_update(GameObject&, Engine&) {}
+
     virtual void end_update(GameObject&, Engine&) {}
 
     virtual void frame_update(GameObject&, Engine&) {}

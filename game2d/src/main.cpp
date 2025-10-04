@@ -201,7 +201,7 @@ struct controls : frog::script2d
 
     void resize(int w, int h, frog::engine2d& eng)
     {
-        eng.camera.size = { w / float(h), 1 };
+        eng.camera().size = { w / float(h), 1 };
     }
 
     void stable_update(frog::game_object2d& obj, frog::engine2d& engine) override
