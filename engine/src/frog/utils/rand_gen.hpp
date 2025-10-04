@@ -57,26 +57,47 @@ struct uniform_float
     uniform_float(T min_, T max_) : min_(min_), max_(max_)
     { }
 
+    // template<typename Gen>
+    // T operator()(Gen& gen)
+    // {
+    //     T k = max_ - min_;
+    //     T r = gen() / T( Gen::max() );
+    //     return min_ + k * r;
+    // }
+
     template<typename Gen>
     T operator()(Gen& gen)
     {
-        T chunk = max_ - min_;
-        T two = T( 2 );
-        T zero = T( 0 );
-        chunk /= two;
-
         T result = min_;
+        T chunk = max_ - min_;
 
-        // TODO: Generate whole words and then read their bits by bit
-        // operations. Perhaps std::bitset?
-        auto coin = uniform_int<unsigned>(0, 1);
+        // // Previous version.
+        // T two = T( 2 );
+        // T zero = T( 0 );
+        // chunk /= two;
+        // auto coin = uniform_int<unsigned>(0, 1);
+        // for (int i = 0; i < 64 && chunk > zero; i++)
+        // {
+        //     if (coin(gen) == 0)
+        //         result += chunk;
+        //     chunk /= two;
+        // }
 
-        for (int i = 0; i < 64 && chunk > zero; i++)
+        // Slightly faster.
+        T zero = T( 0 );
+        T two = T( 2 );
+        chunk /= two;
+        // auto coin = uniform_int<std::uint64_t>(0, std::uint64_t(-1));
+        // std::uint64_t bits = coin(gen);
+        auto bits = gen();
+        static_assert(Gen::max() == std::uint64_t(-1));
+
+        for (int j = 0; j < 64 && chunk > zero; j++)
         {
-            if (coin(gen) == 0)
+            if (bits & 0x1)
                 result += chunk;
-
             chunk /= two;
+            bits >>= 1;
         }
 
         return result;
