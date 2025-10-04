@@ -1,6 +1,5 @@
 #pragma once
 
-#include <random>       // mt19937
 #include <cstdint>      // uint64_t
 
 namespace frog {
@@ -81,7 +80,64 @@ struct uniform_float
     }
 };
 
-template<typename Gen = std::mt19937, typename Int = int, typename Float = float>
+class xorshift32
+{
+    std::uint32_t state;
+
+public:
+    constexpr explicit xorshift32(std::uint32_t seed) : state(seed ? seed : 12345) {}
+
+    constexpr void next()
+    {
+        std::uint32_t x = state;
+        x ^= x << 13;
+        x ^= x >> 17;
+        x ^= x << 5;
+        state = x;
+    }
+
+    constexpr std::uint32_t operator()()
+    {
+        next();
+        return state;
+    }
+
+    static constexpr std::uint32_t max()
+    {
+        return std::uint32_t(-1);
+    }
+};
+
+class xorshift64
+{
+    std::uint64_t state = 0;
+
+public:
+    constexpr explicit xorshift64(std::uint64_t seed) : state(seed ? seed : 12345) {}
+
+    constexpr void next()
+    {
+        std::uint64_t x = state;
+        x ^= x << 13;
+        x ^= x >> 7;
+        x ^= x << 17;
+        state = x;
+    }
+
+    constexpr std::uint64_t operator()()
+    {
+        next();
+        return state;
+    }
+
+    static constexpr std::uint64_t max()
+    {
+        return std::uint64_t(-1);
+    }
+};
+
+// template<typename Gen = std::mt19937, typename Int = int, typename Float = float>
+template<typename Gen = xorshift64, typename Int = int, typename Float = float>
 class rand_gen_t
 {
     Gen gen;
