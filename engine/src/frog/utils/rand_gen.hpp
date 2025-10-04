@@ -18,15 +18,17 @@ struct uniform_int
 {
     T min_, max_;
 
-    uniform_int(T min_, T max_) : min_(min_), max_(max_)
+    constexpr uniform_int(T min_, T max_) : min_(min_), max_(max_)
     { }
 
     template<typename Gen>
-    T operator()(Gen& gen)
+    constexpr T operator()(Gen& gen)
     {
         constexpr auto GEN_MAX = Gen::max();
 
-        // TODO: Static assert that gen max is at least as large as k.
+        // k could result in 0 due to overflow
+        if (max_ == GEN_MAX && min_ == T( 0 ))
+            return gen();
 
         T k = max_ - min_ + 1;
         T mod = (GEN_MAX + 1) % k;
@@ -41,6 +43,7 @@ struct uniform_int
         } while (r > GEN_MAX - mod);
 #pragma GCC diagnostic pop
 
+        // This fella be slow.
         return (r % k) + min_;
     }
 };
