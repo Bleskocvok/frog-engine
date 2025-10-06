@@ -27,7 +27,10 @@ struct uniform_int
         constexpr auto GEN_MAX = Gen::max();
 
         // k could result in 0 due to overflow
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-compare"
         if (max_ == GEN_MAX && min_ == T( 0 ))
+#pragma GCC diagnostic pop
             return gen();
 
         T k = max_ - min_ + 1;
