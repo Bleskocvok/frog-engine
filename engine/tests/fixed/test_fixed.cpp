@@ -398,4 +398,10 @@ void test_exp()
 
     assert_eq( fx32( 2 ).exp( -1 ), fx32( 1, 2 ) );
     assert_eq( fx64( 2 ).exp( -1 ), fx64( 1, 2 ) );
+
+    assert_eq( fx32( 1, 2 ) << 1, fx32( 1 ) );
+    assert_eq( fx32( 1, 4 ) << 1, fx32( 1, 2 ) );
+    assert_eq( fx64( 1, 8 ) << 2, fx64( 1, 2 ) );
+    assert_eq( fx64( 8 ) >> 3, fx64( 1 ) );
+    assert_eq( fx64( 16 ) >> 3, fx64( 2 ) );
 }
