@@ -214,6 +214,12 @@ public:
     friend bool operator==( fixed a, fixed b ) { return a.value == b.value; }
     friend bool operator!=( fixed a, fixed b ) { return not ( a == b ); }
 
+    friend fixed& operator<<=( fixed& a, int val ) { a.value <<= val; return a; }
+    friend fixed& operator>>=( fixed& a, int val ) { a.value >>= val; return a; }
+
+    friend fixed operator<<( fixed a, int val ) { a <<= val; return a; }
+    friend fixed operator>>( fixed a, int val ) { a >>= val; return a; }
+
     // :: fixed -> T -> fixed/bool
 
     template< typename T >
