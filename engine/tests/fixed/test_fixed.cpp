@@ -404,4 +404,14 @@ void test_exp()
     assert_eq( fx64( 1, 8 ) << 2, fx64( 1, 2 ) );
     assert_eq( fx64( 8 ) >> 3, fx64( 1 ) );
     assert_eq( fx64( 16 ) >> 3, fx64( 2 ) );
+
+    assert_eq( fx64( -16 ), -fx64( 16 ) );
+
+    assert( fx64( -16 ) == -fx64( 16 ) );
+    assert( fx64( -16 ) != -fx64( 15 ) );
+    assert( fx64( -16 ) <  -fx64( 15 ) );
+    assert( fx64( -16 ) <= -fx64( 15 ) );
+    assert( fx64(  16 ) >  -fx64( 15 ) );
+    assert( fx64(  16 ) >= -fx64( 15 ) );
+    assert( fx64(  16 ) >=  fx64( 15 ) );
 }
