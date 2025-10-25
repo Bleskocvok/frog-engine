@@ -2,82 +2,16 @@
 
 #include "circle.hpp"
 #include "collision.hpp"
+#include "frog/geometry/vector.hpp"
 #include "polar.hpp"
 #include "general.hpp"
 
+#include <cassert>
 #include <utility>          // pair
 #include <algorithm>        // max, min, clamp, find
 #include <vector>
 
-
 namespace frog::geo {
-
-
-template<typename T>
-class optimization_grid
-{
-    std::vector<std::vector<T>> grid;
-    ivec2 dim;
-    rect box;
-    vec2 chunk;
-
-    template<typename Func>
-    void for_each_around_impl(circle c, Func f)
-    {
-        using std::min, std::max;
-
-        auto inside = c.pos - box.top_left();
-        auto minim = ivec2{ int( ( inside.x() - c.radius ) / chunk.x() ),
-                            int( ( inside.y() - c.radius ) / chunk.y() ) };
-        auto maxim = ivec2{ int( ( inside.x() + c.radius ) / chunk.x() ),
-                            int( ( inside.y() + c.radius ) / chunk.y() ) };
-
-        for     (int y = max( 0, minim.y() ); y <= min( dim.y() - 1, maxim.y() ); ++y)
-            for (int x = max( 0, minim.x() ); x <= min( dim.x() - 1, maxim.x() ); ++x)
-                if (is_collision(c, rect_at(x, y)))
-                    f(x, y);
-    }
-
-public:
-    optimization_grid(ivec2 dim, rect box)
-        : grid(dim.x() * dim.y()),
-          dim(dim),
-          box(box),
-          chunk(box.size.x() / dim.x(), box.size.y() / dim.y()) {}
-
-    const auto& at(int x, int y) const { return grid.at( x + y * dim.x() ); }
-          auto& at(int x, int y)       { return grid.at( x + y * dim.x() ); }
-
-    rect rect_at(int x, int y) const
-    {
-        auto pos = box.top_left() + chunk * 0.5 + vec2{ x * chunk.x(), y * chunk.y() };
-        return rect{ pos, chunk };
-    }
-
-    void add_to_touching(circle c, T val)
-    {
-        for_each_around_impl(c, [&](int x, int y){ at(x, y).push_back(val); });
-    }
-
-    template<typename Func>
-    void for_each_around(circle c, Func f)
-    {
-        for_each_around_impl(c, [&](int x, int y)
-        {
-            for (auto& val : at(x, y))
-                f(val);
-        });
-    }
-
-    void clear()
-    {
-        for (auto& square : grid)
-        {
-            square.clear();
-        }
-    }
-};
-
 
 void soft_physics2d::apply_inertia(point& pt, float delta)
 {
@@ -175,13 +109,24 @@ void soft_physics2d::solve_angle(angle alpha)
     c.pos += b.pos;
 }
 
+void soft_physics2d::calculate_grid()
+{
+    if (grid)
+        grid->clear();
+    else
+        grid.emplace(settings_.grid_dim, settings_.universum);
+
+    for (auto& [i, pt] : points())
+        grid->add_to_touching(circle(pt.pos, pt.radius), { i, &pt });
+}
+
 void soft_physics2d::verlet_solve()
 {
     for (auto& [idx, pt] : points())
         apply_inertia(pt, settings_.delta);
 
-    auto grid = optimization_grid<std::pair<idx_t, point*>>(
-                                    settings_.grid_dim, settings_.universum);
+    // auto grid = optimization_grid<std::pair<idx_t, point*>>(
+    //                                 settings_.grid_dim, settings_.universum);
 
     std::ranges::for_each(plugins_, [](auto& p){ p->before(); });
 
@@ -192,17 +137,22 @@ void soft_physics2d::verlet_solve()
         for (auto& [i, pt] : points())
             encapsulate(pt, settings_.universum);
 
-        grid.clear();
+        // grid.clear();
 
-        for (auto& [i, pt] : points())
-            grid.add_to_touching(circle(pt.pos, pt.radius), { i, &pt });
+        // for (auto& [i, pt] : points())
+        //     grid.add_to_touching(circle(pt.pos, pt.radius), { i, &pt });
+
+        if (not grid)
+            calculate_grid();
+
+        assert(grid);
 
         for (auto& elem : points())
         {
             auto& i = elem.first;
             auto& pt = elem.second;
 
-            grid.for_each_around(circle(pt.pos, pt.radius), [&](std::pair<idx_t, point*> other)
+            grid->for_each_around(circle(pt.pos, pt.radius), [&](std::pair<idx_t, point*> other)
                 {
                     if (other.first > i)
                         solve_collision(pt, *other.second);
@@ -214,6 +164,8 @@ void soft_physics2d::verlet_solve()
 
         for (auto&[idx, a] : angles())
             solve_angle(a);
+
+        calculate_grid();
     }
 
     std::ranges::for_each(plugins_, [](auto& p){ p->after(); });
@@ -249,6 +201,20 @@ void soft_physics2d::remove()
 void soft_physics2d::push(idx_t point, vec2 delta)
 {
     point_at(point).prev -= delta;
+}
+
+void soft_physics2d::explode(circle c, float power)
+{
+    for_each_colliding(c, [&](auto idx, point* pt)
+    {
+        vec2 dif = pt->pos - c.pos;
+        float len = dif.length();
+        float dist = c.radius == 0 || len == 0
+                   ? 1.0
+                   : 1 - len / c.radius;
+        dif /= len;
+        push(idx, dif * dist * power);
+    });
 }
 
 }  // namespace frog::geo

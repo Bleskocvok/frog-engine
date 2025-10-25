@@ -3,9 +3,12 @@
 #include "vector.hpp"
 #include "rectangle.hpp"
 #include "basic.hpp"        // Pi
+#include "optimization_grid.hpp"
 
 #include <cstdint>          // int64_t
 #include <memory>
+#include <optional>
+#include <unordered_set>
 #include <utility>          // move, pair, forward
 #include <cstddef>          // size_t
 #include <stdexcept>        // runtime_error
@@ -213,6 +216,8 @@ private:
 
     std::vector<std::unique_ptr<iplugin>> plugins_;
 
+    std::optional<optimization_grid<std::pair<idx_t, point*>>> grid;
+
     void apply_inertia(point& pt, float delta);
 
     void encapsulate(point& pt, rect rect);
@@ -239,6 +244,8 @@ private:
         }
         return it->second;
     }
+
+    void calculate_grid();
 
 public:
     soft_physics2d(settings s, limits l = limits{})
@@ -305,6 +312,25 @@ public:
     void remove_angle(idx_t i) { angles_removal.push_back(i); }
 
     void push(idx_t point, vec2 delta);
+
+    template<typename Func>
+    void for_each_colliding(circle c, Func&& func)
+    {
+        if (not grid)
+            calculate_grid();
+
+        auto visited = std::unordered_set<idx_t>{};
+
+        grid->for_each_around(c, [&](std::pair<idx_t, point*> pt)
+            {
+                if (visited.contains(pt.first))
+                    return;
+                visited.insert(pt.first);
+                func(pt.first, pt.second);
+            });
+    }
+
+    void explode(circle c, float power);
 };
 
 
