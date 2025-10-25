@@ -180,21 +180,22 @@ class fixed;
 // (More determinism/safeness, but probably a bit slower.)
 using fx32 = fixed< std::int32_t, 11 >;
 using fx64 = fixed< std::int64_t, 22 >;
+// using fx64 = fixed< i64s, 22 >;
 
 
 template< typename Integral, int Decimals >
 class fixed
 {
     // since C++20 this isn't implementation-defined anymore
-    static_assert( Integral( -4 ) >> 1 == -2,
+    static_assert( Integral( -4 ) >> 1 == Integral( -2 ),
         "Necessary for arithmetics to work." );
 
     // and neither is this
-    static_assert( 1 + ~Integral( 0xABCD ) == -0xABCD,
+    static_assert( Integral( 1 ) + ~Integral( 0xABCD ) == Integral( -0xABCD ),
         "This platform must be using two's complement" );
 
     static constexpr Integral Div = Integral( 1 ) << Decimals;
-    static constexpr Integral Mask = Div - 1;
+    static constexpr Integral Mask = Div - Integral( 1 );
 
     Integral value = 0;
 
@@ -212,8 +213,8 @@ public:
         static_assert( std::is_integral< T >::value, "T must be integral" );
     }
 
-    fixed( float  x ) : value( x * Div ) {}
-    fixed( double x ) : value( x * Div ) {}
+    fixed( float  x ) : value( std::int64_t( x * std::int64_t( Div ) ) ) {}
+    fixed( double x ) : value( std::int64_t( x * std::int64_t( Div ) ) ) {}
 
     template< typename T >
     fixed( T numerator, T denominator ) : fixed( numerator )
@@ -249,17 +250,17 @@ public:
 
     operator double() const
     {
-        Integral n = to< Integral >();
-        Integral bits = ( value & Mask );
+        auto n = to< std::int64_t >();
+        auto bits = std::int64_t( value & Mask );
 
-        if ( value > 0 )
-            return n + bits / ( 1.0 * Mask );
+        if ( value > Integral( 0 ) )
+            return n + bits / ( 1.0 * std::int64_t( Mask ) );
 
         // necessary to account for two's complement here
         // therefore one is subtracted from “decimal” bits
         // and then they are inverted
-        double pt = ( ~( bits - 1 ) & Mask ) / ( 1.0 * Mask );
-        return n - pt;
+        double pt = std::int64_t( ~( bits - 1 ) & std::int64_t( Mask ) ) / ( 1.0 * std::int64_t( Mask ) );
+        return std::int64_t( n ) - pt;
     }
 
     operator float() const { return static_cast< double >( *this ); }
@@ -462,10 +463,10 @@ public:
 
         Integral val = a.value;
 
-        if ( val < 0 )
+        if ( val < Integral( 0 ) )
         {
             val = ~val;
-            val += 1;
+            val += Integral( 1 );
         }
 
         // remove rightmost zeroes
@@ -501,8 +502,8 @@ public:
                  : 1;
         };
 
-        out << Integral( a ) << ".";
-        buf_t ds = stuff * ( val & Mask ) / Div;
+        out << static_cast<long long>( a ) << ".";
+        buf_t ds = stuff * buf_t( val & Mask ) / buf_t( Div );
         if ( ds > 0 )
             for ( unsigned i = 0; i < buffer_number_digits() - digits( ds ); i++ )
                 out << "0";
@@ -567,7 +568,7 @@ public:
                 digits += digit;
             }
 
-            this->value += digits * Div / exp10;
+            this->value += digits * buf_t( Div ) / exp10;
         }
 
         if ( negative )
