@@ -9,9 +9,168 @@
 #include <cctype>       // isdigit
 #include <sstream>      // stringstream
 
+#include "frog/debug.hpp"
 
 namespace frog::geo
 {
+
+
+// UB-safe version of uint64_t in regards to overflow.
+struct i64s
+{
+    std::uint64_t val;
+
+    constexpr static std::uint64_t NegMask = 1llu << 63llu;
+
+    constexpr i64s(std::uint64_t n) : val(n) {}
+    constexpr i64s(unsigned n)      : val(n) {}
+    constexpr i64s(int n)           : i64s(static_cast<long>(n)) {}
+    constexpr i64s(long n)          : i64s(static_cast<long long>(n)) {}
+    constexpr i64s(long long n)
+    {
+        if (n < 0)
+        {
+            val = -n;
+            val = 1 + ~val;
+        }
+        else
+            val = n;
+    }
+
+    friend std::ostream& operator<<( std::ostream& out, i64s n )
+    {
+        if (NegMask & n.val)
+        {
+            n.val = ~n.val + 1;
+            out << "-" << n.val;
+        }
+        else
+        {
+            out << n.val;
+        }
+        return out;
+    }
+
+    // UB-unsafe
+    // constexpr operator int()                const { return val; };
+    // constexpr operator long()               const { return val; };
+    // constexpr operator long long()          const { return val; };
+    // constexpr operator unsigned int()       const { return val; };
+    constexpr operator unsigned long()      const { return val; };
+    // constexpr operator unsigned long long() const { return val; };
+
+    constexpr i64s& operator+=(i64s i){ val += i.val; return *this; }
+    constexpr i64s& operator-=(i64s i){ val -= i.val; return *this; }
+    constexpr i64s& operator*=(i64s i){ val *= i.val; return *this; }
+    constexpr i64s& operator/=(i64s i)
+    {
+        bool neg = false;
+        if (val & NegMask)
+        {
+            neg = true;
+            *this = -*this;
+        }
+        if (i.val & NegMask)
+        {
+            neg = not neg;
+            i = -i;
+        }
+
+        val /= i.val;
+        if (neg)
+            val = ~val + 1;
+        return *this;
+    }
+    constexpr i64s& operator&=(i64s i){ val &= i.val; return *this; }
+    constexpr i64s& operator|=(i64s i){ val |= i.val; return *this; }
+    constexpr i64s& operator^=(i64s i){ val ^= i.val; return *this; }
+
+    constexpr
+        i64s& operator<<=(int n)
+    {
+        // LOG("<<");
+        // bool neg = val & NegMask;
+        // LOGX(neg);
+        // if (neg)
+        // {
+        //     *this = -*this;
+        //     LOGX(val);
+        //     val <<= n;
+        //     LOGX(val);
+        //     *this = -*this;
+        //     // val = 1 + ~val;
+        //     return *this;
+        // }
+        val <<= n;
+        return *this;
+    }
+    constexpr
+        i64s& operator>>=(int n)
+    {
+        // LOG(">>");
+        // bool neg = val & NegMask;
+        // LOGX(neg);
+        // if (neg)
+        // {
+        //     *this = -*this;
+        //     LOGX(val);
+        //     val >>= n;
+        //     LOGX(val);
+        //     *this = -*this;
+        //     // val = 1 + ~val;
+        // }
+        // val >>= n;
+        bool neg = val & NegMask;
+        val >>= n;
+        if (neg) val |= NegMask;
+        return *this;
+    }
+
+    constexpr friend i64s operator<<(i64s x, int val){ x <<= val; return x; }
+    constexpr friend i64s operator>>(i64s x, int val){ x >>= val; return x; }
+
+    // unary
+    constexpr friend i64s operator-(i64s a)
+    {
+        a.val = ~a.val + 1;
+        return a;
+    }
+    constexpr friend i64s operator~(i64s a)
+    {
+        a.val = ~a.val;
+        return a;
+    }
+
+    constexpr friend i64s operator+(i64s a, i64s b){ a += b; return a; }
+    constexpr friend i64s operator-(i64s a, i64s b){ a -= b; return a; }
+    constexpr friend i64s operator*(i64s a, i64s b){ a *= b; return a; }
+    constexpr friend i64s operator/(i64s a, i64s b){ a /= b; return a; }
+    constexpr friend i64s operator&(i64s a, i64s b){ a &= b; return a; }
+    constexpr friend i64s operator|(i64s a, i64s b){ a |= b; return a; }
+    constexpr friend i64s operator^(i64s a, i64s b){ a ^= b; return a; }
+
+    template<typename Op>
+    constexpr friend auto binop(auto a, auto b, Op f)
+    {
+        if ( a.val & NegMask && b.val & NegMask )
+            return f( b, a );
+
+         if ( a.val & NegMask )
+            return f( i64s( 0 ), b );
+
+        if ( b.val & NegMask )
+            return f( a, i64s( 0 ) );
+
+        return f( a, b );
+    }
+
+    constexpr friend bool operator< (i64s a, i64s b){ return a.val <  b.val; }
+    constexpr friend bool operator<=(i64s a, i64s b){ return a.val <= b.val; }
+    constexpr friend bool operator> (i64s a, i64s b){ return a.val >  b.val; }
+    constexpr friend bool operator>=(i64s a, i64s b){ return a.val >= b.val; }
+    constexpr friend bool operator==(i64s a, i64s b){ return a.val == b.val; }
+    constexpr friend bool operator!=(i64s a, i64s b){ return not (a == b); }
+};
 
 
 template<typename Integral, int Decimals>
