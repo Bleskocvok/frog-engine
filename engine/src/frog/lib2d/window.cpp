@@ -67,6 +67,9 @@ window::window( int width, int height, const char* title,
     // TODO: move somewhere else and give the option to use linear instead
     // nearest pixel sampling
     SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "0" );
+
+    // Reinitialize win_width and win_height. Maximized window and Fullscreen.
+    update_size( -1, -1 );
 }
 
 
