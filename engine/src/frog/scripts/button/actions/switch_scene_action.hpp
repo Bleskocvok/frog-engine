@@ -20,7 +20,7 @@ struct switch_scene_action_base : Base
     explicit switch_scene_action_base(std::string name)
         : name(std::move(name)) {}
 
-    void action(Base::GameObject&, Base::Engine& engine) override
+    void action(typename Base::GameObject&, typename Base::Engine& engine) override
     {
         engine.scenes->switch_scene(name);
     }

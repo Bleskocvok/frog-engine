@@ -5,9 +5,6 @@
 #include "frog/scripts/button/button_style.hpp"
 #include "frog/utils/ptr.hpp"
 
-#include "frog/debug.hpp"
-#include <utility>
-
 namespace frog
 {
 

@@ -1,12 +1,17 @@
 #pragma once
 
+#include <cstdint>          // uint_least32_t
 #include <iostream>         // clog
 #include <type_traits>      // is_same_v
 #include <utility>          // forward
 #include <optional>         // optional, nullopt
 #include <variant>          // variant, visit
 #include <tuple>            // tuple, tuple_size, get
+
+// Broken on Android in the version I use :(
+#ifndef __ANDROID__
 #include <source_location>  // source_location
+#endif
 
 #define LOG(...)      frog::log_ln(__VA_ARGS__)
 #define LOG_FUNC(...) frog::log_ln("Log function:", __func__  __VA_OPT__(,) __VA_ARGS__)
@@ -29,8 +34,13 @@
 
 #define LOGX(...) frog::log_vars(FROG_UNWRAP0(__VA_ARGS__))
 
-#define LOGV(...)  ( frog::verbose_prefix(),  LOG(__VA_ARGS__) )
-#define LOGVX(...) ( frog::verbose_prefix(), LOGX(__VA_ARGS__) )
+#ifndef __ANDROID__
+    #define LOGV(...)  ( frog::verbose_prefix(),  LOG(__VA_ARGS__) )
+    #define LOGVX(...) ( frog::verbose_prefix(), LOGX(__VA_ARGS__) )
+#else
+    #define LOGV(...)  ( frog::verbose_prefix_impl(__FILE__, __func__, __LINE__),  LOG(__VA_ARGS__) )
+    #define LOGVX(...) ( frog::verbose_prefix_impl(__FILE__, __func__, __LINE__), LOGX(__VA_ARGS__) )
+#endif
 
 namespace frog {
 
@@ -129,7 +139,8 @@ void log(Out& out, Arg&& arg, Args&& ... args)
             out << "[]";
     }
     else
-        struct fail { static_assert(false, "cannot log this type (Arg)"); };
+        arg.cannotLogThisType();
+        // struct fail { static_assert(false, "cannot log this type (Arg)"); };
 
     if constexpr (sizeof...(Args) != 0)
     {
@@ -167,20 +178,30 @@ void log_vars(Args&&... args)
     std::clog << "\n" << std::flush;
 }
 
+inline void verbose_prefix_impl(std::string file, std::string func,
+                                std::uint_least32_t line);
+
+
+#ifndef __ANDROID__
 inline void verbose_prefix(const std::source_location loc
                             = std::source_location::current())
 {
-    std::string file = loc.file_name();
+    verbose_prefix_impl(loc.file_name(), loc.function_name(), loc.line());
+}
+#endif
+
+inline void verbose_prefix_impl(std::string file, std::string func,
+                                std::uint_least32_t line)
+{
     auto base = file.find_last_of("/");
     if (base != file.npos)
         file.erase(0, base + 1);
 
-    std::string func = loc.function_name();
     auto retval = func.find(" ");
     if (retval != func.npos)
         func.erase(0, retval + 1);
 
-    frog::log<false, 10>(std::clog, file, ":", loc.line(), " [", func, "]: ");
+    frog::log<false, 10>(std::clog, file, ":", line, " [", func, "]: ");
 }
 
 } // namespace frog
