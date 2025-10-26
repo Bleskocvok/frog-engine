@@ -8,8 +8,11 @@
 #include "frog/font/truetype.hpp"
 #include "frog/geometry/general.hpp"
 #include "frog/geometry/vector.hpp"
+#include "frog/utils/exception.hpp"
 
 #include "frog/lib2d/structs.hpp"
+#include "frog/lib2d/window.hpp"
+#include "frog/core/settings.hpp"
 
 #include <utility>      // move
 #include <vector>
@@ -18,12 +21,36 @@
 using namespace frog::geo;
 using namespace frog;
 
+namespace {
+
+frog::lib2d::gx::Mode window_screen_mode(const settings& s)
+{
+    switch (s.mode) {
+        case ScreenMode::Borderless: return frog::lib2d::gx::Mode::Borderless;
+        case ScreenMode::Fullscreen: return frog::lib2d::gx::Mode::Fullscreen;
+        case ScreenMode::Windowed:   return frog::lib2d::gx::Mode::Windowed;
+        default:
+            throw error("unsupported screen mode");
+    }
+}
+
+frog::lib2d::gx::Vsync vsync(const settings& s)
+{
+    if (s.vsync)
+        return frog::lib2d::gx::Vsync::On;
+    return frog::lib2d::gx::Vsync::Off;
+}
+
+} // namespace
 
 namespace frog {
 
 
 engine2d::engine2d(settings set, ptr<state> _global)
-    : engine_base( mk_ptr<lib2d::gx::window>(set.width, set.height, set.window_name.c_str()),
+    : engine_base( mk_ptr<lib2d::gx::window>(set.width, set.height,
+                                             set.window_name.c_str(),
+                                             vsync(set),
+                                             window_screen_mode(set)),
                    nullptr,
                    std::move(_global) )
     , win_raw(static_cast<lib2d::gx::window*>(window.get()))

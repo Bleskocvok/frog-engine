@@ -19,6 +19,11 @@ inline std::string create_prog_relative_path(const std::string& argv0,
     return path.parent_path() / relative_path;
 }
 
+enum class ScreenMode : int
+{
+    Windowed = 0, Borderless = 1, Fullscreen = 2, /* TODO:FullscreenBorderless = 3, */
+};
+
 
 struct settings
 {
@@ -44,6 +49,8 @@ struct settings
     std::string asset_path;
 
     std::optional<std::string> window_icon;
+
+    ScreenMode mode = ScreenMode::Windowed;
 
     void assign_path(const fs::path& executable)
     {
