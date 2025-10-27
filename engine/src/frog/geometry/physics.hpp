@@ -51,6 +51,7 @@ public:
         float radius = 1;
         // 0 = infinite weight
         float inv_weight = 1;
+        bool bound_by_universum = true;
     };
 
     class iplugin

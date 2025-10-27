@@ -23,6 +23,9 @@ void soft_physics2d::apply_inertia(point& pt, float delta)
 
 void soft_physics2d::encapsulate(point& pt, rect rect)
 {
+    if (not pt.bound_by_universum)
+        return;
+
     rect.size *= 0.5;
     pt.pos.x() = std::clamp(pt.pos.x(), rect.pos.x() - rect.size.x() + pt.radius,
                                         rect.pos.x() + rect.size.x() - pt.radius);
