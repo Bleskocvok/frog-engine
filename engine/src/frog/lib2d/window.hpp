@@ -86,8 +86,8 @@ namespace frog::lib2d::gx
         //                         int pivot_x, int pivot_y, float angle,
         //                         bool flipped = false );
 
-        void draw_colored_rotated( const texture& tex, int u, int v,
-                                int cut_width, int cut_height,
+        void draw_colored_rotated( const texture& tex,
+                                float u, float v, float cut_width, float cut_height,
                                 float x, float y, float tex_width, float tex_height,
                                 std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a,
                                 float pivot_x, float pivot_y, float angle,

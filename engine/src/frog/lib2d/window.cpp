@@ -7,6 +7,7 @@
 
 #include <stdexcept>    // runtime_error
 #include <string>       // ""s
+#include <cmath>        // round
 
 namespace frog::lib2d::gx
 {
@@ -213,9 +214,9 @@ void window::draw_colored( const texture& tex, int u, int v,
 // }
 
 
-void window::draw_colored_rotated( const texture& tex, int u, int v,
-                            int cut_width, int cut_height, float x, float y,
-                            float tex_width, float tex_height,
+void window::draw_colored_rotated( const texture& tex,
+                            float u, float v, float cut_width, float cut_height,
+                            float x, float y, float tex_width, float tex_height,
                             std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a,
                             float pivot_x, float pivot_y, float angle,
                             bool flipped )
@@ -225,7 +226,8 @@ void window::draw_colored_rotated( const texture& tex, int u, int v,
     SDL_SetTextureColorMod( tex.src(), r, g, b );
     SDL_SetTextureAlphaMod( tex.src(), a );
 
-    SDL_Rect src = { u, v, cut_width, cut_height };
+    auto rnd = [](auto x) -> int { return std::round(x); };
+    SDL_Rect src = { rnd(u), rnd(v), rnd(cut_width), rnd(cut_height) };
     SDL_FRect dest = { x, y, tex_width, tex_height };
     SDL_FPoint center = { pivot_x, pivot_y };
     SDL_RenderCopyExF( renderer.get(),
