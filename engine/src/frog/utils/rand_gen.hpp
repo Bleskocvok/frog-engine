@@ -60,14 +60,16 @@ struct uniform_float
     uniform_float(T min_, T max_) : min_(min_), max_(max_)
     { }
 
+    // Maybe if type == float/double, else the monstrosity
     // template<typename Gen>
     // T operator()(Gen& gen)
     // {
     //     T k = max_ - min_;
-    //     T r = gen() / T( Gen::max() );
+    //     T r = T( gen() ) / T( Gen::max() );
     //     return min_ + k * r;
     // }
 
+    // TODO: Actually, just precompute the table if possible.
     template<typename Gen>
     T operator()(Gen& gen)
     {
