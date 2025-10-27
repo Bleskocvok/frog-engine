@@ -87,12 +87,14 @@ public:
 
         init();
 
+        constexpr int MAX_CONSECUTIVE_UPDATES = 3;
+
         while (not global->quit && not window->should_close())
         {
             update_controls();
             frame_update();
 
-            // int i = 0;
+            int i = 0;
             while (accum >= decltype(accum)(delta))
             {
                 // Instead of updating controls directly before every
@@ -107,11 +109,11 @@ public:
                 // TODO: Consider the situation when stable_update takes longer
                 // than delta. That way, accum keeps increasing, leading to a
                 // drastic FPS drop. How solve?
-                // if (++i > 2)
-                // {
-                //     accum = 0;
-                //     break;
-                // }
+                if (++i >= MAX_CONSECUTIVE_UPDATES)
+                {
+                    accum = 0;
+                    break;
+                }
             }
 
             end_frame_update();
