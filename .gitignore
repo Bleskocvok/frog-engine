@@ -30,6 +30,9 @@
 /.vscode/
 /.vs/
 
+# nvim c++ plugin cache
+/.cache/
+
 # my own unrelated garbage
 /sketches/
 /stuff/
