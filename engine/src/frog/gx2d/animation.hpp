@@ -110,6 +110,8 @@ public:
         return f.length == -1 ? atlas_size.x() : f.length;
     }
 
+    int frame_index() const { return frame_; }
+
     const std::string& current_name() const { return current_; }
     const std::string& next_name() const { return next; }
 
