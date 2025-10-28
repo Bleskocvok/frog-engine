@@ -12,20 +12,24 @@ namespace frog::geo
 template<typename T>
 bool is_collision(rect_t<T> a, rect_t<T> b)
 {
-    return a.pos.x() + a.size.x() * 0.5 >= b.pos.x() - b.size.x() * 0.5
-        && a.pos.x() - a.size.x() * 0.5 <= b.pos.x() + b.size.x() * 0.5
-        && a.pos.y() + a.size.y() * 0.5 >= b.pos.y() - b.size.y() * 0.5
-        && a.pos.y() - a.size.y() * 0.5 <= b.pos.y() + b.size.y() * 0.5;
+    constexpr static T half = T(1) / T(2);
+
+    return a.pos.x() + a.size.x() * half >= b.pos.x() - b.size.x() * half
+        && a.pos.x() - a.size.x() * half <= b.pos.x() + b.size.x() * half
+        && a.pos.y() + a.size.y() * half >= b.pos.y() - b.size.y() * half
+        && a.pos.y() - a.size.y() * half <= b.pos.y() + b.size.y() * half;
 }
 
 // rectangle ⨯ point
 template<typename T>
 bool is_collision(rect_t<T> a, vec<T, 2> p)
 {
-    return p.x() >= a.pos.x() - a.size.x() * 0.5
-        && p.x() <= a.pos.x() + a.size.x() * 0.5
-        && p.y() >= a.pos.y() - a.size.y() * 0.5
-        && p.y() <= a.pos.y() + a.size.y() * 0.5;
+    constexpr static T half = T(1) / T(2);
+
+    return p.x() >= a.pos.x() - a.size.x() * half
+        && p.x() <= a.pos.x() + a.size.x() * half
+        && p.y() >= a.pos.y() - a.size.y() * half
+        && p.y() <= a.pos.y() + a.size.y() * half;
 }
 
 // circle ⨯ point
@@ -39,8 +43,8 @@ bool is_collision(circle_t<T> c, vec<T, 2> p)
 template<typename T>
 bool is_collision(rect_t<T> a, circle_t<T> c)
 {
-    auto l = a;  l.size.x() += c.radius * 2;
-    auto h = a;  h.size.y() += c.radius * 2;
+    auto l = a;  l.size.x() += c.radius * T(2);
+    auto h = a;  h.size.y() += c.radius * T(2);
     return is_collision(l, c.pos)        || is_collision(h, c.pos)
         || is_collision(c, a.top_left()) || is_collision(c, a.top_right())
         || is_collision(c, a.bot_left()) || is_collision(c, a.bot_right());
