@@ -2,7 +2,7 @@
 
 #include "vector.hpp"
 
-#include <cmath>
+#include <cmath>        // fmod, atan2, acos
 #include <vector>
 #include <utility>      // std::pair
 #include <optional>
@@ -11,6 +11,12 @@
 namespace frog::geo
 {
 
+inline float angle_deg(vec2 a, vec2 b)
+{
+    vec2 dif = b - a;
+    // return 90 + frog::geo::ToDeg * std::atan2(dif.y(), dif.x());
+    return frog::geo::ToDeg * std::atan2(dif.y(), dif.x());
+}
 
 inline float canonize(float angle)
 {
