@@ -6,8 +6,12 @@
 #include "frog/geometry/circle.hpp"
 #include "frog/geometry/physics.hpp"
 #include "frog/geometry/vector.hpp"
+#include "frog/gx2d/sprite.hpp"
 #include "frog/scripts/animation_script.hpp"
 #include "frog/scripts/timer_script.hpp"
+
+#include <optional>
+#include <utility>      // move
 
 namespace frog::scripts {
 
@@ -19,11 +23,17 @@ class ball2d : public frog::script2d
     frog::geo::soft_physics2d::idx_t idx = 0;
     frog::game_object2d* obj = nullptr;
 
+    std::optional<frog::gx2d::sprite> sprite;
+
 public:
-    ball2d(frog::geo::circle circle, float inv_weight, frog::geo::soft_physics2d& physics)
+    ball2d(frog::geo::circle circle
+            , float inv_weight
+            , frog::geo::soft_physics2d& physics
+            , std::optional<frog::gx2d::sprite> sprite = std::nullopt)
         : circle(circle)
         , inv_weight(inv_weight)
         , physics(&physics)
+        , sprite(std::move(sprite))
     { }
 
     const frog::game_object2d* object() const { return obj; }
@@ -42,12 +52,20 @@ public:
             .inv_weight = inv_weight,
         });
 
-        // TOOD: Figure out how to do this better.
-        obj->model().image_tag = "circle";
-        obj->model().rect.pos = circle.pos;
-        obj->model().rect.size = circle.radius * 2;
-        obj->model().layer = 2;
-        obj->model().interpolation = frog::gx2d::Interpolation::INTERPOLATE;
+        if (sprite)
+        {
+            obj->model() = std::move(*sprite);
+            sprite.reset();
+        }
+        else
+        {
+            // TOOD: Figure out how to do this better.
+            obj->model().image_tag = "circle";
+            obj->model().rect.pos = circle.pos;
+            obj->model().rect.size = circle.radius * 2;
+            obj->model().layer = 2;
+            obj->model().interpolation = frog::gx2d::Interpolation::INTERPOLATE;
+        }
     }
 
     void end_update(frog::game_object2d& obj, frog::engine2d&) override
