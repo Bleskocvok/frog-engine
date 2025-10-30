@@ -1,15 +1,19 @@
 #pragma once
 
 #include "frog/core/script.hpp"
+#include "frog/geometry/vector.hpp"
 #include "frog/gx2d/sprite.hpp"
 #include "frog/utils/ptr.hpp"
 #include "frog/geometry/rectangle.hpp"
 #include "frog/geometry/collision.hpp"
 #include "frog/graphics/ui_element.hpp"
 
+#include "frog/debug.hpp"
+
 #include "button_action.hpp"
 #include "button_style.hpp"
 
+#include <optional>
 #include <utility>      // move
 
 
@@ -29,6 +33,8 @@ class button_script_base : public Script
 {
     frog::gx::ui_element* ui = nullptr;
     bool down = false;
+
+    std::optional<frog::geo::rect> default_rect;
 
     enum state_t { idling, hovering, pressing };
 
@@ -61,9 +67,44 @@ public:
     state_t state = idling;
 
     button_script_base(decltype(action) b_action = nullptr,
-                       decltype(style) b_style = nullptr)
-        : action(std::move(b_action)),
-          style(std::move(b_style)) {}
+                       decltype(style) b_style = nullptr,
+                       std::optional<frog::geo::rect> rect = std::nullopt)
+        : default_rect(std::move(rect)),
+          action(std::move(b_action)),
+          style(std::move(b_style))
+    {}
+
+    geo::vec2 get_pos() const
+    {
+        return get_rect().pos;
+    }
+
+    void set_pos(geo::vec2 pos)
+    {
+        auto r = get_rect();
+        r.pos = pos;
+        set_rect(r);
+    }
+
+    geo::rect get_rect() const
+    {
+        if (not ui)
+            return default_rect ? *default_rect : frog::geo::rect{};
+
+        return ui->sprite.rect;
+    }
+
+    void set_rect(geo::rect rect)
+    {
+        if (not ui)
+        {
+            if (default_rect)
+                *default_rect = rect;
+            return;
+        }
+
+        ui->sprite.rect = rect;
+    }
 
     void init(typename Script::GameObject& obj, typename Script::Engine&) override
     {
@@ -81,6 +122,9 @@ public:
             ui = obj.add_element(frog::mk_ptr<gx::ui_element>());
         else
             ui = obj.elements().front().get();
+
+        if (default_rect)
+            ui->sprite.rect = *default_rect;
     }
 
     void frame_update(typename Script::GameObject& obj,
