@@ -106,6 +106,27 @@ public:
         ui->sprite.rect = rect;
     }
 
+
+    void set_crop_top(float delta)
+    {
+        delta = std::max(0.0f, delta);
+
+        if (not ui->sprite.crop)
+            ui->sprite.crop.emplace();
+
+        ui->sprite.crop->top = delta;
+    }
+
+    void set_crop_bot(float delta)
+    {
+        delta = std::max(0.0f, delta);
+
+        if (not ui->sprite.crop)
+            ui->sprite.crop.emplace();
+
+        ui->sprite.crop->bot = delta;
+    }
+
     void init(typename Script::GameObject& obj, typename Script::Engine&) override
     {
         using namespace frog;
