@@ -4,6 +4,7 @@
 #include "frog/geometry/vector.hpp"
 #include "frog/graphics/color.hpp"
 
+#include <optional>
 #include <string>
 
 
@@ -22,6 +23,14 @@ enum class Interpolation
     EXTRAPOLATE
 };
 
+struct Crop
+{
+    float top = 0;
+    float bot = 0;
+    float left = 0;
+    float right = 0;
+};
+
 struct sprite
 {
     std::string image_tag;
@@ -38,6 +47,8 @@ struct sprite
 
     prev_sprite prev;
     Interpolation interpolation = Interpolation::NONE;
+
+    std::optional<Crop> crop = std::nullopt;
 };
 
 

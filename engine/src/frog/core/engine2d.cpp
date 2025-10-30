@@ -8,6 +8,7 @@
 #include "frog/font/truetype.hpp"
 #include "frog/geometry/general.hpp"
 #include "frog/geometry/vector.hpp"
+#include "frog/geometry/rectangle.hpp"
 #include "frog/utils/exception.hpp"
 
 #include "frog/lib2d/structs.hpp"
@@ -39,6 +40,27 @@ frog::lib2d::gx::Vsync vsync(const settings& s)
     if (s.vsync)
         return frog::lib2d::gx::Vsync::On;
     return frog::lib2d::gx::Vsync::Off;
+}
+
+void apply_crop(const gx2d::sprite& model, geo::rect& rect, geo::rect& tex)
+{
+    if (not model.crop)
+        return;
+
+    float top_ratio = model.crop->top / rect.size.y();
+    float top_remove = top_ratio * tex.size.y();
+
+    float bot_ratio = model.crop->bot / rect.size.y();
+    float bot_remove = bot_ratio * tex.size.y();
+
+    tex.size.y() -= top_remove;
+    tex.pos.y() += top_remove;
+
+    tex.size.y() -= bot_remove;
+    // tex.pos.y() -= bot_remove;
+
+    rect.size.y() -= model.crop->top + model.crop->bot;
+    rect.pos.y() -= model.crop->bot / 2 - model.crop->top / 2;
 }
 
 } // namespace
@@ -216,7 +238,7 @@ void engine2d::draw_objects(double between)
         });
 
     for (const auto& layer : render_queue)
-        for (const auto& model : layer)
+        for (const gx2d::sprite* model : layer)
         {
             auto rect = model->rect;
             float angle = model->angle;
@@ -231,6 +253,8 @@ void engine2d::draw_objects(double between)
                 rect.pos = frog::geo::lerp(model->prev.pos, model->rect.pos, float(1 + between));
                 angle = lerp_deg(model->prev.angle, model->angle, 1 + between);
             }
+
+            // TODO: Apply crop here too.
 
             rect.pos += shift;
             rect.pos.x() *= scale.x();
@@ -340,9 +364,13 @@ void engine2d::draw_ui(double)
         {
             if (not elem->sprite.image_tag.empty())
             {
+                auto rect = elem->sprite.rect;
+                auto tex = elem->sprite.tex;
+                apply_crop(elem->sprite, rect, tex);
+
                 draw_ui_sprite(textures.at(elem->sprite.image_tag),
-                            elem->sprite.rect,
-                            elem->sprite.tex,
+                            rect,
+                            tex,
                             elem->sprite.color);
             }
 
