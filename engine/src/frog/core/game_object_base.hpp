@@ -154,6 +154,15 @@ public:
         return _elements.back().get();
     }
 
+    template<typename... Args>
+    gx::ui_element* create_element(Args&&... args)
+    {
+        auto ptr = mk_ptr<gx::ui_element>(std::forward<Args>(args)...);
+        auto* raw = ptr.get();
+        _elements.push_back(std::move(ptr));
+        return raw;
+    }
+
     bool remove_element(gx::ui_element* elem)
     {
         auto rem_it = std::remove_if(_elements.begin(), _elements.end(),
