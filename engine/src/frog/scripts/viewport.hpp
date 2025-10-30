@@ -9,11 +9,13 @@ namespace frog::scripts {
 // TODO: Make templated, for 3D too.
 class viewport2d : public script2d
 {
+    float ratio = 1;
     frog::gx::rgba_t clear_color;
 
 public:
-    viewport2d(frog::gx::rgba_t clear_color = { 0, 0, 0, 255 })
-        : clear_color(clear_color)
+    viewport2d(float ratio = 1, frog::gx::rgba_t clear_color = { 0, 0, 0, 255 })
+        : ratio(ratio)
+        , clear_color(clear_color)
     { }
 
     void init(frog::game_object2d&, frog::engine2d& engine) override
@@ -29,8 +31,9 @@ public:
 
     virtual void resize(int w, int h, frog::engine2d& eng)
     {
-        if (w > h)
-            eng.camera().size = { w / float(h), 1 };
+        float k = ratio;
+        if (h / float(w) < k)
+            eng.camera().size = { k * w / float(h), k };
         else
             eng.camera().size = { 1, h / float(w) };
     }
