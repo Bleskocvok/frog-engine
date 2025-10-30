@@ -78,7 +78,8 @@ events::key_state& events::mouse_button( Uint8 but )
         case SDL_BUTTON_LEFT:   return m_mouse.but_l;
         case SDL_BUTTON_MIDDLE: return m_mouse.but_m;
         case SDL_BUTTON_RIGHT:  return m_mouse.but_r;
-        default: throw std::runtime_error("invalid mouse button");
+        default: return other_mouse_buttons[but];
+        // default: throw std::runtime_error("invalid mouse button");
     }
 }
 

@@ -9,6 +9,7 @@
 #include <array>        // array
 #include <optional>     // optional
 #include <utility>      // pair
+#include <cstdint>      // uint8_t
 
 #include "sdl_include.hpp"
 #include SDL_HEADER
@@ -55,6 +56,8 @@ namespace frog::lib2d::gx
 
         key_state& mouse_button( Uint8 but );
         void reset_key( key_state& k );
+
+        std::map<std::uint8_t, key_state> other_mouse_buttons;
 
     public:
         events() = default;
