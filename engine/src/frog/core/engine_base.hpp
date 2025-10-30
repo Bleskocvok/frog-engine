@@ -109,7 +109,7 @@ public:
                 // TODO: Consider the situation when stable_update takes longer
                 // than delta. That way, accum keeps increasing, leading to a
                 // drastic FPS drop. How solve?
-                if (++i >= MAX_CONSECUTIVE_UPDATES)
+                if (++i >= global->max_consecutive_updates)
                 {
                     accum = 0;
                     break;

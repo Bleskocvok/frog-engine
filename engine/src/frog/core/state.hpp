@@ -19,6 +19,8 @@ public:
 
     bool quit = false;
 
+    unsigned max_consecutive_updates = 3;
+
     // in seconds
     double stable_frame_time() const { return physics_delta_us / 1000000.0; }
 
