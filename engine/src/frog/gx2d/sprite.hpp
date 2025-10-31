@@ -3,8 +3,10 @@
 #include "frog/geometry/rectangle.hpp"
 #include "frog/geometry/vector.hpp"
 #include "frog/graphics/color.hpp"
+#include "frog/geometry/general.hpp"
 #include "crop.hpp"
 
+#include <cmath>        // lerp
 #include <optional>
 #include <string>
 
@@ -14,6 +16,8 @@ namespace frog::gx2d {
 struct prev_sprite
 {
     geo::vec2 pos;
+    geo::vec2 size;
+    std::optional<Crop> crop;
     float angle = 0;
 };
 
@@ -48,7 +52,9 @@ struct sprite
 inline void calculate_prev(sprite& sprite)
 {
     sprite.prev.pos = sprite.rect.pos;
+    sprite.prev.size = sprite.rect.size;
     sprite.prev.angle = sprite.angle;
+    sprite.prev.crop = sprite.crop;
 }
 
 inline void crop_rect(const Crop& crop, geo::rect& rect)
@@ -73,5 +79,46 @@ inline void crop_tex(const Crop& crop, const geo::rect& rect, geo::rect& tex)
     tex.size.y() -= bot_remove;
 }
 
+inline void perform_interpolation(const sprite& s, double between, geo::rect& rect, float& angle)
+{
+    if (s.interpolation == gx2d::Interpolation::INTERPOLATE)
+    {
+        rect.pos = frog::geo::lerp(s.prev.pos, s.rect.pos, float(between));
+        rect.size = frog::geo::lerp(s.prev.size, s.rect.size, float(between));
+        angle = geo::lerp_deg(s.prev.angle, s.angle, between);
+    }
+    else if (s.interpolation == gx2d::Interpolation::EXTRAPOLATE)
+    {
+        rect.pos = frog::geo::lerp(s.prev.pos, s.rect.pos, float(1 + between));
+        rect.size = frog::geo::lerp(s.prev.size, s.rect.size, float(1 + between));
+        angle = geo::lerp_deg(s.prev.angle, s.angle, 1 + between);
+    }
+}
+
+
+inline void apply_crop(const gx2d::sprite& model, double between, geo::rect& rect, geo::rect& tex)
+{
+    if (not model.crop)
+        return;
+
+    auto crop = *model.crop;
+
+    if (model.interpolation != gx2d::Interpolation::NONE)
+    {
+        float value = float(between);
+        if (model.interpolation == gx2d::Interpolation::EXTRAPOLATE)
+            value += 1;
+
+        Crop prev = model.prev.crop ? *model.prev.crop : Crop{};
+
+        crop.top = std::lerp(prev.top, crop.top, value);
+        crop.bot = std::lerp(prev.bot, crop.bot, value);
+        crop.left = std::lerp(prev.left, crop.left, value);
+        crop.right = std::lerp(prev.right, crop.right, value);
+    }
+
+    crop_tex(crop, rect, tex);
+    crop_rect(crop, rect);
+}
 
 }  // namespace frog::2d

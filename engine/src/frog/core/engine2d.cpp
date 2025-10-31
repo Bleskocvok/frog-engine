@@ -9,7 +9,6 @@
 #include "frog/graphics/ui_element.hpp"
 #include "frog/font/atlas.hpp"
 #include "frog/font/truetype.hpp"
-#include "frog/geometry/general.hpp"
 #include "frog/geometry/vector.hpp"
 #include "frog/geometry/rectangle.hpp"
 #include "frog/utils/exception.hpp"
@@ -45,15 +44,6 @@ frog::lib2d::gx::Vsync vsync(const settings& s)
     if (s.vsync)
         return frog::lib2d::gx::Vsync::On;
     return frog::lib2d::gx::Vsync::Off;
-}
-
-void apply_crop(const gx2d::sprite& model, geo::rect& rect, geo::rect& tex)
-{
-    if (not model.crop)
-        return;
-
-    gx2d::crop_tex(*model.crop, rect, tex);
-    gx2d::crop_rect(*model.crop, rect);
 }
 
 } // namespace
@@ -236,16 +226,17 @@ void engine2d::draw_objects(double between)
             auto rect = model->rect;
             float angle = model->angle;
 
-            if (model->interpolation == gx2d::Interpolation::INTERPOLATE)
-            {
-                rect.pos = frog::geo::lerp(model->prev.pos, model->rect.pos, float(between));
-                angle = lerp_deg(model->prev.angle, model->angle, between);
-            }
-            else if (model->interpolation == gx2d::Interpolation::EXTRAPOLATE)
-            {
-                rect.pos = frog::geo::lerp(model->prev.pos, model->rect.pos, float(1 + between));
-                angle = lerp_deg(model->prev.angle, model->angle, 1 + between);
-            }
+            // if (model->interpolation == gx2d::Interpolation::INTERPOLATE)
+            // {
+            //     rect.pos = frog::geo::lerp(model->prev.pos, model->rect.pos, float(between));
+            //     angle = lerp_deg(model->prev.angle, model->angle, between);
+            // }
+            // else if (model->interpolation == gx2d::Interpolation::EXTRAPOLATE)
+            // {
+            //     rect.pos = frog::geo::lerp(model->prev.pos, model->rect.pos, float(1 + between));
+            //     angle = lerp_deg(model->prev.angle, model->angle, 1 + between);
+            // }
+            perform_interpolation(*model, between, rect, angle);
 
             // TODO: Apply crop here too.
 
@@ -347,7 +338,7 @@ void engine2d::draw_ui_sprite(const lib2d::gx::texture& tex, geo::rect dest,
 }
 
 
-void engine2d::draw_ui(double)
+void engine2d::draw_ui(double between)
 {
     scenes->for_each_object([&](auto& obj)
     {
@@ -359,8 +350,12 @@ void engine2d::draw_ui(double)
             if (not elem->sprite.image_tag.empty())
             {
                 auto rect = elem->sprite.rect;
+
+                float angle;
+                gx2d::perform_interpolation(elem->sprite, between, rect, angle);
+
                 auto tex = elem->sprite.tex;
-                apply_crop(elem->sprite, rect, tex);
+                gx2d::apply_crop(elem->sprite, between, rect, tex);
 
                 draw_ui_sprite(textures.at(elem->sprite.image_tag),
                             rect,
@@ -372,6 +367,16 @@ void engine2d::draw_ui(double)
             {
                 gx2d::Crop crop;
 
+                auto pos = elem->pos();
+
+                if (auto inter = elem->sprite.interpolation; inter != gx2d::Interpolation::NONE)
+                {
+                    float value = float(between);
+                    if (inter == gx2d::Interpolation::EXTRAPOLATE)
+                        value += 1;
+                    pos = frog::geo::lerp(elem->sprite.prev.pos, pos, value);
+                }
+
                 if (elem->sprite.crop)
                 {
                     float height = elem->label->height * elem->size().y();
@@ -382,7 +387,7 @@ void engine2d::draw_ui(double)
                     crop.bot = std::max(0.0f, crop.bot);
                 }
 
-                draw_text(*elem->label, elem->pos(), elem->size().y(), crop);
+                draw_text(*elem->label, pos, elem->size().y(), crop);
             }
         }
     });

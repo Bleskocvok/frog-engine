@@ -23,6 +23,14 @@ public:
 private:
     gx2d::sprite img;
 
+    void calculate_prev()
+    {
+        gx2d::calculate_prev(img);
+
+        for (auto& ui : elements())
+            gx2d::calculate_prev(ui->sprite);
+    }
+
 public:
     game_object2d() = default;
 
@@ -35,12 +43,12 @@ public:
         game_object_base<game_object2d, script2d, engine2d>::init(engine);
 
         if (prev)
-            gx2d::calculate_prev(img);
+            calculate_prev();
     }
 
     virtual void pre_update(Engine& engine) override
     {
-        gx2d::calculate_prev(img);
+        calculate_prev();
 
         game_object_base<game_object2d, script2d, engine2d>::pre_update(engine);
     }
