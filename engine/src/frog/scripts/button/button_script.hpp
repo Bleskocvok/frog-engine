@@ -2,6 +2,7 @@
 
 #include "frog/core/script.hpp"
 #include "frog/geometry/vector.hpp"
+#include "frog/gx2d/crop.hpp"
 #include "frog/gx2d/sprite.hpp"
 #include "frog/utils/assert.hpp"
 #include "frog/utils/ptr.hpp"
@@ -33,6 +34,8 @@ template<typename Script>
 class button_script_base : public Script
 {
     frog::gx::ui_element* ui = nullptr;
+    Script::GameObject* game_obj = nullptr;
+
     bool down = false;
 
     std::optional<frog::geo::rect> default_rect;
@@ -139,33 +142,42 @@ public:
             return;
         }
 
+        if (style)
+        {
+            frog_assert(game_obj);
+            style->set_rect(*game_obj, rect);
+        }
+
         ui->sprite.rect = rect;
     }
 
-    void set_crop_top(float delta)
+    void set_crop(gx2d::Crop crop)
     {
         if (not ui)
             return;
 
-        delta = std::max(0.0f, delta);
+        crop.top = std::max(0.0f, crop.top);
+        crop.bot = std::max(0.0f, crop.bot);
+        crop.left = std::max(0.0f, crop.left);
+        crop.right = std::max(0.0f, crop.right);
+
+        if (style)
+        {
+            frog_assert(game_obj);
+            style->set_crop(*game_obj, crop);
+        }
 
         if (not ui->sprite.crop)
             ui->sprite.crop.emplace();
 
-        ui->sprite.crop->top = delta;
+        ui->sprite.crop = crop;
     }
 
-    void set_crop_bot(float delta)
+    gx2d::Crop get_crop() const
     {
         if (not ui)
-            return;
-
-        delta = std::max(0.0f, delta);
-
-        if (not ui->sprite.crop)
-            ui->sprite.crop.emplace();
-
-        ui->sprite.crop->bot = delta;
+            return {};
+        return ui->sprite.crop.value_or(gx2d::Crop{});
     }
 
     void invisible(bool val)
@@ -192,6 +204,8 @@ public:
 
         if (default_rect)
             ui->sprite.rect = *default_rect;
+
+        game_obj = &obj;
     }
 
     void frame_update(typename Script::GameObject& obj,

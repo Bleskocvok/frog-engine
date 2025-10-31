@@ -1,6 +1,8 @@
 #pragma once
 
 #include "frog/core/script.hpp"
+#include "frog/gx2d/crop.hpp"
+#include "frog/geometry/rectangle.hpp"
 
 
 namespace frog
@@ -26,6 +28,10 @@ struct button_style_base
     virtual void press(GameObject&) {}
 
     virtual void stable_update(GameObject&) {}
+
+    virtual void set_crop(GameObject&, gx2d::Crop) {}
+
+    virtual void set_rect(GameObject&, geo::rect) {}
 };
 
 
