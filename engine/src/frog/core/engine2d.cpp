@@ -4,6 +4,7 @@
 
 #include "frog/gx2d/renderer2d.hpp"
 #include "frog/gx2d/sprite.hpp"
+#include "frog/gx2d/crop.hpp"
 #include "frog/graphics/color.hpp"
 #include "frog/graphics/ui_element.hpp"
 #include "frog/font/atlas.hpp"
@@ -12,6 +13,7 @@
 #include "frog/geometry/vector.hpp"
 #include "frog/geometry/rectangle.hpp"
 #include "frog/utils/exception.hpp"
+#include "frog/utils/ptr.hpp"
 
 #include "frog/lib2d/structs.hpp"
 #include "frog/lib2d/window.hpp"
@@ -20,6 +22,7 @@
 #include <utility>      // move
 #include <vector>
 #include <tuple>        // tie
+#include <algorithm>    // max
 
 using namespace frog::geo;
 using namespace frog;
@@ -283,11 +286,14 @@ void engine2d::draw_text(const gx::text& label, geo::vec2 pos,
 
 
 void engine2d::draw_sprite(const lib2d::gx::texture& tex, geo::rect dest,
-                           geo::rect uv, gx::rgba_t color)
+                           geo::rect uv, gx::rgba_t color, gx2d::Crop crop)
 {
     geo::vec2 scale;
     geo::vec2 shift;
     std::tie(scale, shift) = ui_scale_shift();
+
+    gx2d::crop_tex(crop, dest, uv);
+    gx2d::crop_rect(crop, dest);
 
     dest.pos.x() *= scale.x();
     dest.pos.y() *= scale.y();
@@ -345,7 +351,7 @@ void engine2d::draw_ui(double)
 {
     scenes->for_each_object([&](auto& obj)
     {
-        for (const auto& elem : obj.elements())
+        for (const frog::ptr<gx::ui_element>& elem : obj.elements())
         {
             if (not elem->sprite.image_tag.empty())
             {
@@ -361,7 +367,19 @@ void engine2d::draw_ui(double)
 
             if (elem->label)
             {
-                draw_text(*elem->label, elem->pos(), elem->size().y(), {});
+                gx2d::Crop crop;
+
+                if (elem->sprite.crop)
+                {
+                    float height = elem->label->height * elem->size().y();
+                    float dif = 0.5 * ( elem->sprite.rect.size.y() - height );
+                    crop.top = elem->sprite.crop->top - dif;
+                    crop.bot = elem->sprite.crop->bot - dif;
+                    crop.top = std::max(0.0f, crop.top);
+                    crop.bot = std::max(0.0f, crop.bot);
+                }
+
+                draw_text(*elem->label, elem->pos(), elem->size().y(), crop);
             }
         }
     });

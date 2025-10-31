@@ -30,13 +30,15 @@ geo::vec2 atlas::size(const std::string& str, float height)
 }
 
 void atlas::draw(frog::engine2d& engine, const frog::gx::text& label,
-          geo::vec2 pos, float container_height, frog::gx2d::Crop crop)
+          geo::vec2 pos, float container_height, frog::gx2d::Crop /* crop */)
 {
     using namespace frog;
     using namespace frog::geo;
 
     float height = container_height * label.height;
     auto text_size = size(label.str, height);
+
+    // TODO: Handle crop.
 
     if (label.centered)
         pos.x() -= text_size.x() / 2;

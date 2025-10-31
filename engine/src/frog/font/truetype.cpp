@@ -3,6 +3,7 @@
 #include "truetype.hpp"
 
 #include "frog/core/engine2d.hpp"
+#include "frog/geometry/rectangle.hpp"
 
 #include <utility>      // move
 
@@ -32,20 +33,19 @@ void truetype::draw(frog::engine2d& engine, const frog::gx::text& label,
         pos.x() -= text_size.x() / 2;
 
     pos.x() += text_size.x() / 2;
+    geo::rect rect = { pos, text_size };
 
     auto* cached = texture_cache.get(label.str);
     if (cached)
     {
-        engine.draw_sprite(*cached, { pos, text_size }, { 0, 0, 1, 1 },
-                           label.color);
+        engine.draw_sprite(*cached, rect, { 0, 0, 1, 1 }, label.color, crop);
     }
     else
     {
         auto surf = font_.render_text(label.str, 255, 255, 255, 255);
         auto texture = engine.win_raw->make_texture(surf);
 
-        engine.draw_sprite(texture, { pos, text_size }, { 0, 0, 1, 1 },
-                           label.color);
+        engine.draw_sprite(texture, rect, { 0, 0, 1, 1 }, label.color, crop);
 
         texture_cache.put(label.str, std::move(texture));
     }
