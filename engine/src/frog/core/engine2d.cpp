@@ -353,6 +353,9 @@ void engine2d::draw_ui(double)
     {
         for (const frog::ptr<gx::ui_element>& elem : obj.elements())
         {
+            if (elem->hide)
+                continue;
+
             if (not elem->sprite.image_tag.empty())
             {
                 auto rect = elem->sprite.rect;

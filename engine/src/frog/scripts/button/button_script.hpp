@@ -43,6 +43,8 @@ class button_script_base : public Script
     bool override_press = false;
     bool override_release = false;
 
+    bool is_invisible = false;
+
     void set_state(state_t next, typename Script::GameObject& obj)
     {
         if (state == next)
@@ -166,6 +168,11 @@ public:
         ui->sprite.crop->bot = delta;
     }
 
+    void invisible(bool val)
+    {
+        is_invisible = val;
+    }
+
     void init(typename Script::GameObject& obj, typename Script::Engine&) override
     {
         using namespace frog;
@@ -233,6 +240,12 @@ public:
             set_state(hovering, obj);
         else
             set_state(idling, obj);
+    }
+
+    void end_frame_update(typename Script::GameObject& obj,
+                      typename Script::Engine& engine) override
+    {
+        ui->hide = is_invisible;
     }
 
     void stable_update(typename Script::GameObject& obj,

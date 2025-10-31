@@ -28,6 +28,8 @@ struct ui_element
 
     std::optional<text> label;
 
+    bool hide = false;
+
     const geo::vec2& pos() const { return sprite.rect.pos; }
           geo::vec2& pos()       { return sprite.rect.pos; }
 
