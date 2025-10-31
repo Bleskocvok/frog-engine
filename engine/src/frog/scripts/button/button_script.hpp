@@ -38,6 +38,10 @@ class button_script_base : public Script
 
     enum state_t { idling, hovering, pressing };
 
+    bool input_from_engine = true;
+    bool override_press = false;
+    bool override_release = false;
+
     void set_state(state_t next, typename Script::GameObject& obj)
     {
         if (state == next)
@@ -54,6 +58,12 @@ class button_script_base : public Script
             case hovering: style->hover(obj); break;
             case pressing: style->press(obj); break;
         }
+    }
+
+    void reset_override_input()
+    {
+        override_press = false;
+        override_release = false;
     }
 
 public:
@@ -73,6 +83,27 @@ public:
           action(std::move(b_action)),
           style(std::move(b_style))
     {}
+
+    void manually_activated(bool v)
+    {
+        input_from_engine = not v;
+    }
+
+    void send_press()
+    {
+        override_press = true;
+    }
+
+    void send_release()
+    {
+        override_release = true;
+    }
+
+    void reset()
+    {
+        reset_override_input();
+        down = false;
+    }
 
     geo::vec2 get_pos() const
     {
@@ -105,7 +136,6 @@ public:
 
         ui->sprite.rect = rect;
     }
-
 
     void set_crop_top(float delta)
     {
@@ -154,12 +184,19 @@ public:
         using namespace frog;
 
         geo::vec2 pos = engine.mouse_pos_in_ui();
-        // geo::vec2 pos = engine.mouse_pos_in_camera();
 
         auto rect = ui->sprite.rect;
         bool collides = geo::is_collision(rect, pos);
         bool l_pressed = engine.input->mouse().but_l.pressed;
         bool l_released = engine.input->mouse().but_l.released;
+
+        if (not input_from_engine)
+        {
+            l_pressed = override_press;
+            l_released = override_release;
+        }
+
+        reset_override_input();
 
         if (collides && l_pressed)
             down = true;
