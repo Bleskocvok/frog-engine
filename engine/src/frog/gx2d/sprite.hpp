@@ -109,7 +109,7 @@ inline void apply_crop(const gx2d::sprite& model, double between, geo::rect& rec
         if (model.interpolation == gx2d::Interpolation::EXTRAPOLATE)
             value += 1;
 
-        Crop prev = model.prev.crop ? *model.prev.crop : Crop{};
+        Crop prev = model.prev.crop.value_or(Crop{});
 
         crop.top = std::lerp(prev.top, crop.top, value);
         crop.bot = std::lerp(prev.bot, crop.bot, value);
