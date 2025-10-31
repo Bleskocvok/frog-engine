@@ -92,7 +92,7 @@ public:
             update_controls();
             frame_update();
 
-            int i = 0;
+            unsigned i = 0;
             while (accum >= decltype(accum)(delta))
             {
                 // Instead of updating controls directly before every
