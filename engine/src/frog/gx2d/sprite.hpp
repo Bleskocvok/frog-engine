@@ -3,6 +3,7 @@
 #include "frog/geometry/rectangle.hpp"
 #include "frog/geometry/vector.hpp"
 #include "frog/graphics/color.hpp"
+#include "crop.hpp"
 
 #include <optional>
 #include <string>
@@ -21,14 +22,6 @@ enum class Interpolation
     NONE,
     INTERPOLATE,
     EXTRAPOLATE
-};
-
-struct Crop
-{
-    float top = 0;
-    float bot = 0;
-    float left = 0;
-    float right = 0;
 };
 
 struct sprite
@@ -56,6 +49,28 @@ inline void calculate_prev(sprite& sprite)
 {
     sprite.prev.pos = sprite.rect.pos;
     sprite.prev.angle = sprite.angle;
+}
+
+inline void crop_rect(const Crop& crop, geo::rect& rect)
+{
+    // TODO: Left and right.
+    rect.size.y() -= crop.top + crop.bot;
+    rect.pos.y() -= crop.bot * 0.5 - crop.top * 0.5;
+}
+
+inline void crop_tex(const Crop& crop, const geo::rect& rect, geo::rect& tex)
+{
+    // TODO: Left and right.
+    float top_ratio = crop.top / rect.size.y();
+    float top_remove = top_ratio * tex.size.y();
+
+    float bot_ratio = crop.bot / rect.size.y();
+    float bot_remove = bot_ratio * tex.size.y();
+
+    tex.size.y() -= top_remove;
+    tex.pos.y() += top_remove;
+
+    tex.size.y() -= bot_remove;
 }
 
 

@@ -2,6 +2,7 @@
 
 #include "frog/geometry/vector.hpp"
 #include "frog/graphics/color.hpp"
+#include "frog/graphics/ui_element.hpp"
 
 #include <string>
 
@@ -19,8 +20,12 @@ struct base
 
     virtual geo::vec2 size(const std::string& str, float height) = 0;
 
-    virtual void draw(frog::engine2d&, const std::string& str,
-                      frog::geo::vec2 pos, float height, frog::gx::rgba_t color) = 0;
+    virtual void draw(frog::engine2d&, const frog::gx::text& label,
+                      geo::vec2 pos, float container_height,
+                      frog::gx2d::Crop crop = {}) = 0;
+
+    // virtual void draw(frog::engine2d&, const std::string& str,
+    //                   frog::geo::vec2 pos, float height, frog::gx::rgba_t color) = 0;
 };
 
 

@@ -3,7 +3,9 @@
 #include "engine2d.hpp"
 
 #include "frog/gx2d/renderer2d.hpp"
+#include "frog/gx2d/sprite.hpp"
 #include "frog/graphics/color.hpp"
+#include "frog/graphics/ui_element.hpp"
 #include "frog/font/atlas.hpp"
 #include "frog/font/truetype.hpp"
 #include "frog/geometry/general.hpp"
@@ -47,20 +49,8 @@ void apply_crop(const gx2d::sprite& model, geo::rect& rect, geo::rect& tex)
     if (not model.crop)
         return;
 
-    float top_ratio = model.crop->top / rect.size.y();
-    float top_remove = top_ratio * tex.size.y();
-
-    float bot_ratio = model.crop->bot / rect.size.y();
-    float bot_remove = bot_ratio * tex.size.y();
-
-    tex.size.y() -= top_remove;
-    tex.pos.y() += top_remove;
-
-    tex.size.y() -= bot_remove;
-    // tex.pos.y() -= bot_remove;
-
-    rect.size.y() -= model.crop->top + model.crop->bot;
-    rect.pos.y() -= model.crop->bot / 2 - model.crop->top / 2;
+    gx2d::crop_tex(*model.crop, rect, tex);
+    gx2d::crop_rect(*model.crop, rect);
 }
 
 } // namespace
@@ -284,16 +274,11 @@ void engine2d::draw_objects(double between)
 }
 
 
-void engine2d::draw_text(const std::string& font_name, const std::string& str,
-                         geo::vec2 pos, float height, gx::rgba_t color,
-                         bool centered)
+void engine2d::draw_text(const gx::text& label, geo::vec2 pos,
+                        float container_height, frog::gx2d::Crop crop)
 {
-    auto& font = fonts.at(font_name);
-
-    if (centered)
-        pos.x() -= font.size(str, height).x() / 2;
-
-    font.draw(*this, str, pos, height, color);
+    auto& font = fonts.at(label.font);
+    font.draw(*this, label, pos, container_height, crop);
 }
 
 
@@ -376,12 +361,7 @@ void engine2d::draw_ui(double)
 
             if (elem->label)
             {
-                draw_text(elem->label->font,
-                          elem->label->str,
-                          elem->pos(),
-                          elem->size().y() * elem->label->height,
-                          elem->label->color,
-                          elem->label->centered);
+                draw_text(*elem->label, elem->pos(), elem->size().y(), {});
             }
         }
     });

@@ -75,8 +75,12 @@ public:
 
     frog::geo::vec2 size(const std::string& str, float height) override;
 
-    void draw(frog::engine2d&, const std::string& str,
-              frog::geo::vec2 pos, float height, frog::gx::rgba_t color) override;
+    // void draw(frog::engine2d&, const std::string& str,
+    //           frog::geo::vec2 pos, float height, frog::gx::rgba_t color) override;
+
+    void draw(frog::engine2d&, const frog::gx::text& label,
+              frog::geo::vec2 pos, float container_height,
+              frog::gx2d::Crop crop = {}) override;
 };
 
 
