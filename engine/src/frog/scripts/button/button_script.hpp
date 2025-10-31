@@ -3,6 +3,7 @@
 #include "frog/core/script.hpp"
 #include "frog/geometry/vector.hpp"
 #include "frog/gx2d/sprite.hpp"
+#include "frog/utils/assert.hpp"
 #include "frog/utils/ptr.hpp"
 #include "frog/geometry/rectangle.hpp"
 #include "frog/geometry/collision.hpp"
@@ -84,6 +85,8 @@ public:
           style(std::move(b_style))
     {}
 
+    bool initialized() const { return ui; }
+
     void manually_activated(bool v)
     {
         input_from_engine = not v;
@@ -139,6 +142,9 @@ public:
 
     void set_crop_top(float delta)
     {
+        if (not ui)
+            return;
+
         delta = std::max(0.0f, delta);
 
         if (not ui->sprite.crop)
@@ -149,6 +155,9 @@ public:
 
     void set_crop_bot(float delta)
     {
+        if (not ui)
+            return;
+
         delta = std::max(0.0f, delta);
 
         if (not ui->sprite.crop)
