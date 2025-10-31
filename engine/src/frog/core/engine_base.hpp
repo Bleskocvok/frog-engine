@@ -87,8 +87,6 @@ public:
 
         init();
 
-        constexpr int MAX_CONSECUTIVE_UPDATES = 3;
-
         while (not global->quit && not window->should_close())
         {
             update_controls();
