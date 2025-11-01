@@ -6,6 +6,7 @@
 
 #include "bounce_script.hpp"
 #include "constants.hpp"
+#include "frog/graphics/ui_element.hpp"
 #include "player_script.hpp"
 
 #include <string>
@@ -26,11 +27,11 @@ struct game_over_script : frog::script
         text->label = { "Game Over" };
         text->pos() = { 0 };
         text->size() = { TextSize };
-        text->label->centered = true;
+        text->label->align = gx::Align::CENTER;
 
         score = object.add_element(mk_ptr<gx::ui_element>());
         score->label = { "score" };
-        score->label->centered = true;
+        score->label->align = gx::Align::CENTER;
         score->pos() = { 0, 0 - text->size().y() };
         score->size() = { TextSize * 0.5 };
     }
