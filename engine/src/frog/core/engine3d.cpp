@@ -3,6 +3,7 @@
 #include "engine3d.hpp"
 
 #include "frog/graphics/renderer3d.hpp"
+#include "frog/graphics/ui_element.hpp"
 #include "frog/gx3d/program.hpp"
 #include "frog/gx3d/location.hpp"
 
@@ -159,7 +160,7 @@ void frog::engine::draw_ui(double)
                           elem->pos(),
                           elem->size().y() * elem->label->height,
                           gx::rgb_to_vec(elem->color()),
-                          elem->label->centered);
+                          elem->label->align == gx::Align::CENTER);
             }
         }
     });
