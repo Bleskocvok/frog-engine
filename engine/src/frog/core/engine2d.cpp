@@ -185,7 +185,6 @@ std::pair<geo::vec2, geo::vec2> engine2d::ui_scale_shift() const
 }
 
 
-// TODO: unused parameter, use it for extrapolation of movement
 void engine2d::draw_objects(double between)
 {
     // TODO: Use std::set!

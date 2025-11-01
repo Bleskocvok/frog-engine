@@ -104,9 +104,10 @@ public:
                 update_controls();
                 accum -= delta;
 
-                // TODO: Consider the situation when stable_update takes longer
-                // than delta. That way, accum keeps increasing, leading to a
-                // drastic FPS drop. How solve?
+                // This is for the situation when stable_update takes longer
+                // than delta. That way, accum would keep increasing, leading to
+                // a death spiral that is hard to recover from. We should just
+                // skip updates instead.
                 if (++i >= global->max_consecutive_updates)
                 {
                     accum = 0;
