@@ -1,6 +1,7 @@
 #ifndef NOT_FROG_BUILD_2D
 
 #include "frog/core/engine2d.hpp"
+#include "frog/graphics/ui_element.hpp"
 
 #include "atlas.hpp"
 
@@ -40,8 +41,12 @@ void atlas::draw(frog::engine2d& engine, const frog::gx::text& label,
 
     // TODO: Handle crop.
 
-    if (label.centered)
+    if (label.align == gx::Align::CENTER)
         pos.x() -= text_size.x() / 2;
+    else if (label.align == gx::Align::RIGHT)
+        pos.x() -= text_size.x();
+    else
+        frog_assert(label.align == gx::Align::LEFT);
 
     // TODO: Load this from config_file
     static const std::string map = "ABCDEFGHIJKLMNOP"

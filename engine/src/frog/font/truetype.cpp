@@ -29,8 +29,16 @@ void truetype::draw(frog::engine2d& engine, const frog::gx::text& label,
     float height = container_height * label.height;
     auto text_size = size(label.str, height);
 
-    if (label.centered)
+    // if (label.centered)
+    //     pos.x() -= text_size.x() / 2;
+
+    if (label.align == gx::Align::CENTER)
         pos.x() -= text_size.x() / 2;
+    else if (label.align == gx::Align::RIGHT)
+        pos.x() -= text_size.x();
+    else
+        frog_assert(label.align == gx::Align::LEFT);
+
 
     pos.x() += text_size.x() / 2;
     geo::rect rect = { pos, text_size };

@@ -11,12 +11,19 @@
 namespace frog::gx
 {
 
+enum class Align
+{
+    CENTER,
+    LEFT, RIGHT
+};
+
 
 struct text
 {
     std::string str;
     float height = 1;   // relative to its parent's height
-    bool centered = false;
+    // bool centered = false;
+    Align align = Align::LEFT;
     gx::rgba_t color = gx::colors::white;
     std::string font = "default";
 };
