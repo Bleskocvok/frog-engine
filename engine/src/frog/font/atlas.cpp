@@ -2,6 +2,9 @@
 
 #include "frog/core/engine2d.hpp"
 #include "frog/graphics/ui_element.hpp"
+#include "frog/geometry/rectangle.hpp"
+#include "frog/gx2d/crop.hpp"
+#include "frog/gx2d/sprite.hpp"
 
 #include "atlas.hpp"
 
@@ -31,7 +34,7 @@ geo::vec2 atlas::size(const std::string& str, float height)
 }
 
 void atlas::draw(frog::engine2d& engine, const frog::gx::text& label,
-          geo::vec2 pos, float container_height, frog::gx2d::Crop /* crop */)
+          geo::vec2 pos, float container_height, frog::gx2d::Crop crop)
 {
     using namespace frog;
     using namespace frog::geo;
@@ -39,7 +42,7 @@ void atlas::draw(frog::engine2d& engine, const frog::gx::text& label,
     float height = container_height * label.height;
     auto text_size = size(label.str, height);
 
-    // TODO: Handle crop.
+    geo::rect full_rect = { pos, text_size };
 
     if (label.align == gx::Align::CENTER)
         pos.x() -= text_size.x() / 2;
@@ -77,7 +80,15 @@ void atlas::draw(frog::engine2d& engine, const frog::gx::text& label,
 
         tex_pos *= tex_size;
 
-        engine.draw_sprite(texture, { pos, vec2{ height } }, { tex_pos, tex_size }, label.color);
+        geo::rect tex = { tex_pos, tex_size };
+        geo::rect char_rect = { pos, vec2{ height } };
+
+        // Cropping stuff.
+        crop = gx2d::multiply_crop(full_rect, crop, char_rect);
+        gx2d::crop_tex(crop, char_rect, tex);
+        gx2d::crop_rect(crop, char_rect);
+
+        engine.draw_sprite(texture, char_rect, tex, label.color);
         pos.x() += char_size(height).x();
     }
 }
