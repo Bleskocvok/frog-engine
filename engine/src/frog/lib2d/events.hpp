@@ -33,6 +33,7 @@ namespace frog::lib2d::gx
             key_state but_l;
             key_state but_r;
             key_state but_m;
+            int wheel = 0;
         };
 
         void k_reset();

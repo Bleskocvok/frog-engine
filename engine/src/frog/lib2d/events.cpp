@@ -59,6 +59,7 @@ void events::m_reset()
     reset_key( m_mouse.but_m );
     m_mouse.dx = 0;
     m_mouse.dy = 0;
+    m_mouse.wheel = 0;
 }
 
 
@@ -147,6 +148,9 @@ void events::update()
                 m_mouse.dx += event.motion.xrel;
                 m_mouse.dy += event.motion.yrel;
                 break;
+
+            case SDL_MOUSEWHEEL:
+                m_mouse.wheel = event.wheel.y;
 
             default: break;
         }
