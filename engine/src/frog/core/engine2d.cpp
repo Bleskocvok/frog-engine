@@ -226,16 +226,6 @@ void engine2d::draw_objects(double between)
             auto rect = model->rect;
             float angle = model->angle;
 
-            // if (model->interpolation == gx2d::Interpolation::INTERPOLATE)
-            // {
-            //     rect.pos = frog::geo::lerp(model->prev.pos, model->rect.pos, float(between));
-            //     angle = lerp_deg(model->prev.angle, model->angle, between);
-            // }
-            // else if (model->interpolation == gx2d::Interpolation::EXTRAPOLATE)
-            // {
-            //     rect.pos = frog::geo::lerp(model->prev.pos, model->rect.pos, float(1 + between));
-            //     angle = lerp_deg(model->prev.angle, model->angle, 1 + between);
-            // }
             perform_interpolation(*model, between, rect, angle);
 
             // TODO: Apply crop here too.
@@ -254,8 +244,6 @@ void engine2d::draw_objects(double between)
             const auto& tex = *it;
 
             auto uv_size = geo::vec2{ float(tex.w()), float(tex.h()) } * model->tex.size;
-            // auto uv = ( model->tex.pos - model->tex.size * 0.5f )
-            //         * geo::vec2{ float(tex.w()), float(tex.h()) };
             auto uv = ( model->tex.pos ) * geo::vec2{ float(tex.w()), float(tex.h()) };
             gx::rgba_t color = model->color;
             win_raw->draw_colored_rotated(tex, uv.x(), uv.y(), uv_size.x(), uv_size.y(),
