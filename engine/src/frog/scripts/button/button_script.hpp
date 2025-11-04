@@ -257,7 +257,7 @@ public:
     }
 
     void end_frame_update(typename Script::GameObject& obj,
-                      typename Script::Engine& engine) override
+                          typename Script::Engine&) override
     {
         for (auto& ui : obj.elements())
             ui->hide = is_invisible;

@@ -21,7 +21,7 @@ struct log_action_base : Base
     explicit log_action_base(std::string str)
         : str(std::move(str)) {}
 
-    void action(typename Base::GameObject&, typename Base::Engine& engine) override
+    void action(typename Base::GameObject&, typename Base::Engine&) override
     {
         LOG(str);
     }

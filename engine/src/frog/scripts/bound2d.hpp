@@ -55,7 +55,7 @@ public:
         rotation_delta_deg = deg;
     }
 
-    void init(frog::game_object2d& o, frog::engine2d&) override
+    void init(frog::game_object2d&, frog::engine2d&) override
     {
     }
 
