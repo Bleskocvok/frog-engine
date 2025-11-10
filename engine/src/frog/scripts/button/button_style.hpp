@@ -8,6 +8,11 @@
 namespace frog
 {
 
+enum class button_state
+{
+    IDLE, HOVER, PRESS
+};
+
 template<typename GameObject>
 struct button_style_base;
 
