@@ -13,6 +13,7 @@
 #include "frog/geometry/rectangle.hpp"
 #include "frog/utils/exception.hpp"
 #include "frog/utils/ptr.hpp"
+#include "frog/utils/assert.hpp"
 
 #include "frog/lib2d/structs.hpp"
 #include "frog/lib2d/window.hpp"
@@ -386,7 +387,8 @@ bool engine2d::add_texture(const std::string& tag, const std::string& path)
     bool has = textures.contains(tag);
     auto full = global->asset_path() + "/" + path;
     textures.add(tag, mk_ptr<lib2d::gx::texture>( win_raw->make_texture(full.c_str()) ));
-    return has;
+    // TODO: Omg, I fixed this, I sure hope it didn't break anything else.
+    return not has;
 }
 
 
@@ -395,6 +397,34 @@ bool engine2d::remove_texture(const std::string& tag)
     return textures.remove(tag);
 }
 
+bool engine2d::add_cursor(const std::string& tag, const std::string& path)
+{
+    bool has = textures.contains(tag);
+    auto full = global->asset_path() + "/" + path;
+
+    auto surface = lib2d::detail::load_img( full );
+    frog_assert(surface);
+    cursors.add(tag, mk_ptr<lib2d::detail::cursor>( SDL_CreateColorCursor( surface.get(), 0, 0 ) ));
+    return has;
+}
+
+bool engine2d::remove_cursor(const std::string& tag)
+{
+    return cursors.remove(tag);
+}
+
+void engine2d::set_cursor(const std::string& tag)
+{
+    auto& cursor = cursors.at(tag);
+    SDL_SetCursor(cursor.get());
+}
+
+void engine2d::reset_cursor()
+{
+    auto* def = SDL_CreateSystemCursor( SDL_SystemCursor::SDL_SYSTEM_CURSOR_ARROW );
+    auto cursor = lib2d::detail::cursor( def );
+    SDL_SetCursor(cursor.get());
+}
 
 }  // namespace engine2d
 

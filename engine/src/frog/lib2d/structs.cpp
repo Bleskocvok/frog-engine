@@ -16,6 +16,7 @@ namespace frog::lib2d::detail
     void deleter::operator()( SDL_Renderer* obj ) { SDL_DestroyRenderer( obj ); }
     void deleter::operator()( SDL_GameController* c ) { SDL_GameControllerClose( c ); }
     void deleter::operator()( SDL_RWops* obj ){ SDL_RWclose( obj ); }
+    void deleter::operator()( SDL_Cursor* obj ){ SDL_FreeCursor( obj ); }
     // TTF
     void deleter::operator()( TTF_Font* font ) { TTF_CloseFont(font); }
 

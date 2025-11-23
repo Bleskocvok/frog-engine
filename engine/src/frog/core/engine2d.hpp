@@ -8,6 +8,8 @@
 #include "frog/utils/ptr.hpp"
 #include "frog/gx2d/crop.hpp"
 
+#include "frog/lib2d/structs.hpp"
+
 // bits, please
 #include "frog/lib2d/bits.hpp"      // initializer
 
@@ -120,6 +122,13 @@ public:
     geo::vec2 camera_coords(int mouse_x, int mouse_y);
 
     geo::vec2 camera_coords_ui(int mouse_x, int mouse_y);
+
+    gx::assets<frog::lib2d::detail::cursor> cursors;
+
+    bool add_cursor(const std::string& tag, const std::string& path);
+    bool remove_cursor(const std::string& tag);
+    void set_cursor(const std::string& tag);
+    void reset_cursor();
 
     bool add_texture(const std::string& tag, const std::string& path);
     bool remove_texture(const std::string& name);
