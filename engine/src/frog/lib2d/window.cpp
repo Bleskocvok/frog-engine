@@ -8,34 +8,57 @@
 #include <stdexcept>    // runtime_error
 #include <string>       // ""s
 #include <cmath>        // round
+#include <variant>      // holds_alternative, get
+
+namespace
+{
+
+int get_pos(const frog::lib2d::gx::WindowPosition& winpos)
+{
+    if (std::holds_alternative<int>(winpos))
+        return std::get<int>(winpos);
+
+    if (std::holds_alternative<frog::lib2d::gx::winpos_centered>(winpos))
+        return SDL_WINDOWPOS_CENTERED;
+
+    if (std::holds_alternative<frog::lib2d::gx::winpos_undefined>(winpos))
+        return SDL_WINDOWPOS_UNDEFINED;
+
+    throw std::runtime_error("get_pos: invalid winpos");
+}
+
+} // namespace
 
 namespace frog::lib2d::gx
 {
 
 
-window::window( int width, int height, const char* title,
-        Vsync vsync, Mode mode, bool maximized )
-        : win_width( width ), win_height( height )
+// window::window( int width, int height, const char* title,
+//         Vsync vsync, Mode mode, bool maximized )
+//         : win_width( width ), win_height( height )
+window::window( const window_settings& settings )
 {
     using namespace std::string_literals;
 
     std::uint32_t win_flags = SDL_WINDOW_RESIZABLE;
     std::uint32_t ren_flags = SDL_RENDERER_ACCELERATED;
-    std::uint32_t pos = SDL_WINDOWPOS_UNDEFINED;
+    int pos_x = get_pos(settings.pos_x);
+    int pos_y = get_pos(settings.pos_y);
 
-    if ( vsync == Vsync::On )
+    if ( settings.vsync == Vsync::On )
         ren_flags = ren_flags | SDL_RENDERER_PRESENTVSYNC;
 
-    if ( maximized )
+    if ( settings.maximized )
         win_flags = win_flags | SDL_WINDOW_MAXIMIZED;
 
-    if ( mode == Mode::Windowed )
+    if ( settings.mode == Mode::Windowed )
     {
         // win_flags = win_flags;
     }
-    else if ( mode == Mode::Borderless )
+    else if ( settings.mode == Mode::Borderless )
     {
-        pos = SDL_WINDOWPOS_CENTERED;
+        pos_x = SDL_WINDOWPOS_CENTERED;
+        pos_y = SDL_WINDOWPOS_CENTERED;
         win_flags = win_flags | SDL_WINDOW_BORDERLESS;
         // SDL_DisplayMode dm;
         // int ret = SDL_GetDesktopDisplayMode( &dm );
@@ -45,16 +68,16 @@ window::window( int width, int height, const char* title,
         // }
         // TODO: ^^
     }
-    else if ( mode == Mode::Fullscreen )
+    else if ( settings.mode == Mode::Fullscreen )
     {
         win_flags = win_flags | SDL_WINDOW_FULLSCREEN_DESKTOP;
     }
 
-    win = lib2d::detail::window( SDL_CreateWindow( title,
-                                                 pos, // pos x
-                                                 pos, // pos y
-                                                 width,
-                                                 height,
+    win = lib2d::detail::window( SDL_CreateWindow( settings.title.c_str(),
+                                                 pos_x,
+                                                 pos_y,
+                                                 settings.width,
+                                                 settings.height,
                                                  win_flags ) );
     if ( not win )
         throw std::runtime_error( "Create window: "s += SDL_GetError() );

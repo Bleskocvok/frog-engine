@@ -47,16 +47,32 @@ frog::lib2d::gx::Vsync vsync(const settings& s)
     return frog::lib2d::gx::Vsync::Off;
 }
 
+lib2d::gx::window_settings get_window_settings(const settings& s)
+{
+    return lib2d::gx::window_settings
+    {
+        .width = s.width,
+        .height = s.height,
+        .title = s.window_name,
+        .vsync = vsync(s),
+        .mode = window_screen_mode(s),
+        .maximized = s.window.maximized,
+        .pos_x = s.window.pos_x,
+        .pos_y = s.window.pos_y,
+    };
+}
+
 } // namespace
 
 namespace frog {
 
 
 engine2d::engine2d(settings set, ptr<state> _global)
-    : engine_base( mk_ptr<lib2d::gx::window>(set.width, set.height,
-                                             set.window_name.c_str(),
-                                             vsync(set),
-                                             window_screen_mode(set)),
+    // : engine_base( mk_ptr<lib2d::gx::window>(set.width, set.height,
+    //                                          set.window_name.c_str(),
+    //                                          vsync(set),
+    //                                          window_screen_mode(set)),
+    : engine_base( mk_ptr<lib2d::gx::window>(get_window_settings(set)),
                    nullptr,
                    std::move(_global) )
     , win_raw(static_cast<lib2d::gx::window*>(window.get()))

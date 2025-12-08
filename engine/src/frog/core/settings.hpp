@@ -1,5 +1,7 @@
 #pragma once
 
+#include "frog/lib2d/window.hpp"
+
 #include <filesystem>   // path
 #include <string>
 #include <optional>
@@ -51,6 +53,17 @@ struct settings
     std::optional<std::string> window_icon;
 
     ScreenMode mode = ScreenMode::Windowed;
+
+    using WindowPosition = frog::lib2d::gx::WindowPosition;
+    using winpos_undefined = frog::lib2d::gx::winpos_undefined;
+    using winpos_centered = frog::lib2d::gx::winpos_centered;
+
+    struct
+    {
+        bool maximized = false;
+        WindowPosition pos_x = winpos_undefined{};
+        WindowPosition pos_y = winpos_undefined{};
+    } window;
 
     void assign_path(const fs::path& executable)
     {

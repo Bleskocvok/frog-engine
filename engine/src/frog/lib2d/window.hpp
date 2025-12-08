@@ -11,6 +11,7 @@
 // #include SDL_HEADER
 
 #include <cstdint>      // uint8_t
+#include <string>
 
 
 struct SDL_Surface;
@@ -24,14 +25,38 @@ namespace frog::lib2d::gx
         Windowed = 0, Borderless = 1, Fullscreen = 2, /* TODO:FullscreenBorderless = 3, */
     };
 
+    enum class Winpos : int
+    {
+        Centered, Undefined, Real
+    };
+
+    struct winpos_centered {};
+    struct winpos_undefined {};
+    using WindowPosition = std::variant<int, winpos_centered, winpos_undefined>;
+
+    struct window_settings
+    {
+        int width = 800,
+            height = 600;
+        std::string title;
+
+        Vsync vsync = Vsync::On;
+        Mode mode = Mode::Windowed;
+        bool maximized = false;
+
+        WindowPosition pos_x = winpos_undefined{};
+        WindowPosition pos_y = winpos_undefined{};
+    };
 
     class window : public frog::os::window_base
     {
 
     public:
-        window( int width, int height, const char* title,
-                Vsync vsync = Vsync::On, Mode mode = Mode::Windowed,
-                bool maximized = false );
+        // window( int width, int height, const char* title,
+        //         Vsync vsync = Vsync::On, Mode mode = Mode::Windowed,
+        //         bool maximized = false );
+
+        window( const window_settings& settings );
 
         window( const window& ) = delete;
         window& operator=( const window& ) = delete;
