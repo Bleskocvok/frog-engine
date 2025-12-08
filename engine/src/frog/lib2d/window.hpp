@@ -25,11 +25,6 @@ namespace frog::lib2d::gx
         Windowed = 0, Borderless = 1, Fullscreen = 2, /* TODO:FullscreenBorderless = 3, */
     };
 
-    enum class Winpos : int
-    {
-        Centered, Undefined, Real
-    };
-
     struct winpos_centered {};
     struct winpos_undefined {};
     using WindowPosition = std::variant<int, winpos_centered, winpos_undefined>;
@@ -52,10 +47,6 @@ namespace frog::lib2d::gx
     {
 
     public:
-        // window( int width, int height, const char* title,
-        //         Vsync vsync = Vsync::On, Mode mode = Mode::Windowed,
-        //         bool maximized = false );
-
         window( const window_settings& settings );
 
         window( const window& ) = delete;

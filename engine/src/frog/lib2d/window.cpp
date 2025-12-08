@@ -33,9 +33,6 @@ namespace frog::lib2d::gx
 {
 
 
-// window::window( int width, int height, const char* title,
-//         Vsync vsync, Mode mode, bool maximized )
-//         : win_width( width ), win_height( height )
 window::window( const window_settings& settings )
 {
     using namespace std::string_literals;
