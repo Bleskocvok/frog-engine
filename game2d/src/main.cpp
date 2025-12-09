@@ -29,8 +29,8 @@ int main(int argc, char** argv)
 
     auto set = frog::settings{};
     set.clear_color = { 0.5, 0.6, 0.3 };
-    set.window_name = "gaaaaaame2d";
-    set.vsync = true;
+    set.window.title = "gaaaaaame2d";
+    set.window.vsync = true;
 
     return run_engine2d(std::move(set), std::move(global),
                         [](frog::engine2d& e){ init_game(e); },
