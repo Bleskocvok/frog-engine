@@ -1,22 +1,7 @@
 #pragma once
 
-#ifndef NOT_FROG_BUILD_2D
-
-#include "texture.hpp"
-#include "structs.hpp"
-
-#include "frog/os/window_base.hpp"
-
-// #include "sdl_include.hpp"
-// #include SDL_HEADER
-
-#include <cstdint>      // uint8_t
 #include <string>
 #include <variant>
-
-
-struct SDL_Surface;
-
 
 namespace frog::lib2d::gx
 {
@@ -44,6 +29,27 @@ struct window_settings
     WindowPosition pos_x = winpos_undefined{};
     WindowPosition pos_y = winpos_undefined{};
 };
+
+}  // frog::lib2d::gx
+
+#ifndef NOT_FROG_BUILD_2D
+
+#include "texture.hpp"
+#include "structs.hpp"
+
+#include "frog/os/window_base.hpp"
+
+// #include "sdl_include.hpp"
+// #include SDL_HEADER
+
+#include <cstdint>      // uint8_t
+
+
+struct SDL_Surface;
+
+
+namespace frog::lib2d::gx
+{
 
 class window : public frog::os::window_base
 {

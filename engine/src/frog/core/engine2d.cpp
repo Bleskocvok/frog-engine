@@ -31,7 +31,8 @@ namespace {
 
 frog::lib2d::gx::Mode window_screen_mode(const settings& s)
 {
-    switch (s.mode) {
+    switch (s.window.mode)
+    {
         case ScreenMode::Borderless: return frog::lib2d::gx::Mode::Borderless;
         case ScreenMode::Fullscreen: return frog::lib2d::gx::Mode::Fullscreen;
         case ScreenMode::Windowed:   return frog::lib2d::gx::Mode::Windowed;
@@ -42,7 +43,7 @@ frog::lib2d::gx::Mode window_screen_mode(const settings& s)
 
 frog::lib2d::gx::Vsync vsync(const settings& s)
 {
-    if (s.vsync)
+    if (s.window.vsync)
         return frog::lib2d::gx::Vsync::On;
     return frog::lib2d::gx::Vsync::Off;
 }
@@ -51,9 +52,9 @@ lib2d::gx::window_settings get_window_settings(const settings& s)
 {
     return lib2d::gx::window_settings
     {
-        .width = s.width,
-        .height = s.height,
-        .title = s.window_name,
+        .width = s.window.width,
+        .height = s.window.height,
+        .title = s.window.title,
         .vsync = vsync(s),
         .mode = window_screen_mode(s),
         .maximized = s.window.maximized,
@@ -79,9 +80,9 @@ engine2d::engine2d(settings set, ptr<state> _global)
 {
     renderer = mk_ptr<gx::renderer2d>(static_cast<lib2d::gx::window*>(window.get()));
 
-    if (set.window_icon)
+    if (set.window.icon)
     {
-        std::string filename = global->asset_path() + "/" + *set.window_icon;
+        std::string filename = global->asset_path() + "/" + *set.window.icon;
         lib2d::detail::surface img = lib2d::detail::load_img(filename);
         win_raw->set_icon( img );
     }

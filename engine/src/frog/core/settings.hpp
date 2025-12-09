@@ -37,22 +37,11 @@ struct settings
 
     } clear_color;
 
-    bool vsync = true;
-
-    int width = 1280,
-        height = 720;
-
     int gl_major = 4,
         gl_minor = 5;
 
-    std::string window_name;
-
     std::string save_path;
     std::string asset_path;
-
-    std::optional<std::string> window_icon;
-
-    ScreenMode mode = ScreenMode::Windowed;
 
     using WindowPosition = frog::lib2d::gx::WindowPosition;
     using winpos_undefined = frog::lib2d::gx::winpos_undefined;
@@ -60,9 +49,21 @@ struct settings
 
     struct
     {
+        bool vsync = true;
+
+        int width = 1280,
+            height = 720;
+
+        ScreenMode mode = ScreenMode::Windowed;
+
+        std::string title;
+
         bool maximized = false;
         WindowPosition pos_x = winpos_undefined{};
         WindowPosition pos_y = winpos_undefined{};
+
+        std::optional<std::string> icon;
+
     } window;
 
     void assign_path(const fs::path& executable)
