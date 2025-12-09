@@ -24,16 +24,16 @@ frog::engine::engine(settings set, ptr<state> _global)
 {
     // TODO: Debug on WSL why this segfaults
     // LOG("pre-win");
-    window = mk_ptr<os::window>(set.width, set.height, set.window_name.c_str());
+    window = mk_ptr<os::window>(set.window.width, set.window.height, set.window.title.c_str());
     // LOG("post-win");
     win_raw = static_cast<os::window*>(window.get());
     // LOG("post-win-raw");
 
-    renderer = mk_ptr<gl::renderer3d>(set.gl_major, set.gl_minor, set.vsync);
+    renderer = mk_ptr<gl::renderer3d>(set.gl_major, set.gl_minor, set.window.vsync);
 
     // LOG("viewport");
 
-    renderer->viewport(set.width, set.height);
+    renderer->viewport(set.window.width, set.window.height);
     renderer->clear_color(set.clear_color.r
                         , set.clear_color.g
                         , set.clear_color.b);
@@ -48,7 +48,7 @@ frog::engine::engine(settings set, ptr<state> _global)
 
     // LOG("win_raw");
 
-    camera.screen_size(set.width, set.height);
+    camera.screen_size(set.window.width, set.window.height);
 
     // LOG("engine ok");
 }
