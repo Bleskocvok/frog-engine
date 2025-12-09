@@ -12,6 +12,7 @@
 
 #include <cstdint>      // uint8_t
 #include <string>
+#include <variant>
 
 
 struct SDL_Surface;
