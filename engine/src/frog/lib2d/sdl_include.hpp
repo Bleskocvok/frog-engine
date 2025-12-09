@@ -1,6 +1,6 @@
-#ifndef NOT_FROG_BUILD_2D
+#pragma once
 
-    #pragma once
+#ifndef NOT_FROG_BUILD_2D
 
     #ifdef SDL_HEADER_FOLDER
         #define SDL_HEADER <SDL_HEADER_FOLDER/SDL.h>
