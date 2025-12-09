@@ -44,8 +44,8 @@ int main(int argc, char** argv)
 
     auto set = frog::settings{};
          set.clear_color = { 0.5, 0.6, 0.3 };
-         set.window_name = "gaaaaaame";
-         set.vsync = true;
+         set.window.title = "gaaaaaame";
+         set.window.vsync = true;
 
     //
     // Engine creation
