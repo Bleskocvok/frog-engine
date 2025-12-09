@@ -272,7 +272,7 @@ if(FROG_BUILD_3D)
     add_dirs_to_includes("${TINYOBJLOADER_INCLUDE_DIR}")
     add_lib_to_list(tinyobjloader)
 else()
-    target_compile_definitions(frog_lib PRIVATE -D NOT_FROG_BUILD_3D=1)
+    target_compile_definitions(frog_lib PUBLIC -D NOT_FROG_BUILD_3D=1)
 endif(FROG_BUILD_3D)
 
 
@@ -338,7 +338,7 @@ if(FROG_BUILD_2D)
     # TODO: remove this shit
     add_dirs_to_includes("${SDL2_INCLUDE_DIRS}")
 else()
-    target_compile_definitions(frog_lib PRIVATE -D NOT_FROG_BUILD_2D=1)
+    target_compile_definitions(frog_lib PUBLIC -D NOT_FROG_BUILD_2D=1)
 endif(FROG_BUILD_2D)
 
 
