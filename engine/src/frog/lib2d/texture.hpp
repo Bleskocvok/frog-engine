@@ -27,6 +27,8 @@ namespace frog::lib2d::gx
         int h() const { return tex_height; }
         float ratio() const { return tex_width / static_cast<float>( tex_height ); }
 
+        // TODO: Size
+
     private:
         friend window;
 

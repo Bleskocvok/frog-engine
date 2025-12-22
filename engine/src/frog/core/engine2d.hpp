@@ -9,6 +9,7 @@
 #include "frog/gx2d/crop.hpp"
 
 #include "frog/lib2d/structs.hpp"
+#include "frog/core/2d/camera.hpp"
 
 // bits, please
 #include "frog/lib2d/bits.hpp"      // initializer
@@ -49,20 +50,7 @@ class engine2d : public engine_base<engine2d, game_object2d, lib2d::os::timer>
     std::pair<geo::vec2, geo::vec2> scale_shift(geo::rect& cam) const;
     std::pair<geo::vec2, geo::vec2> ui_scale_shift() const;
 
-    void draw_text(const gx::text& label, geo::vec2 pos,
-                        float container_height, frog::gx2d::Crop crop);
-
-    void draw_sprite(const lib2d::gx::texture& tex, geo::rect dest, geo::rect uv,
-                     gx::rgba_t color, gx2d::Crop crop = {});
-
-    void draw_ui_sprite(const lib2d::gx::texture& tex, geo::rect dest, geo::rect uv,
-                        gx::rgba_t color);
-
     void prepend_path_prefix(std::string& path);
-
-    // Friends and family.
-    friend font::atlas;
-    friend font::truetype;
 
 public:
     lib2d::initializer initializer_{ lib2d::initializer::Video };
@@ -72,15 +60,6 @@ public:
 
     gx::assets<lib2d::gx::texture> textures;
     gx::assets<font::base> fonts;
-
-    struct camera2d : public geo::rect {
-        geo::rect prev;
-
-        camera2d(geo::vec2 pos, geo::vec2 size)
-            : geo::rect(pos, size)
-            , prev(pos, size)
-        { }
-    };
 
     // geo::rect camera_ = { geo::vec2{ 0 }, geo::vec2{ 1, 1 } };
     const camera2d default_camera = { geo::vec2{ 0 }, geo::vec2{ 1, 1 } };

@@ -1,6 +1,7 @@
 #ifndef NOT_FROG_BUILD_2D
 
 #include "frog/core/engine2d.hpp"
+#include "frog/core/2d/renderer.hpp"
 #include "frog/graphics/ui_element.hpp"
 #include "frog/geometry/rectangle.hpp"
 #include "frog/gx2d/crop.hpp"
@@ -33,7 +34,7 @@ geo::vec2 atlas::size(const std::string& str, float height)
            , height };
 }
 
-void atlas::draw(frog::engine2d& engine, const frog::gx::text& label,
+void atlas::draw(frog::r2d::Renderer& renderer, const frog::gx::text& label,
           geo::vec2 pos, float container_height, frog::gx2d::Crop crop)
 {
     using namespace frog;
@@ -88,7 +89,7 @@ void atlas::draw(frog::engine2d& engine, const frog::gx::text& label,
         gx2d::crop_tex(crop, char_rect, tex);
         gx2d::crop_rect(crop, char_rect);
 
-        engine.draw_sprite(texture, char_rect, tex, label.color);
+        renderer.draw_sprite(texture, char_rect, tex, label.color);
         pos.x() += char_size(height).x();
     }
 }

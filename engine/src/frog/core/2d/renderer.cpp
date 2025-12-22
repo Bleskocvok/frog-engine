@@ -1,0 +1,222 @@
+#include "renderer.hpp"
+
+using namespace frog::r2d;
+using namespace frog;
+
+namespace
+{
+
+
+} // namespace
+
+std::pair<geo::vec2, geo::vec2> Renderer::scale_shift(geo::rect& cam) const
+{
+    geo::vec2 scale = { window->w() / cam.size.x(),
+                        window->h() / cam.size.y() };
+    geo::vec2 shift = { 0 };
+    shift -= cam.top_left();
+    return { scale, shift };
+}
+
+std::pair<geo::vec2, geo::vec2> Renderer::ui_scale_shift() const
+{
+    geo::vec2 scale = { window->w() / camera.size.x(),
+                        window->h() / camera.size.y() };
+    geo::vec2 shift = { 0 };
+    shift.x() += window->w() * 0.5;
+    shift.y() += window->h() * 0.5;
+    return { scale, shift };
+}
+
+void Renderer::draw_sprite(const lib2d::gx::texture& tex, geo::rect dest,
+                       geo::rect uv, gx::rgba_t color, gx2d::Crop crop)
+{
+    geo::vec2 scale;
+    geo::vec2 shift;
+    std::tie(scale, shift) = ui_scale_shift();
+
+    gx2d::crop_tex(crop, dest, uv);
+    gx2d::crop_rect(crop, dest);
+
+    dest.pos.x() *= scale.x();
+    dest.pos.y() *= scale.y();
+    dest.pos += shift;
+
+    dest.size.x() *= scale.x();
+    dest.size.y() *= scale.y();
+    auto top_left = dest.top_left();
+
+    // TODO: This is a little unhinged. I should probably use the same
+    // coordinate system for textures throughout the whole code.
+    uv.pos *= geo::vec2(tex.w(), tex.h());
+    uv.size *= geo::vec2(tex.w(), tex.h());
+
+    window->draw_colored_rotated(tex, uv.pos.x(), uv.pos.y(),
+                                  uv.size.x(), uv.size.y(),
+                                  top_left.x(), top_left.y(),
+                                  dest.size.x(), dest.size.y(),
+                                  color.r(), color.g(), color.b(), color.a(),
+                                  dest.size.x() / 2, dest.size.y() / 2,
+                                  0);
+}
+
+void Renderer::draw_objects(const frog::scene_manager<frog::game_object2d>& scenes,
+                            double between)
+{
+    // TODO: Use std::set!
+    // TODO: solve in a more appropriate OOP way
+    //       also, perhaps create some sort of reference counting with layers
+    //       in render queue (i.e. add reference for a new game object, remove for deleted object)
+    // TODO: make this more memory efficient for unhinged layer values
+    //       (i.e. don't crash the game for unsigned(-1))
+    std::vector<std::vector<const gx2d::sprite*>> render_queue;
+
+    geo::vec2 scale;
+    geo::vec2 shift;
+    std::tie(scale, shift) = scale_shift(camera);
+
+    geo::vec2 prev_scale;
+    geo::vec2 prev_shift;
+    std::tie(prev_scale, prev_shift) = scale_shift(camera.prev);
+
+    scale = frog::geo::lerp(prev_scale, scale, float(between));
+    shift = frog::geo::lerp(prev_shift, shift, float(between));
+
+    scenes.for_each_object([&](const auto& obj)
+        {
+            if (obj.model().image_tag.empty())
+                return;
+
+            auto layer = obj.model().layer;
+
+            if (layer >= render_queue.size())
+                render_queue.resize(layer + 1);
+
+            render_queue[layer].push_back(&obj.model());
+        });
+
+    for (const auto& layer : render_queue)
+        for (const gx2d::sprite* model : layer)
+        {
+            auto rect = model->rect;
+            float angle = model->angle;
+
+            perform_interpolation(*model, between, rect, angle);
+
+            // TODO: Apply crop here too.
+
+            rect.pos += shift;
+            rect.pos.x() *= scale.x();
+            rect.pos.y() *= scale.y();
+
+            rect.size.x() *= scale.x();
+            rect.size.y() *= scale.y();
+            auto top_left = rect.top_left();
+
+            const auto& it = textures->find(model->image_tag);
+            if (not it)
+                throw std::runtime_error("invalid texture '" + model->image_tag + "'");
+            const auto& tex = *it;
+
+            auto uv_size = geo::vec2{ float(tex.w()), float(tex.h()) } * model->tex.size;
+            auto uv = ( model->tex.pos ) * geo::vec2{ float(tex.w()), float(tex.h()) };
+            gx::rgba_t color = model->color;
+            window->draw_colored_rotated(tex, uv.x(), uv.y(), uv_size.x(), uv_size.y(),
+                                          top_left.x(), top_left.y(),
+                                          rect.size.x(), rect.size.y(),
+                                          color.r(), color.g(), color.b(), color.a(),
+                                          rect.size.x() / 2, rect.size.y() / 2,
+                                          angle);
+        }
+}
+
+void Renderer::draw_ui_sprite(const lib2d::gx::texture& tex, geo::rect dest,
+                       geo::rect uv, gx::rgba_t color)
+{
+    geo::vec2 scale;
+    geo::vec2 shift;
+    std::tie(scale, shift) = ui_scale_shift();
+
+    dest.pos.x() *= scale.x();
+    dest.pos.y() *= scale.y();
+    dest.pos += shift;
+
+    dest.size.x() *= scale.x();
+    dest.size.y() *= scale.y();
+    auto top_left = dest.top_left();
+
+    uv.pos *= geo::vec2(tex.w(), tex.h());
+    uv.size *= geo::vec2(tex.w(), tex.h());
+    // uv.pos -= uv.size * 0.5;
+
+    window->draw_colored_rotated(tex, uv.pos.x(), uv.pos.y(),
+                                  uv.size.x(), uv.size.y(),
+                                  top_left.x(), top_left.y(),
+                                  dest.size.x(), dest.size.y(),
+                                  color.r(), color.g(), color.b(), color.a(),
+                                  dest.size.x() / 2, dest.size.y() / 2,
+                                  0);
+}
+
+void Renderer::draw_ui(const frog::scene_manager<frog::game_object2d>& scenes,
+                       double between)
+{
+    scenes.for_each_object([&](auto& obj)
+    {
+        for (const frog::ptr<gx::ui_element>& elem : obj.elements())
+        {
+            if (elem->hide)
+                continue;
+
+            if (not elem->sprite.image_tag.empty())
+            {
+                auto rect = elem->sprite.rect;
+
+                float angle;
+                gx2d::perform_interpolation(elem->sprite, between, rect, angle);
+
+                auto tex = elem->sprite.tex;
+                gx2d::apply_crop(elem->sprite, between, rect, tex);
+
+                draw_ui_sprite(textures->at(elem->sprite.image_tag),
+                            rect,
+                            tex,
+                            elem->sprite.color);
+            }
+
+            if (elem->label)
+            {
+                gx2d::Crop crop;
+
+                auto pos = elem->pos();
+
+                if (auto inter = elem->sprite.interpolation; inter != gx2d::Interpolation::NONE)
+                {
+                    float value = float(between);
+                    if (inter == gx2d::Interpolation::EXTRAPOLATE)
+                        value += 1;
+                    pos = frog::geo::lerp(elem->sprite.prev.pos, pos, value);
+                }
+
+                if (elem->sprite.crop)
+                {
+                    float height = elem->label->height * elem->size().y();
+                    float dif = 0.5 * ( elem->sprite.rect.size.y() - height );
+                    crop.top = elem->sprite.crop->top - dif;
+                    crop.bot = elem->sprite.crop->bot - dif;
+                    crop = gx2d::clamp(crop);
+                }
+
+                draw_text(*elem->label, pos, elem->size().y(), crop);
+            }
+        }
+    });
+}
+
+
+void Renderer::draw_text(const gx::text& label, geo::vec2 pos,
+                        float container_height, frog::gx2d::Crop crop)
+{
+    auto& font = fonts->at(label.font);
+    font.draw(*this, label, pos, container_height, crop);
+}

@@ -1,3 +1,4 @@
+#include "frog/core/2d/renderer.hpp"
 #ifndef NOT_FROG_BUILD_2D
 
 #include "truetype.hpp"
@@ -23,7 +24,7 @@ geo::vec2 truetype::size(const std::string& str, float height)
     return { w / float(h) * height, height };
 }
 
-void truetype::draw(frog::engine2d& engine, const frog::gx::text& label,
+void truetype::draw(frog::r2d::Renderer& engine, const frog::gx::text& label,
           geo::vec2 pos, float container_height, frog::gx2d::Crop crop)
 {
     float height = container_height * label.height;
@@ -48,7 +49,7 @@ void truetype::draw(frog::engine2d& engine, const frog::gx::text& label,
     else
     {
         auto surf = font_.render_text(label.str, 255, 255, 255, 255);
-        auto texture = engine.win_raw->make_texture(surf);
+        auto texture = engine.window->make_texture(surf);
 
         engine.draw_sprite(texture, rect, { 0, 0, 1, 1 }, label.color, crop);
 

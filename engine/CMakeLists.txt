@@ -66,6 +66,7 @@ set(SRC_FILES
     src/frog/core/engine2d.cpp
     src/frog/core/engine3d.cpp
     src/frog/core/object_builder.cpp
+    src/frog/core/2d/renderer.cpp
     src/frog/font/atlas.cpp
     src/frog/font/truetype.cpp
     src/frog/geometry/camera.cpp
