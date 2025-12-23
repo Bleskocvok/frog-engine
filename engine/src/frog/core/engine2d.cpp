@@ -189,26 +189,6 @@ void engine2d::draw_objects(double between)
     renderer.draw_objects(*scenes, between);
 }
 
-// void engine2d::draw_text(const gx::text& label, geo::vec2 pos,
-//                         float container_height, frog::gx2d::Crop crop)
-// {
-//     throw 0;
-//     // auto& font = fonts.at(label.font);
-//     // font.draw(*this, label, pos, container_height, crop);
-// }
-
-// void engine2d::draw_sprite(const lib2d::gx::texture& tex, geo::rect dest,
-//                            geo::rect uv, gx::rgba_t color, gx2d::Crop crop)
-// {
-//     throw 2;
-// }
-
-// void engine2d::draw_ui_sprite(const lib2d::gx::texture& tex, geo::rect dest,
-//                            geo::rect uv, gx::rgba_t color)
-// {
-//     throw 2;
-// }
-
 void engine2d::draw_ui(double between)
 {
     auto renderer = r2d::Renderer(*win_raw, textures, fonts, camera());

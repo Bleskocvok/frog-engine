@@ -2,27 +2,17 @@
 
 #include "frog/core/scene_manager.hpp"
 #include "frog/core/game_object2d.hpp"
-#include "frog/graphics/assets.hpp"
 #include "frog/core/2d/camera.hpp"
-
-#include "frog/gx2d/renderer2d.hpp"
-#include "frog/gx2d/sprite.hpp"
-#include "frog/gx2d/crop.hpp"
+#include "frog/core/scene_manager.hpp"
+#include "frog/graphics/assets.hpp"
 #include "frog/graphics/color.hpp"
 #include "frog/graphics/ui_element.hpp"
 #include "frog/font/atlas.hpp"
 #include "frog/font/truetype.hpp"
 #include "frog/geometry/vector.hpp"
 #include "frog/geometry/rectangle.hpp"
-
-#include "frog/core/scene_manager.hpp"
-#include "frog/utils/exception.hpp"
-#include "frog/utils/ptr.hpp"
-#include "frog/utils/assert.hpp"
-
-#include "frog/lib2d/structs.hpp"
 #include "frog/lib2d/window.hpp"
-#include "frog/core/settings.hpp"
+#include "frog/gx2d/crop.hpp"
 
 namespace frog::r2d
 {

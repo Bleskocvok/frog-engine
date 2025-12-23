@@ -1,6 +1,7 @@
 #pragma once
 
 #include "base.hpp"
+#include "frog/lib2d/texture.hpp"
 
 
 namespace frog::font {
