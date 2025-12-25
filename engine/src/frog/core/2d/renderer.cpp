@@ -76,6 +76,7 @@ void Renderer::draw(const RenderCtx& ctx, const gx2d::Sprite& model)
     // TODO: Apply crop here too.
 
     rect.pos *= ctx.pos_mult;
+    rect.size *= ctx.scale_mult;
 
     rect.pos += ctx.shift;
     rect.pos.x() *= ctx.scale.x();
@@ -84,8 +85,6 @@ void Renderer::draw(const RenderCtx& ctx, const gx2d::Sprite& model)
     rect.size.x() *= ctx.scale.x();
     rect.size.y() *= ctx.scale.y();
     auto top_left = rect.top_left();
-
-    rect.size *= ctx.scale_mult;
 
     const auto& it = textures->find(model.image_tag);
     if (not it)
@@ -141,7 +140,7 @@ void Renderer::draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite)
             case gx2d::Anchor::Position::SIZE_RELATIVE:
                 sub_ctx.shift      += sprite.rect.pos;
                 sub_ctx.prev_shift += sprite.prev.pos;
-                sub_ctx.pos_mult *= sprite.rect.size;
+                sub_ctx.pos_mult   *= sprite.rect.size;
                 break;
             case gx2d::Anchor::Position::NONE:
                 break;
@@ -154,13 +153,13 @@ void Renderer::draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite)
     };
 
     for (const auto& sub : sprite.children)
-        if (sub.layer == gx2d::BELOW)
+        if (sub.layer == gx2d::RelLayer::BELOW)
             draw_subsprite(sub);
 
     draw(ctx, sprite);
 
     for (const auto& sub : sprite.children)
-        if (sub.layer == gx2d::ABOVE)
+        if (sub.layer == gx2d::RelLayer::ABOVE)
             draw_subsprite(sub);
 }
 

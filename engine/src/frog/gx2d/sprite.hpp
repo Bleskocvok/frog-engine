@@ -54,8 +54,8 @@ struct Sprite
     std::vector<ChildSprite> children;
 };
 
-constexpr std::int16_t BELOW = INT16_MIN;
-constexpr std::int16_t ABOVE = INT16_MAX;
+// constexpr std::int16_t BELOW = INT16_MIN;
+// constexpr std::int16_t ABOVE = INT16_MAX;
 
 struct Anchor
 {
@@ -64,9 +64,12 @@ struct Anchor
     bool rel_size = false;
 };
 
+enum class RelLayer { BELOW, ABOVE };
+
 struct ChildSprite
 {
-    std::int16_t layer = ABOVE;
+    // std::int16_t layer = ABOVE;
+    RelLayer layer = RelLayer::ABOVE;
     Anchor anchor;
     Sprite sprite;
 };
