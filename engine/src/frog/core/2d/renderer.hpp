@@ -15,6 +15,7 @@
 #include "frog/geometry/rectangle.hpp"
 #include "frog/lib2d/window.hpp"
 #include "frog/gx2d/crop.hpp"
+#include "frog/gx2d/sprite.hpp"
 
 namespace frog::r2d
 {
@@ -37,11 +38,18 @@ class Renderer
     {
         geo::vec2 scale;
         geo::vec2 shift;
+
+        geo::vec2 prev_scale;
+        geo::vec2 prev_shift;
+
         bool move_pre_scale = true;
+        double between = 0;
     };
 
     void draw(const RenderCtx& ctx, const lib2d::gx::texture& tex, geo::rect dest,
               geo::rect uv, gx::rgba_t color, gx2d::Crop crop = {});
+
+    void draw(const RenderCtx& ctx, const gx2d::sprite& sprite);
 
 public:
     Renderer(lib2d::gx::window& window_,
