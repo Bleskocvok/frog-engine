@@ -1,4 +1,3 @@
-#include "frog/core/2d/renderer.hpp"
 #ifndef NOT_FROG_BUILD_2D
 
 #include "engine2d.hpp"
@@ -15,6 +14,7 @@
 #include "frog/utils/exception.hpp"
 #include "frog/utils/ptr.hpp"
 #include "frog/utils/assert.hpp"
+#include "frog/core/2d/renderer.hpp"
 
 #include "frog/lib2d/structs.hpp"
 #include "frog/lib2d/window.hpp"
