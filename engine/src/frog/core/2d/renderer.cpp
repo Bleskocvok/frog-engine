@@ -1,4 +1,8 @@
+#ifndef NOT_FROG_BUILD_2D
+
 #include "renderer.hpp"
+
+#include <map>
 
 using namespace frog::r2d;
 using namespace frog;
@@ -28,36 +32,53 @@ std::pair<geo::vec2, geo::vec2> Renderer::ui_scale_shift() const
     return { scale, shift };
 }
 
-void Renderer::draw_sprite(const lib2d::gx::texture& tex, geo::rect dest,
-                       geo::rect uv, gx::rgba_t color, gx2d::Crop crop)
-{
-    geo::vec2 scale;
-    geo::vec2 shift;
-    std::tie(scale, shift) = ui_scale_shift();
 
+void Renderer::draw(const RenderCtx& ctx, const lib2d::gx::texture& tex, geo::rect dest,
+                    geo::rect uv, gx::rgba_t color, gx2d::Crop crop)
+{
     gx2d::crop_tex(crop, dest, uv);
     gx2d::crop_rect(crop, dest);
 
-    dest.pos.x() *= scale.x();
-    dest.pos.y() *= scale.y();
-    dest.pos += shift;
+    if (ctx.move_pre_scale)
+        dest.pos += ctx.shift;
 
-    dest.size.x() *= scale.x();
-    dest.size.y() *= scale.y();
+    dest.pos.x() *= ctx.scale.x();
+    dest.pos.y() *= ctx.scale.y();
+
+    if (not ctx.move_pre_scale)
+        dest.pos += ctx.shift;
+
+    dest.size.x() *= ctx.scale.x();
+    dest.size.y() *= ctx.scale.y();
     auto top_left = dest.top_left();
 
-    // TODO: This is a little unhinged. I should probably use the same
-    // coordinate system for textures throughout the whole code.
     uv.pos *= geo::vec2(tex.w(), tex.h());
     uv.size *= geo::vec2(tex.w(), tex.h());
 
     window->draw_colored_rotated(tex, uv.pos.x(), uv.pos.y(),
-                                  uv.size.x(), uv.size.y(),
-                                  top_left.x(), top_left.y(),
-                                  dest.size.x(), dest.size.y(),
-                                  color.r(), color.g(), color.b(), color.a(),
-                                  dest.size.x() / 2, dest.size.y() / 2,
-                                  0);
+                                 uv.size.x(), uv.size.y(),
+                                 top_left.x(), top_left.y(),
+                                 dest.size.x(), dest.size.y(),
+                                 color.r(), color.g(), color.b(), color.a(),
+                                 dest.size.x() / 2, dest.size.y() / 2,
+                                 0);
+}
+
+void Renderer::draw_sprite(const lib2d::gx::texture& tex, geo::rect dest,
+                       geo::rect uv, gx::rgba_t color, gx2d::Crop crop)
+{
+    RenderCtx ctx;
+    std::tie(ctx.scale, ctx.shift) = ui_scale_shift();
+
+    ctx.move_pre_scale = false;
+
+    draw(ctx, tex, dest, uv, color, crop);
+}
+
+void Renderer::draw_ui_sprite(const lib2d::gx::texture& tex, geo::rect dest,
+                              geo::rect uv, gx::rgba_t color)
+{
+    draw_sprite(tex, dest, uv, color);
 }
 
 void Renderer::draw_objects(const frog::scene_manager<frog::game_object2d>& scenes,
@@ -69,7 +90,7 @@ void Renderer::draw_objects(const frog::scene_manager<frog::game_object2d>& scen
     //       in render queue (i.e. add reference for a new game object, remove for deleted object)
     // TODO: make this more memory efficient for unhinged layer values
     //       (i.e. don't crash the game for unsigned(-1))
-    std::vector<std::vector<const gx2d::sprite*>> render_queue;
+    std::map<unsigned, std::vector<const gx2d::sprite*>> render_queue;
 
     geo::vec2 scale;
     geo::vec2 shift;
@@ -89,13 +110,13 @@ void Renderer::draw_objects(const frog::scene_manager<frog::game_object2d>& scen
 
             auto layer = obj.model().layer;
 
-            if (layer >= render_queue.size())
-                render_queue.resize(layer + 1);
+            // if (layer >= render_queue.size())
+            //     render_queue.resize(layer + 1);
 
             render_queue[layer].push_back(&obj.model());
         });
 
-    for (const auto& layer : render_queue)
+    for (const auto& [idx, layer]: render_queue)
         for (const gx2d::sprite* model : layer)
         {
             auto rect = model->rect;
@@ -118,8 +139,8 @@ void Renderer::draw_objects(const frog::scene_manager<frog::game_object2d>& scen
                 throw std::runtime_error("invalid texture '" + model->image_tag + "'");
             const auto& tex = *it;
 
-            auto uv_size = geo::vec2{ float(tex.w()), float(tex.h()) } * model->tex.size;
-            auto uv = ( model->tex.pos ) * geo::vec2{ float(tex.w()), float(tex.h()) };
+            auto uv_size =   model->tex.size  * geo::vec2{ float(tex.w()), float(tex.h()) };
+            auto uv      = ( model->tex.pos ) * geo::vec2{ float(tex.w()), float(tex.h()) };
             gx::rgba_t color = model->color;
             window->draw_colored_rotated(tex, uv.x(), uv.y(), uv_size.x(), uv_size.y(),
                                           top_left.x(), top_left.y(),
@@ -128,34 +149,6 @@ void Renderer::draw_objects(const frog::scene_manager<frog::game_object2d>& scen
                                           rect.size.x() / 2, rect.size.y() / 2,
                                           angle);
         }
-}
-
-void Renderer::draw_ui_sprite(const lib2d::gx::texture& tex, geo::rect dest,
-                       geo::rect uv, gx::rgba_t color)
-{
-    geo::vec2 scale;
-    geo::vec2 shift;
-    std::tie(scale, shift) = ui_scale_shift();
-
-    dest.pos.x() *= scale.x();
-    dest.pos.y() *= scale.y();
-    dest.pos += shift;
-
-    dest.size.x() *= scale.x();
-    dest.size.y() *= scale.y();
-    auto top_left = dest.top_left();
-
-    uv.pos *= geo::vec2(tex.w(), tex.h());
-    uv.size *= geo::vec2(tex.w(), tex.h());
-    // uv.pos -= uv.size * 0.5;
-
-    window->draw_colored_rotated(tex, uv.pos.x(), uv.pos.y(),
-                                  uv.size.x(), uv.size.y(),
-                                  top_left.x(), top_left.y(),
-                                  dest.size.x(), dest.size.y(),
-                                  color.r(), color.g(), color.b(), color.a(),
-                                  dest.size.x() / 2, dest.size.y() / 2,
-                                  0);
 }
 
 void Renderer::draw_ui(const frog::scene_manager<frog::game_object2d>& scenes,
@@ -220,3 +213,5 @@ void Renderer::draw_text(const gx::text& label, geo::vec2 pos,
     auto& font = fonts->at(label.font);
     font.draw(*this, label, pos, container_height, crop);
 }
+
+#endif

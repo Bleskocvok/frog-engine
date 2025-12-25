@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef NOT_FROG_BUILD_2D
+
 #include "frog/core/scene_manager.hpp"
 #include "frog/core/game_object2d.hpp"
 #include "frog/core/2d/camera.hpp"
@@ -31,6 +33,16 @@ class Renderer
     friend font::atlas;
     friend font::truetype;
 
+    struct RenderCtx
+    {
+        geo::vec2 scale;
+        geo::vec2 shift;
+        bool move_pre_scale = true;
+    };
+
+    void draw(const RenderCtx& ctx, const lib2d::gx::texture& tex, geo::rect dest,
+              geo::rect uv, gx::rgba_t color, gx2d::Crop crop = {});
+
 public:
     Renderer(lib2d::gx::window& window_,
             frog::gx::assets<lib2d::gx::texture>& textures_,
@@ -57,3 +69,5 @@ public:
 };
 
 } // namespace frog
+
+#endif
