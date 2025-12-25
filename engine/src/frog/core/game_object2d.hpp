@@ -21,7 +21,7 @@ public:
     using Engine = engine2d;
 
 private:
-    gx2d::sprite img;
+    gx2d::Sprite img;
 
     void calculate_prev()
     {
@@ -34,8 +34,8 @@ private:
 public:
     game_object2d() = default;
 
-    const gx2d::sprite& model() const { return img; }
-          gx2d::sprite& model()       { return img; }
+    const gx2d::Sprite& model() const { return img; }
+          gx2d::Sprite& model()       { return img; }
 
     virtual void init(Engine& engine) override
     {

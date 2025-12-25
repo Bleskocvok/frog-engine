@@ -32,7 +32,7 @@ enum class Interpolation
 
 struct ChildSprite;
 
-struct sprite
+struct Sprite
 {
     std::string image_tag;
     geo::rect rect;
@@ -68,10 +68,10 @@ struct ChildSprite
 {
     std::int16_t layer = ABOVE;
     Anchor anchor;
-    sprite sprite;
+    Sprite sprite;
 };
 
-inline void calculate_prev(sprite& sprite)
+inline void calculate_prev(Sprite& sprite)
 {
     sprite.prev.pos = sprite.rect.pos;
     sprite.prev.size = sprite.rect.size;
@@ -104,7 +104,7 @@ inline void crop_tex(const Crop& crop, const geo::rect& rect, geo::rect& tex)
     tex.size.y() -= bot_remove;
 }
 
-inline void perform_interpolation(const sprite& s, double between, geo::rect& rect, float& angle)
+inline void perform_interpolation(const Sprite& s, double between, geo::rect& rect, float& angle)
 {
     if (s.interpolation == gx2d::Interpolation::INTERPOLATE)
     {
@@ -121,7 +121,7 @@ inline void perform_interpolation(const sprite& s, double between, geo::rect& re
 }
 
 
-inline void apply_crop(const gx2d::sprite& model, double between, geo::rect& rect, geo::rect& tex)
+inline void apply_crop(const gx2d::Sprite& model, double between, geo::rect& rect, geo::rect& tex)
 {
     if (not model.crop)
         return;

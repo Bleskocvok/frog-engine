@@ -64,7 +64,7 @@ void Renderer::draw(const RenderCtx& ctx, const lib2d::gx::texture& tex, geo::re
                                  0);
 }
 
-void Renderer::draw(const RenderCtx& ctx, const gx2d::sprite& model)
+void Renderer::draw(const RenderCtx& ctx, const gx2d::Sprite& model)
 {
     auto rect = model.rect;
     float angle = model.angle;
@@ -130,7 +130,7 @@ void Renderer::draw_objects(const frog::scene_manager<frog::game_object2d>& scen
     //       in render queue (i.e. add reference for a new game object, remove for deleted object)
     // TODO: make this more memory efficient for unhinged layer values
     //       (i.e. don't crash the game for unsigned(-1))
-    std::map<unsigned, std::vector<const gx2d::sprite*>> render_queue;
+    std::map<unsigned, std::vector<const gx2d::Sprite*>> render_queue;
 
     RenderCtx ctx;
     ctx.between = between;
@@ -155,7 +155,7 @@ void Renderer::draw_objects(const frog::scene_manager<frog::game_object2d>& scen
         });
 
     for (const auto& [idx, layer]: render_queue)
-        for (const gx2d::sprite* model : layer)
+        for (const gx2d::Sprite* model : layer)
             draw(ctx, *model);
 }
 

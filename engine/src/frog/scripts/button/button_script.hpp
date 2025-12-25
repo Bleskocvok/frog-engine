@@ -73,9 +73,9 @@ class button_script_base : public Script
     }
 
 public:
-    frog::gx2d::sprite normal;
-    frog::gx2d::sprite hover;
-    frog::gx2d::sprite press;
+    frog::gx2d::Sprite normal;
+    frog::gx2d::Sprite hover;
+    frog::gx2d::Sprite press;
     frog::ptr<frog::button_action_base<typename Script::GameObject,
                                        typename Script::Engine>> action = nullptr;
     frog::ptr<frog::button_style_base<typename Script::GameObject>> style = nullptr;

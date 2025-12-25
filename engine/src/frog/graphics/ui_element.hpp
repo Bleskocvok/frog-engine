@@ -30,7 +30,7 @@ struct text
 
 struct ui_element
 {
-    frog::gx2d::sprite sprite;
+    frog::gx2d::Sprite sprite;
 
     std::optional<text> label;
 

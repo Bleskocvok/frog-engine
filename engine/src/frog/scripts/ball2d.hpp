@@ -23,13 +23,13 @@ class ball2d : public frog::script2d
     frog::geo::soft_physics2d::idx_t idx = 0;
     frog::game_object2d* obj = nullptr;
 
-    std::optional<frog::gx2d::sprite> sprite;
+    std::optional<frog::gx2d::Sprite> sprite;
 
 public:
     ball2d(frog::geo::circle circle
             , float inv_weight
             , frog::geo::soft_physics2d& physics
-            , std::optional<frog::gx2d::sprite> sprite = std::nullopt)
+            , std::optional<frog::gx2d::Sprite> sprite = std::nullopt)
         : circle(circle)
         , inv_weight(inv_weight)
         , physics(&physics)

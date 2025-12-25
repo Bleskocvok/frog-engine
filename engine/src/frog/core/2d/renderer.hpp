@@ -49,7 +49,7 @@ class Renderer
     void draw(const RenderCtx& ctx, const lib2d::gx::texture& tex, geo::rect dest,
               geo::rect uv, gx::rgba_t color, gx2d::Crop crop = {});
 
-    void draw(const RenderCtx& ctx, const gx2d::sprite& sprite);
+    void draw(const RenderCtx& ctx, const gx2d::Sprite& sprite);
 
 public:
     Renderer(lib2d::gx::window& window_,
