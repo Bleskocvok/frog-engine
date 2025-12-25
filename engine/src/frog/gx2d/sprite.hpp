@@ -7,8 +7,10 @@
 #include "crop.hpp"
 
 #include <cmath>        // lerp
+#include <cstdint>      // int16_t, INT16_MIN, INT16_MAX
 #include <optional>
 #include <string>
+#include <vector>
 
 
 namespace frog::gx2d {
@@ -28,6 +30,8 @@ enum class Interpolation
     EXTRAPOLATE
 };
 
+struct ChildSprite;
+
 struct sprite
 {
     std::string image_tag;
@@ -46,8 +50,26 @@ struct sprite
     Interpolation interpolation = Interpolation::NONE;
 
     std::optional<Crop> crop = std::nullopt;
+
+    std::vector<ChildSprite> children;
 };
 
+constexpr std::int16_t BELOW = INT16_MIN;
+constexpr std::int16_t ABOVE = INT16_MAX;
+
+struct Anchor
+{
+    enum class Position { NONE, RELATIVE, SIZE_RELATIVE };
+    Position position = Position::NONE;
+    bool rel_size = false;
+};
+
+struct ChildSprite
+{
+    std::int16_t layer = ABOVE;
+    Anchor anchor;
+    sprite sprite;
+};
 
 inline void calculate_prev(sprite& sprite)
 {
@@ -62,6 +84,9 @@ inline void crop_rect(const Crop& crop, geo::rect& rect)
     // TODO: Left and right.
     rect.size.y() -= crop.top + crop.bot;
     rect.pos.y() -= crop.bot * 0.5 - crop.top * 0.5;
+
+    rect.size.x() -= crop.left + crop.right;
+    rect.pos.x() -= crop.right * 0.5 - crop.left * 0.5;
 }
 
 inline void crop_tex(const Crop& crop, const geo::rect& rect, geo::rect& tex)
