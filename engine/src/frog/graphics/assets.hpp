@@ -16,6 +16,7 @@ template <typename T>
 class assets
 {
     std::unordered_map<std::string, ptr<T>> data;
+    std::string name;
 
     template<typename This>
     static auto& try_get(This* t, const std::string& tag)
@@ -26,11 +27,17 @@ class assets
         }
         catch (std::out_of_range&)
         {
-            throw std::runtime_error("assets '" + tag + "' not found");
+            if (t->name.empty())
+                throw std::runtime_error("assets '" + tag + "' not found");
+            throw std::runtime_error("asset " + t->name + " '" + tag + "' not found");
         }
     }
 
 public:
+    explicit assets(std::string name = "")
+        : name(std::move(name))
+    { }
+
     // TODO: investigate why this segfaults
     // EDIT: apparently it doesn't, but keep an eye on this
     const std::string& add(const std::string& tag, T element)

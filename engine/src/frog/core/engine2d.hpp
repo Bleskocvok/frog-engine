@@ -58,8 +58,8 @@ public:
     lib2d::gx::window* win_raw = nullptr;
     ptr<lib2d::gx::events> input = mk_ptr<lib2d::gx::events>();
 
-    gx::assets<lib2d::gx::texture> textures;
-    gx::assets<font::base> fonts;
+    gx::assets<lib2d::gx::texture> textures = gx::assets<lib2d::gx::texture>{ "texture" };
+    gx::assets<font::base> fonts = gx::assets<font::base>{ "font" };
 
     // geo::rect camera_ = { geo::vec2{ 0 }, geo::vec2{ 1, 1 } };
     const camera2d default_camera = { geo::vec2{ 0 }, geo::vec2{ 1, 1 } };
@@ -102,7 +102,7 @@ public:
 
     geo::vec2 camera_coords_ui(int mouse_x, int mouse_y);
 
-    gx::assets<frog::lib2d::detail::cursor> cursors;
+    gx::assets<frog::lib2d::detail::cursor> cursors = gx::assets<frog::lib2d::detail::cursor>{ "cursor" };
 
     bool add_cursor(const std::string& tag, const std::string& path);
     bool remove_cursor(const std::string& tag);
