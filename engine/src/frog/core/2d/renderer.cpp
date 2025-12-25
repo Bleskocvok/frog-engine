@@ -2,6 +2,8 @@
 
 #include "renderer.hpp"
 
+#include "frog/gx2d/sprite.hpp"
+
 #include <map>
 
 using namespace frog::r2d;
@@ -73,6 +75,8 @@ void Renderer::draw(const RenderCtx& ctx, const gx2d::Sprite& model)
 
     // TODO: Apply crop here too.
 
+    rect.pos *= ctx.pos_mult;
+
     rect.pos += ctx.shift;
     rect.pos.x() *= ctx.scale.x();
     rect.pos.y() *= ctx.scale.y();
@@ -81,13 +85,15 @@ void Renderer::draw(const RenderCtx& ctx, const gx2d::Sprite& model)
     rect.size.y() *= ctx.scale.y();
     auto top_left = rect.top_left();
 
+    rect.size *= ctx.scale_mult;
+
     const auto& it = textures->find(model.image_tag);
     if (not it)
         throw std::runtime_error("invalid texture '" + model.image_tag + "'");
     const auto& tex = *it;
 
-    auto uv_size =   model.tex.size  * geo::vec2{ float(tex.w()), float(tex.h()) };
-    auto uv      = ( model.tex.pos ) * geo::vec2{ float(tex.w()), float(tex.h()) };
+    auto uv_size = model.tex.size * geo::vec2{ float(tex.w()), float(tex.h()) };
+    auto uv      = model.tex.pos  * geo::vec2{ float(tex.w()), float(tex.h()) };
     gx::rgba_t color = model.color;
     window->draw_colored_rotated(tex, uv.x(), uv.y(), uv_size.x(), uv_size.y(),
                                   top_left.x(), top_left.y(),
@@ -119,6 +125,43 @@ void Renderer::draw_text(const gx::text& label, geo::vec2 pos,
 {
     auto& font = fonts->at(label.font);
     font.draw(*this, label, pos, container_height, crop);
+}
+
+void Renderer::draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite)
+{
+    auto draw_subsprite = [&](const gx2d::ChildSprite& sub)
+    {
+        RenderCtx sub_ctx = ctx;
+        switch (sub.anchor.position)
+        {
+            case gx2d::Anchor::Position::RELATIVE:
+                sub_ctx.shift      += sprite.rect.pos;
+                sub_ctx.prev_shift += sprite.prev.pos;
+                break;
+            case gx2d::Anchor::Position::SIZE_RELATIVE:
+                sub_ctx.shift      += sprite.rect.pos;
+                sub_ctx.prev_shift += sprite.prev.pos;
+                sub_ctx.pos_mult *= sprite.rect.size;
+                break;
+            case gx2d::Anchor::Position::NONE:
+                break;
+        }
+
+        if (sub.anchor.rel_size)
+            sub_ctx.scale_mult *= sprite.rect.size;
+
+        draw(sub_ctx, sub.sprite);
+    };
+
+    for (const auto& sub : sprite.children)
+        if (sub.layer == gx2d::BELOW)
+            draw_subsprite(sub);
+
+    draw(ctx, sprite);
+
+    for (const auto& sub : sprite.children)
+        if (sub.layer == gx2d::ABOVE)
+            draw_subsprite(sub);
 }
 
 void Renderer::draw_objects(const frog::scene_manager<frog::game_object2d>& scenes,
@@ -156,7 +199,7 @@ void Renderer::draw_objects(const frog::scene_manager<frog::game_object2d>& scen
 
     for (const auto& [idx, layer]: render_queue)
         for (const gx2d::Sprite* model : layer)
-            draw(ctx, *model);
+            draw_recursive(ctx, *model);
 }
 
 void Renderer::draw_ui(const frog::scene_manager<frog::game_object2d>& scenes,

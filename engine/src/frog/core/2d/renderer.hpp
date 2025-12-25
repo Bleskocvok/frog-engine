@@ -42,6 +42,9 @@ class Renderer
         geo::vec2 prev_scale;
         geo::vec2 prev_shift;
 
+        geo::vec2 scale_mult = { 1 };
+        geo::vec2 pos_mult = { 1 };
+
         bool move_pre_scale = true;
         double between = 0;
     };
@@ -50,6 +53,8 @@ class Renderer
               geo::rect uv, gx::rgba_t color, gx2d::Crop crop = {});
 
     void draw(const RenderCtx& ctx, const gx2d::Sprite& sprite);
+
+    void draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite);
 
 public:
     Renderer(lib2d::gx::window& window_,
