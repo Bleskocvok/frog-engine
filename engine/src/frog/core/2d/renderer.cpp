@@ -231,14 +231,15 @@ void Renderer::draw_ui(const frog::scene_manager<frog::game_object2d>& scenes,
             {
                 gx2d::Crop crop;
 
-                auto pos = elem->pos();
+                auto pos = elem->pos() + elem->label->rel_pos;
 
                 if (auto inter = elem->sprite.interpolation; inter != gx2d::Interpolation::NONE)
                 {
                     float value = float(between);
                     if (inter == gx2d::Interpolation::EXTRAPOLATE)
                         value += 1;
-                    pos = frog::geo::lerp(elem->sprite.prev.pos, pos, value);
+                    auto prev = elem->sprite.prev.pos + elem->label->rel_pos;
+                    pos = frog::geo::lerp(prev, pos, value);
                 }
 
                 if (elem->sprite.crop)

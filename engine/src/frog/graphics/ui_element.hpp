@@ -25,6 +25,7 @@ struct text
     Align align = Align::LEFT;
     gx::rgba_t color = gx::colors::white;
     std::string font = "default";
+    frog::geo::vec2 rel_pos;
 };
 
 
