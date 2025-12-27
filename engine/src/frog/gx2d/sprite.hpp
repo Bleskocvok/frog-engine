@@ -105,6 +105,19 @@ inline void crop_tex(const Crop& crop, const geo::rect& rect, geo::rect& tex)
     tex.pos.y() += top_remove;
 
     tex.size.y() -= bot_remove;
+
+    // Left, right.
+
+    float left_ratio = crop.left / rect.size.x();
+    float left_remove = left_ratio * tex.size.x();
+
+    float right_ratio = crop.right/ rect.size.x();
+    float right_remove = right_ratio * tex.size.x();
+
+    tex.size.x() -= left_remove;
+    tex.pos.x() += left_remove;
+
+    tex.size.x() -= right_remove;
 }
 
 inline void perform_interpolation(const Sprite& s, double between, geo::rect& rect, float& angle)

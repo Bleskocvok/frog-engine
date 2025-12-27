@@ -23,6 +23,8 @@ inline Crop clamp(Crop c)
     return c;
 }
 
+// Source + crop describe the are that should be cut out of dest. Therefore
+// returns the crop to change dest to cropped src.
 inline frog::gx2d::Crop multiply_crop(const frog::geo::rect& src,
                                       const frog::gx2d::Crop& crop,
                                       const frog::geo::rect& dest)

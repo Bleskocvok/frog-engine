@@ -248,6 +248,14 @@ void Renderer::draw_ui(const frog::scene_manager<frog::game_object2d>& scenes,
                     float dif = 0.5 * ( elem->sprite.rect.size.y() - height );
                     crop.top = elem->sprite.crop->top - dif;
                     crop.bot = elem->sprite.crop->bot - dif;
+
+                    auto& font = fonts->at(elem->label->font);
+
+                    float width = font.size(elem->label->str, height).x();
+                    float x_dif = 0.5 * ( elem->sprite.rect.size.x() - width );
+                    crop.left = elem->sprite.crop->left - x_dif;
+                    crop.right = elem->sprite.crop->right - x_dif;
+
                     crop = gx2d::clamp(crop);
                 }
 
