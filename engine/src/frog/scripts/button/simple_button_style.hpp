@@ -39,19 +39,11 @@ struct simple_button_style_base : button_style_base<GameObject>
 
     void press(GameObject&) override { press(*ui); }
 
-    // void activate(GameObject&) override {}
-
-    // void deactivate(GameObject&) override {}
-
     virtual void idle(gx::ui_element&) {}
 
     virtual void hover(gx::ui_element&) {}
 
     virtual void press(gx::ui_element&) {}
-
-    // virtual void activate(gx::ui_element&) { activate(*ui); }
-
-    // virtual void deactivate(gx::ui_element&) { deactivate(*ui); }
 };
 
 

@@ -32,9 +32,9 @@ struct button_style_base
 
     virtual void press(GameObject&) {}
 
-    virtual void activate(GameObject&) {}
+    virtual void activate() {}
 
-    virtual void deactivate(GameObject&) {}
+    virtual void deactivate() {}
 
     virtual void stable_update(GameObject&) {}
 
