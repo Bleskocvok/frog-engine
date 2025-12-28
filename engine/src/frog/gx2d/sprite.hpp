@@ -94,7 +94,6 @@ inline void crop_rect(const Crop& crop, geo::rect& rect)
 
 inline void crop_tex(const Crop& crop, const geo::rect& rect, geo::rect& tex)
 {
-    // TODO: Left and right.
     float top_ratio = crop.top / rect.size.y();
     float top_remove = top_ratio * tex.size.y();
 
