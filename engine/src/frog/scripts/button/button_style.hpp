@@ -32,6 +32,10 @@ struct button_style_base
 
     virtual void press(GameObject&) {}
 
+    virtual void activate(GameObject&) {}
+
+    virtual void deactivate(GameObject&) {}
+
     virtual void stable_update(GameObject&) {}
 
     virtual void set_crop(GameObject&, gx2d::Crop) {}

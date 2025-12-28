@@ -189,11 +189,11 @@ public:
     {
         using namespace frog;
 
-        if (style)
-        {
-            style->init(obj);
-            style->idle(obj);
-        }
+        // if (style)
+        // {
+        //     style->init(obj);
+        //     style->idle(obj);
+        // }
 
         // TODO: Still not happy about this. It's strange to use the rectangle
         // from ui for button dimensions.
@@ -204,6 +204,12 @@ public:
 
         if (default_rect)
             ui->sprite.rect = *default_rect;
+
+        if (style)
+        {
+            style->init(obj);
+            style->idle(obj);
+        }
 
         game_obj = &obj;
     }
