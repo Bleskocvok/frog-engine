@@ -56,6 +56,11 @@ class Renderer
 
     void draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite);
 
+    void draw_text(const gx::text& label, geo::vec2 pos,
+                   float container_height, frog::gx2d::Crop crop = {});
+
+    void draw_text(const gx::ui_element& elem, double between);
+
 public:
     Renderer(lib2d::gx::window& window_,
             frog::gx::assets<lib2d::gx::texture>& textures_,
@@ -76,9 +81,6 @@ public:
                            geo::rect uv, gx::rgba_t color);
 
     void draw_ui(const frog::scene_manager<frog::game_object2d>& scenes, double between);
-
-    void draw_text(const gx::text& label, geo::vec2 pos,
-                   float container_height, frog::gx2d::Crop crop = {});
 };
 
 } // namespace frog

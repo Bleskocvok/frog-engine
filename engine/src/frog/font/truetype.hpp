@@ -79,7 +79,7 @@ public:
     //           frog::geo::vec2 pos, float height, frog::gx::rgba_t color) override;
 
     void draw(frog::r2d::Renderer&, const frog::gx::text& label,
-              frog::geo::vec2 pos, float container_height,
+              frog::geo::vec2 pos, float height,
               frog::gx2d::Crop crop = {}) override;
 };
 

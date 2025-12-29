@@ -3,6 +3,8 @@
 #include "renderer.hpp"
 
 #include "frog/gx2d/sprite.hpp"
+#include "frog/graphics/ui_element.hpp"
+#include "frog/utils/assert.hpp"
 
 #include <map>
 
@@ -229,40 +231,63 @@ void Renderer::draw_ui(const frog::scene_manager<frog::game_object2d>& scenes,
 
             if (elem->label)
             {
-                gx2d::Crop crop;
-
-                auto pos = elem->pos() + elem->label->rel_pos;
-
-                if (auto inter = elem->sprite.interpolation; inter != gx2d::Interpolation::NONE)
-                {
-                    float value = float(between);
-                    if (inter == gx2d::Interpolation::EXTRAPOLATE)
-                        value += 1;
-                    auto prev = elem->sprite.prev.pos + elem->label->rel_pos;
-                    pos = frog::geo::lerp(prev, pos, value);
-                }
-
-                if (elem->sprite.crop)
-                {
-                    float height = elem->label->height * elem->size().y();
-                    float dif = 0.5 * ( elem->sprite.rect.size.y() - height );
-                    crop.top = elem->sprite.crop->top - dif;
-                    crop.bot = elem->sprite.crop->bot - dif;
-
-                    auto& font = fonts->at(elem->label->font);
-
-                    float width = font.size(elem->label->str, height).x();
-                    float x_dif = 0.5 * ( elem->sprite.rect.size.x() - width );
-                    crop.left = elem->sprite.crop->left - x_dif;
-                    crop.right = elem->sprite.crop->right - x_dif;
-
-                    crop = gx2d::clamp(crop);
-                }
-
-                draw_text(*elem->label, pos, elem->size().y(), crop);
+                draw_text(*elem, between);
             }
         }
     });
+}
+
+void Renderer::draw_text(const gx::ui_element& elem, double between)
+{
+    gx2d::Crop crop;
+
+    if (not elem.label)
+        return;
+
+    const auto& label = *elem.label;
+
+    auto& font = fonts->at(label.font);
+
+    auto pos = elem.pos() + elem.label->rel_pos;
+
+    if (auto inter = elem.sprite.interpolation; inter != gx2d::Interpolation::NONE)
+    {
+        float value = float(between);
+        if (inter == gx2d::Interpolation::EXTRAPOLATE)
+            value += 1;
+        auto prev = elem.sprite.prev.pos + label.rel_pos;
+        pos = frog::geo::lerp(prev, pos, value);
+    }
+
+    if (elem.sprite.crop)
+    {
+        float height = label.height * elem.size().y();
+        float dif = 0.5 * ( elem.sprite.rect.size.y() - height );
+        crop.top = elem.sprite.crop->top - dif;
+        crop.bot = elem.sprite.crop->bot - dif;
+
+        auto& font = fonts->at(label.font);
+
+        float width = font.size(label.str, height).x();
+        float x_dif = 0.5 * ( elem.sprite.rect.size.x() - width );
+        crop.left = elem.sprite.crop->left - x_dif;
+        crop.right = elem.sprite.crop->right - x_dif;
+
+        crop = gx2d::clamp(crop);
+    }
+
+    float container_height = elem.size().y();
+    float height = container_height * label.height;
+    auto text_size = font.size(label.str, height);
+
+    if (label.align == gx::Align::CENTER)
+        pos.x() -= text_size.x() / 2;
+    else if (label.align == gx::Align::RIGHT)
+        pos.x() -= text_size.x();
+    else
+        frog_assert(label.align == gx::Align::LEFT);
+
+    font.draw(*this, label, pos, height, crop);
 }
 
 #endif

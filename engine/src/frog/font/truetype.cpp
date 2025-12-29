@@ -1,10 +1,10 @@
-#include "frog/core/2d/renderer.hpp"
 #ifndef NOT_FROG_BUILD_2D
 
 #include "truetype.hpp"
 
 #include "frog/core/engine2d.hpp"
 #include "frog/geometry/rectangle.hpp"
+#include "frog/core/2d/renderer.hpp"
 
 #include <utility>      // move
 
@@ -25,18 +25,17 @@ geo::vec2 truetype::size(const std::string& str, float height)
 }
 
 void truetype::draw(frog::r2d::Renderer& engine, const frog::gx::text& label,
-          geo::vec2 pos, float container_height, frog::gx2d::Crop crop)
+          geo::vec2 pos, float height, frog::gx2d::Crop crop)
 {
-    float height = container_height * label.height;
+    // float height = container_height * label.height;
     auto text_size = size(label.str, height);
 
-    if (label.align == gx::Align::CENTER)
-        pos.x() -= text_size.x() / 2;
-    else if (label.align == gx::Align::RIGHT)
-        pos.x() -= text_size.x();
-    else
-        frog_assert(label.align == gx::Align::LEFT);
-
+    // if (label.align == gx::Align::CENTER)
+    //     pos.x() -= text_size.x() / 2;
+    // else if (label.align == gx::Align::RIGHT)
+    //     pos.x() -= text_size.x();
+    // else
+    //     frog_assert(label.align == gx::Align::LEFT);
 
     pos.x() += text_size.x() / 2;
     geo::rect rect = { pos, text_size };
