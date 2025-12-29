@@ -2,9 +2,11 @@
 
 #include "renderer.hpp"
 
+#include "frog/gx2d/crop.hpp"
 #include "frog/gx2d/sprite.hpp"
-#include "frog/graphics/ui_element.hpp"
 #include "frog/utils/assert.hpp"
+#include "frog/geometry/rectangle.hpp"
+#include "frog/graphics/ui_element.hpp"
 
 #include <map>
 
@@ -239,8 +241,6 @@ void Renderer::draw_ui(const frog::scene_manager<frog::game_object2d>& scenes,
 
 void Renderer::draw_text(const gx::ui_element& elem, double between)
 {
-    gx2d::Crop crop;
-
     if (not elem.label)
         return;
 
@@ -259,23 +259,6 @@ void Renderer::draw_text(const gx::ui_element& elem, double between)
         pos = frog::geo::lerp(prev, pos, value);
     }
 
-    if (elem.sprite.crop)
-    {
-        float height = label.height * elem.size().y();
-        float dif = 0.5 * ( elem.sprite.rect.size.y() - height );
-        crop.top = elem.sprite.crop->top - dif;
-        crop.bot = elem.sprite.crop->bot - dif;
-
-        auto& font = fonts->at(label.font);
-
-        float width = font.size(label.str, height).x();
-        float x_dif = 0.5 * ( elem.sprite.rect.size.x() - width );
-        crop.left = elem.sprite.crop->left - x_dif;
-        crop.right = elem.sprite.crop->right - x_dif;
-
-        crop = gx2d::clamp(crop);
-    }
-
     float container_height = elem.size().y();
     float height = container_height * label.height;
     auto text_size = font.size(label.str, height);
@@ -286,6 +269,26 @@ void Renderer::draw_text(const gx::ui_element& elem, double between)
         pos.x() -= text_size.x();
     else
         frog_assert(label.align == gx::Align::LEFT);
+
+    gx2d::Crop crop;
+
+    if (elem.sprite.crop)
+    {
+        // float dif = 0.5 * ( elem.sprite.rect.size.y() - height );
+        // crop.top = elem.sprite.crop->top - dif;
+        // crop.bot = elem.sprite.crop->bot - dif;
+
+        // float width = text_size.x();
+        // float x_dif = 0.5 * ( elem.sprite.rect.size.x() - width );
+        // crop.left = elem.sprite.crop->left - x_dif;
+        // crop.right = elem.sprite.crop->right - x_dif;
+
+        // crop = gx2d::clamp(crop);
+
+        auto crop_rect = geo::rect{ pos, text_size };
+        crop_rect.pos.x() += text_size.x() / 2;
+        crop = gx2d::multiply_crop(elem.sprite.rect, *elem.sprite.crop, crop_rect);
+    }
 
     font.draw(*this, label, pos, height, crop);
 }

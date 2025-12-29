@@ -3,6 +3,7 @@
 #include "frog/geometry/rectangle.hpp"
 
 #include <algorithm>        // max
+#include <ostream>
 
 namespace frog::gx2d {
 
@@ -12,6 +13,16 @@ struct Crop
     float bot = 0;
     float left = 0;
     float right = 0;
+
+    friend std::ostream& operator<<(std::ostream& o, const Crop& c)
+    {
+        return o << "{"
+                 << " top=" << c.top
+                 << " bot=" << c.bot
+                 << " left=" << c.left
+                 << " right=" << c.right
+                 << " }";
+    }
 };
 
 inline Crop clamp(Crop c)
