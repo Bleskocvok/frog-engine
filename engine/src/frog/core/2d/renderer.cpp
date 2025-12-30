@@ -72,6 +72,9 @@ void Renderer::draw(const RenderCtx& ctx, const lib2d::gx::texture& tex, geo::re
 
 void Renderer::draw(const RenderCtx& ctx, const gx2d::Sprite& model)
 {
+    if (model.image_tag.empty())
+        return;
+
     auto rect = model.rect;
     float angle = model.angle;
 
@@ -189,8 +192,9 @@ void Renderer::draw_objects(const frog::scene_manager<frog::game_object2d>& scen
 
     scenes.for_each_object([&](const auto& obj)
         {
-            if (obj.model().image_tag.empty())
-                return;
+            // // Kinda needs to be commented now.
+            // if (obj.model().image_tag.empty())
+            //     return;
 
             auto layer = obj.model().layer;
 
