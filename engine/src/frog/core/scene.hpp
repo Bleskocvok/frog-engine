@@ -79,19 +79,20 @@ public:
         return found->get();
     }
 
-    // // TODO: This is broken and returns nullptr.
-    // template<typename Script>
-    // Script* get_script()
-    // {
-    //     for (auto& obj : objects())
-    //         if (obj)
-    //         {
-    //             auto* ptr = obj->template get_script<Script>();
-    //             if (ptr)
-    //                 return ptr;
-    //         }
-    //     return nullptr;
-    // }
+    template<typename Script>
+    Script* get_script()
+    {
+        for (auto& obj : objects())
+        {
+            if (not obj)
+                continue;
+
+            auto* ptr = go_get_script<GameObject, Script>(*obj);
+            if (ptr)
+                return ptr;
+        }
+        return nullptr;
+    }
 
     const auto& objects() const { return objects_; }
           auto& objects()       { return objects_; }
