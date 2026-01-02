@@ -3,6 +3,7 @@
 #include "frog/graphics/renderer_base.hpp"
 
 #include "frog/os/window_base.hpp"
+#include "frog/utils/assert.hpp"
 #include "frog/utils/ptr.hpp"
 
 #include "scene_manager.hpp"
@@ -75,6 +76,19 @@ public:
           global(std::move(global)) {}
 
     geo::ivec2 window_size() const { return { window->width(), window->height() }; }
+
+    GameObject* create_child(GameObject& father)
+    {
+        auto* obj = scenes->current().create_object();
+        father.add_child(obj);
+        return obj;
+    }
+
+    GameObject* create_child(GameObject* father)
+    {
+        frog_assert(father);
+        return create_child(*father);
+    }
 
     void quit() { global->quit = true; }
 

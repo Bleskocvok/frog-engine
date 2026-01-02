@@ -43,6 +43,7 @@ private:
     std::vector<ptr<Script>> added_scripts;
     std::vector<Script*> removed_scripts;
     std::vector<ptr<gx::ui_element>> _elements;
+    std::vector<Derived*> children_;
 
     std::string _tag;
     std::string scene_name_;
@@ -85,7 +86,14 @@ private:
 public:
     virtual ~game_object_base() = default;
 
-    void destroy() { _destroyed = true; }
+    void destroy()
+    {
+        _destroyed = true;
+
+        for (auto& child : children_)
+            if (child)
+                child->destroy();
+    }
 
     bool is_destroyed() { return _destroyed; }
 
@@ -97,6 +105,12 @@ public:
 
     const auto& scene_name() const { return scene_name_; }
 
+    const auto& children() const { return children_; }
+
+    void add_child(Derived* child)
+    {
+        children_.push_back(child);
+    }
 
     template<typename S>
     S* get_script()
