@@ -38,6 +38,7 @@ struct Sprite
     geo::rect rect;
 
     gx::rgba_t color = gx::colors::white;
+    // Degrees.
     float angle = 0;
     bool flipped = false;
 
