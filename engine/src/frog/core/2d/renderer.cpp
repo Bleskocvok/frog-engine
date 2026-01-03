@@ -133,7 +133,7 @@ void Renderer::draw_ui_sprite(const lib2d::gx::texture& tex, geo::rect dest,
     draw_sprite(tex, dest, uv, color);
 }
 
-void Renderer::draw_text(const gx::text& label, geo::vec2 pos,
+void Renderer::draw_text(const gx::Text& label, geo::vec2 pos,
                         float container_height, frog::gx2d::Crop crop)
 {
     auto& font = fonts->at(label.font);

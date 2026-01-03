@@ -34,7 +34,7 @@ geo::vec2 atlas::size(const std::string& str, float height)
            , height };
 }
 
-void atlas::draw(frog::r2d::Renderer& renderer, const frog::gx::text& label,
+void atlas::draw(frog::r2d::Renderer& renderer, const frog::gx::Text& label,
           geo::vec2 pos, float height, frog::gx2d::Crop crop)
 {
     using namespace frog;

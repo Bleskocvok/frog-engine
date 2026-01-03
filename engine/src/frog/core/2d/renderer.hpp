@@ -70,7 +70,7 @@ class Renderer
 
     void draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite);
 
-    void draw_text(const gx::text& label, geo::vec2 pos,
+    void draw_text(const gx::Text& label, geo::vec2 pos,
                    float container_height, frog::gx2d::Crop crop = {});
 
     void draw_text(const gx::ui_element& elem, double between);

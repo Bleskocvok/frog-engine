@@ -18,7 +18,7 @@ enum class Align
 };
 
 
-struct text
+struct Text
 {
     std::string str;
     float height = 1;   // relative to its parent's height
@@ -33,7 +33,7 @@ struct ui_element
 {
     frog::gx2d::Sprite sprite;
 
-    std::optional<text> label;
+    std::optional<Text> label;
 
     bool hide = false;
 

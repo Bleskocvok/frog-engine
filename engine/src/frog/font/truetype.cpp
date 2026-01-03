@@ -24,7 +24,7 @@ geo::vec2 truetype::size(const std::string& str, float height)
     return { w / float(h) * height, height };
 }
 
-void truetype::draw(frog::r2d::Renderer& engine, const frog::gx::text& label,
+void truetype::draw(frog::r2d::Renderer& engine, const frog::gx::Text& label,
           geo::vec2 pos, float height, frog::gx2d::Crop crop)
 {
     // float height = container_height * label.height;
