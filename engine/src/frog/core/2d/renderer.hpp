@@ -53,11 +53,21 @@ class Renderer
 
     struct Queue
     {
-        std::map<unsigned, std::vector<const gx2d::Sprite*>> data;
+        struct Elem
+        {
+            const gx2d::Sprite* sprite = nullptr;
+            const gx::ui_element* elem = nullptr;
+        };
+        std::map<unsigned, std::vector<Elem>> data;
 
         void push(const gx2d::Sprite& sprite)
         {
-            data[ sprite.layer ].push_back( &sprite );
+            data[ sprite.layer ].push_back( Elem{ .sprite = &sprite, .elem = nullptr } );
+        }
+
+        void push(const gx::ui_element& elem)
+        {
+            data[ elem.sprite.layer ].push_back( Elem{ .sprite = nullptr, .elem = &elem } );
         }
 
         void draw(Renderer& renderer, const Renderer::RenderCtx& ctx);

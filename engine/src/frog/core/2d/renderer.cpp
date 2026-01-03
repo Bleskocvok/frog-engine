@@ -181,8 +181,17 @@ void Renderer::draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite)
 void Renderer::Queue::draw(Renderer& renderer, const Renderer::RenderCtx& ctx)
 {
     for (const auto& [idx, layer] : data)
-        for (const gx2d::Sprite* model : layer)
-            renderer.draw_recursive(ctx, *model);
+        for (const auto& [model, elem] : layer)
+        {
+            if (model)
+                renderer.draw_recursive(ctx, *model);
+
+            if (elem)
+            {
+                renderer.draw_recursive(ctx, elem->sprite);
+                renderer.draw_text(*elem, ctx.between);
+            }
+        }
 }
 
 void Renderer::draw_objects(const frog::scene_manager<frog::game_object2d>& scenes,
@@ -223,6 +232,40 @@ void Renderer::draw_ui(const frog::scene_manager<frog::game_object2d>& scenes,
     std::tie(ctx.scale, ctx.shift) = ui_scale_shift();
     ctx.move_pre_scale = false;
 
+    // scenes.for_each_object([&](auto& obj)
+    // {
+    //     for (const frog::ptr<gx::ui_element>& elem : obj.elements())
+    //     {
+    //         if (elem->hide)
+    //             continue;
+
+    //         draw_recursive(ctx, elem->sprite);
+
+    //         if (not elem->sprite.image_tag.empty())
+    //         {
+    //             // auto rect = elem->sprite.rect;
+
+    //             // float angle;
+    //             // gx2d::perform_interpolation(elem->sprite, between, rect, angle);
+
+    //             // auto tex = elem->sprite.tex;
+    //             // gx2d::apply_crop(elem->sprite, between, rect, tex);
+
+    //             // draw_ui_sprite(textures->at(elem->sprite.image_tag),
+    //             //             rect,
+    //             //             tex,
+    //             //             elem->sprite.color);
+    //         }
+
+    //         if (elem->label)
+    //         {
+    //             draw_text(*elem, between);
+    //         }
+    //     }
+    // });
+
+    auto queue = Queue();
+
     scenes.for_each_object([&](auto& obj)
     {
         for (const frog::ptr<gx::ui_element>& elem : obj.elements())
@@ -230,30 +273,11 @@ void Renderer::draw_ui(const frog::scene_manager<frog::game_object2d>& scenes,
             if (elem->hide)
                 continue;
 
-            draw_recursive(ctx, elem->sprite);
-
-            if (not elem->sprite.image_tag.empty())
-            {
-                // auto rect = elem->sprite.rect;
-
-                // float angle;
-                // gx2d::perform_interpolation(elem->sprite, between, rect, angle);
-
-                // auto tex = elem->sprite.tex;
-                // gx2d::apply_crop(elem->sprite, between, rect, tex);
-
-                // draw_ui_sprite(textures->at(elem->sprite.image_tag),
-                //             rect,
-                //             tex,
-                //             elem->sprite.color);
-            }
-
-            if (elem->label)
-            {
-                draw_text(*elem, between);
-            }
+            queue.push(*elem);
         }
     });
+
+    queue.draw(*this, ctx);
 }
 
 void Renderer::draw_text(const gx::ui_element& elem, double between)
