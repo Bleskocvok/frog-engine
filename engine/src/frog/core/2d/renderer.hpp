@@ -17,6 +17,8 @@
 #include "frog/gx2d/crop.hpp"
 #include "frog/gx2d/sprite.hpp"
 
+#include <map>
+
 namespace frog::r2d
 {
 
@@ -47,6 +49,18 @@ class Renderer
 
         bool move_pre_scale = true;
         double between = 0;
+    };
+
+    struct Queue
+    {
+        std::map<unsigned, std::vector<const gx2d::Sprite*>> data;
+
+        void push(const gx2d::Sprite& sprite)
+        {
+            data[ sprite.layer ].push_back( &sprite );
+        }
+
+        void draw(Renderer& renderer, const Renderer::RenderCtx& ctx);
     };
 
     void draw(const RenderCtx& ctx, const lib2d::gx::texture& tex, geo::rect dest,

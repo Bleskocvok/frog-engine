@@ -140,6 +140,7 @@ void Renderer::draw_text(const gx::text& label, geo::vec2 pos,
     font.draw(*this, label, pos, container_height, crop);
 }
 
+// TODO: This is not recursive, retard. Fix!
 void Renderer::draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite)
 {
     auto draw_subsprite = [&](const gx2d::ChildSprite& sub)
@@ -177,6 +178,13 @@ void Renderer::draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite)
             draw_subsprite(sub);
 }
 
+void Renderer::Queue::draw(Renderer& renderer, const Renderer::RenderCtx& ctx)
+{
+    for (const auto& [idx, layer] : data)
+        for (const gx2d::Sprite* model : layer)
+            renderer.draw_recursive(ctx, *model);
+}
+
 void Renderer::draw_objects(const frog::scene_manager<frog::game_object2d>& scenes,
                             double between)
 {
@@ -197,23 +205,14 @@ void Renderer::draw_objects(const frog::scene_manager<frog::game_object2d>& scen
     ctx.scale = frog::geo::lerp(ctx.prev_scale, ctx.scale, float(between));
     ctx.shift = frog::geo::lerp(ctx.prev_shift, ctx.shift, float(between));
 
+    auto queue = Queue();
+
     scenes.for_each_object([&](const auto& obj)
         {
-            // // Kinda needs to be commented now.
-            // if (obj.model().image_tag.empty())
-            //     return;
-
-            auto layer = obj.model().layer;
-
-            // if (layer >= render_queue.size())
-            //     render_queue.resize(layer + 1);
-
-            render_queue[layer].push_back(&obj.model());
+            queue.push(obj.model());
         });
 
-    for (const auto& [idx, layer]: render_queue)
-        for (const gx2d::Sprite* model : layer)
-            draw_recursive(ctx, *model);
+    queue.draw(*this, ctx);
 }
 
 void Renderer::draw_ui(const frog::scene_manager<frog::game_object2d>& scenes,
