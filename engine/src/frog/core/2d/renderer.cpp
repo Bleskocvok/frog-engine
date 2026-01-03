@@ -76,32 +76,39 @@ void Renderer::draw(const RenderCtx& ctx, const gx2d::Sprite& model)
         return;
 
     auto rect = model.rect;
+    auto tex = model.tex;
     float angle = model.angle;
 
     perform_interpolation(model, ctx.between, rect, angle);
 
     // TODO: Apply crop here too.
 
+    gx2d::apply_crop(model, ctx.between, rect, tex);
+
     rect.pos *= ctx.pos_mult;
     rect.size *= ctx.scale_mult;
 
-    rect.pos += ctx.shift;
+    if (ctx.move_pre_scale)
+        rect.pos += ctx.shift;
     rect.pos.x() *= ctx.scale.x();
     rect.pos.y() *= ctx.scale.y();
+    if (not ctx.move_pre_scale)
+        rect.pos += ctx.shift;
 
     rect.size.x() *= ctx.scale.x();
     rect.size.y() *= ctx.scale.y();
     auto top_left = rect.top_left();
 
-    const auto& it = textures->find(model.image_tag);
-    if (not it)
-        throw std::runtime_error("invalid texture '" + model.image_tag + "'");
-    const auto& tex = *it;
+    // const auto& it = textures->find(model.image_tag);
+    // if (not it)
+    //     throw std::runtime_error("invalid texture '" + model.image_tag + "'");
+    // const auto& tex = *it;
+    const auto& texture = textures->at(model.image_tag);
 
-    auto uv_size = model.tex.size * geo::vec2{ float(tex.w()), float(tex.h()) };
-    auto uv      = model.tex.pos  * geo::vec2{ float(tex.w()), float(tex.h()) };
+    auto uv_size = tex.size * geo::vec2{ float(texture.w()), float(texture.h()) };
+    auto uv      = tex.pos  * geo::vec2{ float(texture.w()), float(texture.h()) };
     gx::rgba_t color = model.color;
-    window->draw_colored_rotated(tex, uv.x(), uv.y(), uv_size.x(), uv_size.y(),
+    window->draw_colored_rotated(texture, uv.x(), uv.y(), uv_size.x(), uv_size.y(),
                                   top_left.x(), top_left.y(),
                                   rect.size.x(), rect.size.y(),
                                   color.r(), color.g(), color.b(), color.a(),
@@ -212,6 +219,11 @@ void Renderer::draw_objects(const frog::scene_manager<frog::game_object2d>& scen
 void Renderer::draw_ui(const frog::scene_manager<frog::game_object2d>& scenes,
                        double between)
 {
+    auto ctx = RenderCtx{};
+    ctx.between = between;
+    std::tie(ctx.scale, ctx.shift) = ui_scale_shift();
+    ctx.move_pre_scale = false;
+
     scenes.for_each_object([&](auto& obj)
     {
         for (const frog::ptr<gx::ui_element>& elem : obj.elements())
@@ -219,20 +231,22 @@ void Renderer::draw_ui(const frog::scene_manager<frog::game_object2d>& scenes,
             if (elem->hide)
                 continue;
 
+            draw_recursive(ctx, elem->sprite);
+
             if (not elem->sprite.image_tag.empty())
             {
-                auto rect = elem->sprite.rect;
+                // auto rect = elem->sprite.rect;
 
-                float angle;
-                gx2d::perform_interpolation(elem->sprite, between, rect, angle);
+                // float angle;
+                // gx2d::perform_interpolation(elem->sprite, between, rect, angle);
 
-                auto tex = elem->sprite.tex;
-                gx2d::apply_crop(elem->sprite, between, rect, tex);
+                // auto tex = elem->sprite.tex;
+                // gx2d::apply_crop(elem->sprite, between, rect, tex);
 
-                draw_ui_sprite(textures->at(elem->sprite.image_tag),
-                            rect,
-                            tex,
-                            elem->sprite.color);
+                // draw_ui_sprite(textures->at(elem->sprite.image_tag),
+                //             rect,
+                //             tex,
+                //             elem->sprite.color);
             }
 
             if (elem->label)
