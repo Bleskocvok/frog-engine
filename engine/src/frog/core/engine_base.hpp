@@ -79,7 +79,8 @@ public:
 
     GameObject* create_child(GameObject& father)
     {
-        auto* obj = scenes->current().create_object();
+        // TODO: Not current, but use father's scene.
+        auto* obj = scenes->at(father.scene_name()).create_object();
         father.add_child(obj);
         return obj;
     }
