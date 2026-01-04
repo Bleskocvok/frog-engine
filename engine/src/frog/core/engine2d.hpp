@@ -33,6 +33,7 @@ namespace frog::font { class atlas; class truetype; } // namespace font
 
 namespace frog {
 
+using Scene2d = scene<game_object2d>;
 
 class engine2d : public engine_base<engine2d, game_object2d, lib2d::os::timer>
 {
