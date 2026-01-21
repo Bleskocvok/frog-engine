@@ -223,8 +223,6 @@ private:
 
     void encapsulate(point& pt, rect rect);
 
-    void solve_collision(point& a, point& b);
-
     void solve_joint(joint j);
 
     void solve_angle(angle alpha);
@@ -265,6 +263,8 @@ public:
 
     const auto& settings() const { return settings_; }
           auto& settings()       { return settings_; }
+
+    static void solve_collision(point& a, point& b);
 
     void update()
     {
