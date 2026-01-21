@@ -27,6 +27,9 @@ geo::vec2 truetype::size(const std::string& str, float height)
 void truetype::draw(frog::r2d::Renderer& engine, const frog::gx::Text& label,
           geo::vec2 pos, float height, frog::gx2d::Crop crop)
 {
+    if (label.str.empty())
+        return;
+
     // float height = container_height * label.height;
     auto text_size = size(label.str, height);
 
@@ -47,7 +50,8 @@ void truetype::draw(frog::r2d::Renderer& engine, const frog::gx::Text& label,
     }
     else
     {
-        auto surf = font_.render_text(label.str, 255, 255, 255, 255);
+        auto surf = font_.render_text(label.str, label.color.r(), label.color.g(),
+                                      label.color.b(), label.color.a());
         auto texture = engine.window->make_texture(surf);
 
         engine.draw_sprite(texture, rect, { 0, 0, 1, 1 }, label.color, crop);
