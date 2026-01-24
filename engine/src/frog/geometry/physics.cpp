@@ -6,6 +6,8 @@
 #include "polar.hpp"
 #include "general.hpp"
 
+#include "frog/debug.hpp"
+
 #include <cassert>
 #include <utility>          // pair
 #include <algorithm>        // max, min, clamp, find, for_each

@@ -207,7 +207,7 @@ private:
     Settings settings_;
     limits limits_ = {};
 
-
+    rect prev_universum;
 
     container<point> points_;
     container<joint> joints_;
@@ -270,8 +270,12 @@ public:
 
     void update()
     {
+        if (prev_universum != settings().universum)
+            grid.reset();
+
         remove();
         verlet_solve();
+        prev_universum = settings().universum;
     }
 
     bool limit_reached() const
