@@ -41,6 +41,11 @@ struct rect_t
     {
         return o << "rect_t{ pos=" << rect.pos << ", size=" << rect.size << " }";
     }
+
+    friend bool operator==(const rect_t& a, const rect_t& b)
+    {
+        return a.pos == b.pos && a.size == b.size;
+    }
 };
 
 
