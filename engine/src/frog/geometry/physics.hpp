@@ -72,7 +72,7 @@ public:
         virtual ~iplugin() = default;
     };
 
-    struct settings
+    struct Settings
     {
         vec2 gravity = { 0, 9.81 };
         float inertia = 0.98;
@@ -204,8 +204,10 @@ public:
     };
 
 private:
-    settings settings_;
+    Settings settings_;
     limits limits_ = {};
+
+
 
     container<point> points_;
     container<joint> joints_;
@@ -247,7 +249,7 @@ private:
     void calculate_grid();
 
 public:
-    soft_physics2d(settings s, limits l = limits{})
+    soft_physics2d(Settings s, limits l = limits{})
         : settings_(s), limits_(l), points_(l.points), joints_(l.joints)
         , angles_(l.angles)
     { }
