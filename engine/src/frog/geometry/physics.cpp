@@ -18,7 +18,7 @@ void soft_physics2d::apply_inertia(point& pt, float delta)
     vec2 diff = pt.pos - pt.prev;
     pt.prev = pt.pos;
     pt.pos += diff * settings_.inertia;
-    pt.pos.y() += settings_.gravity * delta * delta;
+    pt.pos += settings_.gravity * delta * delta;
 }
 
 void soft_physics2d::encapsulate(point& pt, rect rect)

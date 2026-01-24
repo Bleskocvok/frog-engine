@@ -74,7 +74,7 @@ public:
 
     struct settings
     {
-        float gravity = 9.81;
+        vec2 gravity = { 0, 9.81 };
         float inertia = 0.98;
         int iterations = 10;
         rect universum = { 0, 0, 1, 1 };
