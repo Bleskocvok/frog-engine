@@ -5,7 +5,7 @@
 #include "frog/utils/assert.hpp"
 
 #include <vector>
-#include <algorithm>    // for_each
+#include <algorithm>    // for_each, ranges::find_if
 #include <string>
 #include <cassert>
 #include <utility>      // forward, utility
@@ -44,6 +44,7 @@ private:
     std::vector<Script*> removed_scripts;
     std::vector<ptr<gx::ui_element>> _elements;
     std::vector<Derived*> children_;
+    game_object_base* parent_ = nullptr;
 
     std::string _tag;
     std::string scene_name_;
@@ -83,16 +84,49 @@ private:
         return added || deleted;
     }
 
+    inline static int INDENTATION = 0;
+
+    static std::string prefix() {
+        std::string r;
+        for (int i =0; i < INDENTATION; i++)
+            r += "    ";
+        return r;
+    }
+
+    void remove_child(game_object_base* child)
+    {
+        // Literal UB.
+        // std::erase(children_, child)
+
+        auto it = std::ranges::find(children_, child);
+        if (it == children_.end())
+            return;
+        *it = nullptr;
+        LOG(prefix(), "REMOVE CHILD", child, child->tag(), "INSIDE", this, "CHILDREN", children_);
+    }
+
 public:
     virtual ~game_object_base() = default;
 
     void destroy()
     {
+        LOG(prefix(), "BEGIN DESTROYING", this, this->tag(), "CHILDREN", children_);
+        INDENTATION++;
+
         _destroyed = true;
+
+        if (parent_)
+            parent_->remove_child(this);
 
         for (auto& child : children_)
             if (child)
+            {
+                LOG(prefix(), "CHILD DESTROY", child);
                 child->destroy();
+            }
+
+        INDENTATION--;
+        LOG(prefix(), "END DESTROYING", this, this->tag());
     }
 
     bool is_destroyed() { return _destroyed; }
@@ -109,6 +143,8 @@ public:
 
     void add_child(Derived* child)
     {
+        LOG(prefix(), "ADDING CHILD", child, "INSIDE", this, "CHILDREN", children_);
+        child->parent_ = this;
         children_.push_back(child);
     }
 
