@@ -13,10 +13,10 @@ namespace frog {
 
 class animation_script : public frog::script2d
 {
-    gx2d::animation animation_;
+    gx2d::Animation animation_;
 
 public:
-    animation_script(gx2d::animation animation_)
+    animation_script(gx2d::Animation animation_)
         : animation_(std::move(animation_)) {}
 
     void init(frog::game_object2d& obj, frog::engine2d&) override
@@ -39,8 +39,8 @@ public:
         obj.model().tex = animation_.frame().tex;
     }
 
-    const gx2d::animation& animation() const { return animation_; }
-          gx2d::animation& animation()       { return animation_; }
+    const gx2d::Animation& animation() const { return animation_; }
+          gx2d::Animation& animation()       { return animation_; }
 };
 
 

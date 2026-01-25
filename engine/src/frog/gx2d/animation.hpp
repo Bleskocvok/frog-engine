@@ -12,14 +12,14 @@
 namespace frog::gx2d {
 
 
-struct animation_frame
+struct AnimationFrame
 {
     int index = 0;
     int length = 1;
     std::string next;
     bool flipped = false;
 
-    animation_frame(int index, int length, std::string next, bool flipped = false)
+    AnimationFrame(int index, int length, std::string next, bool flipped = false)
         : index(index)
         , length(length)
         , next(std::move(next))
@@ -27,11 +27,11 @@ struct animation_frame
 };
 
 
-class animation
+class Animation
 {
     Sprite atlas;
     geo::ivec2 atlas_size;
-    std::unordered_map<std::string, animation_frame> map;
+    std::unordered_map<std::string, AnimationFrame> map;
     std::string current_ = "";
     std::string next = "";
     int frame_ = 0;
@@ -40,7 +40,7 @@ class animation
     float accum = 0;
 
 public:
-    animation(Sprite atlas, geo::ivec2 atlas_size, float delay = 0.16667, std::string start = "")
+    Animation(Sprite atlas, geo::ivec2 atlas_size, float delay = 0.16667, std::string start = "")
         : atlas(std::move(atlas))
         , atlas_size(atlas_size)
         , current_(std::move(start))
@@ -49,7 +49,7 @@ public:
 
     const Sprite& get_atlas() const { return atlas; }
 
-    void add_frame(std::string name, animation_frame frame)
+    void add_frame(std::string name, AnimationFrame frame)
     {
         map.emplace(name, std::move(frame));
         if (current_.empty())
@@ -82,7 +82,7 @@ public:
         }
     }
 
-    const animation_frame& at(const std::string& f) const
+    const AnimationFrame& at(const std::string& f) const
     {
         try
         {
@@ -98,14 +98,14 @@ public:
         }
     }
 
-    const animation_frame& current() const { return at(current_); }
+    const AnimationFrame& current() const { return at(current_); }
 
     float frame_duration(const std::string& f) const
     {
         return length_of(at(f)) * delay;
     }
 
-    int length_of(const animation_frame& f) const
+    int length_of(const AnimationFrame& f) const
     {
         return f.length == -1 ? atlas_size.x() : f.length;
     }

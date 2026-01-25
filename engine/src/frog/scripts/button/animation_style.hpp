@@ -14,10 +14,10 @@ struct animation_style : frog::button_style2d
 {
     frog::gx::ui_element* ui = nullptr;
     bool activated = false;
-    frog::gx2d::animation anim;
+    frog::gx2d::Animation anim;
     float update_delta = 0;
 
-    animation_style(frog::gx2d::animation anim, float update_delta)
+    animation_style(frog::gx2d::Animation anim, float update_delta)
         : anim(std::move(anim)),
           update_delta(update_delta)
     { }
