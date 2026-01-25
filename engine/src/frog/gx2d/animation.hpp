@@ -45,7 +45,11 @@ public:
         , atlas_size(atlas_size)
         , current_(std::move(start))
         , delay(delay)
-    {}
+    { }
+
+    Animation(geo::ivec2 atlas_size, float delay = 0.16667, std::string start = "")
+        : Animation({}, atlas_size, delay, start)
+    { }
 
     const Sprite& get_atlas() const { return atlas; }
 
@@ -115,16 +119,24 @@ public:
     const std::string& current_name() const { return current_; }
     const std::string& next_name() const { return next; }
 
+    frog::geo::rect texture_rect() const
+    {
+        geo::vec2 units = { 1.0f / atlas_size.x(),
+                            1.0f / atlas_size.y() };
+        geo::ivec2 pos = { frame_, current().index };
+
+        frog::geo::rect res;
+        res.pos = { pos.x() * units.x(),
+                    pos.y() * units.y() };
+        res.size = units;
+
+        return res;
+    }
+
     Sprite frame() const
     {
         Sprite img = atlas;
-
-        geo::vec2 units = { 1.0f / atlas_size.x(), 1.0f / atlas_size.y() };
-        geo::ivec2 pos = { frame_, current().index };
-
-        img.tex.pos = { pos.x() * units.x(),
-                        pos.y() * units.y() };
-        img.tex.size = units;
+        img.tex = texture_rect();
         img.flipped = current().flipped;
         return img;
     }
