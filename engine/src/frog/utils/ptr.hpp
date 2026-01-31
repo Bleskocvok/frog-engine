@@ -11,8 +11,12 @@ namespace frog
 template<typename T>
 using ptr = std::unique_ptr<T>;
 
+// template<typename T>
+// using weak = std::weak_ptr<T>;
+
+// TODO: std::weak_ptr, but that requires change in object creation.
 template<typename T>
-using weak = std::weak_ptr<T>;
+using weak = T*;
 
 template<typename T>
 using shared = std::shared_ptr<T>;
@@ -29,7 +33,7 @@ ptr<T> mk_ptr(Args&&... args)
 // std::make_shared
 // frog::mk_shared
 template<typename T, typename... Args>
-ptr<T> mk_shared(Args&&... args)
+shared<T> mk_shared(Args&&... args)
 {
     return std::make_shared<T>(std::forward<Args>(args)...);
 }
