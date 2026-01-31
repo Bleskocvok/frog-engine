@@ -29,8 +29,11 @@ inline geo::vec4 rgb_to_vec( gx::rgba_t rgb )
 namespace colors
 {
 
-inline const auto white = rgba_t{ 255, 255, 255, 255 };
-inline const auto black = rgba_t{ 0, 0, 0, 255 };
+inline const auto WHITE = rgba_t{ 255, 255, 255, 255 };
+inline const auto BLACK = rgba_t{   0,   0,   0, 255 };
+inline const auto RED   = rgba_t{ 255,   0,   0, 255 };
+inline const auto GREEN = rgba_t{   0, 255,   0, 255 };
+inline const auto BLUE  = rgba_t{   0,   0, 255, 255 };
 
 }  // namespace colors
 

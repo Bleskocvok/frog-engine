@@ -23,7 +23,7 @@ struct Text
     std::string str;
     float height = 1;   // relative to its parent's height
     Align align = Align::LEFT;
-    gx::rgba_t color = gx::colors::white;
+    gx::rgba_t color = gx::colors::WHITE;
     std::string font = "default";
     frog::geo::vec2 rel_pos = { 0 };
 };

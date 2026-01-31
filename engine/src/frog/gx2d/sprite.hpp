@@ -37,7 +37,7 @@ struct Sprite
     std::string image_tag;
     geo::rect rect;
 
-    gx::rgba_t color = gx::colors::white;
+    gx::rgba_t color = gx::colors::WHITE;
     // Degrees.
     float angle = 0;
     bool flipped = false;
