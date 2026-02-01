@@ -162,15 +162,27 @@ public:
 
     void add_objects(Engine& eng)
     {
-        for (size_t i = 0; i < to_add.size(); i++)
+        std::vector<ptr<GameObject>> queue = std::move(to_add);
+        to_add.clear();
+
+        for (auto& obj : queue)
         {
-            if (not to_add[i])
+            if (not obj)
                 continue;
 
-            to_add[i]->init(eng);
-            objects_.push_back(std::move(to_add[i]));
+            obj->init(eng);
+            objects_.push_back(std::move(obj));
         }
-        to_add.clear();
+
+        // for (size_t i = 0; i < to_add.size(); i++)
+        // {
+        //     if (not to_add[i])
+        //         continue;
+
+        //     to_add[i]->init(eng);
+        //     objects_.push_back(std::move(to_add[i]));
+        // }
+        // to_add.clear();
     }
 
     void init(Engine& eng)
