@@ -72,6 +72,54 @@ class button_script_base : public Script
         override_release = false;
     }
 
+    void button_update(typename Script::GameObject& obj,
+                      typename Script::Engine& engine)
+    {
+        using namespace frog;
+
+        geo::vec2 pos = engine.mouse_pos_in_ui();
+
+        auto rect = ui->sprite.rect;
+        bool collides = geo::is_collision(rect, pos);
+        bool l_pressed = engine.input->mouse().but_l.pressed;
+        bool l_released = engine.input->mouse().but_l.released;
+
+        if (not input_from_engine)
+        {
+            l_pressed = override_press;
+            l_released = override_release;
+        }
+
+        reset_override_input();
+
+        if (collides && l_pressed)
+            down = true;
+
+        if (l_released)
+        {
+            if (down && collides)
+                if (action)
+                {
+                    action->action();
+                    action->action(obj, engine);
+                }
+            down = false;
+        }
+        else if (down)
+            if (action)
+            {
+                action->frame_holding();
+                action->frame_holding(obj, engine);
+            }
+
+        if (down)
+            set_state(pressing, obj);
+        else if (collides)
+            set_state(hovering, obj);
+        else
+            set_state(idling, obj);
+    }
+
 public:
     frog::gx2d::Sprite normal;
     frog::gx2d::Sprite hover;
@@ -216,51 +264,7 @@ public:
 
     void frame_update(typename Script::GameObject& obj,
                       typename Script::Engine& engine) override
-    {
-        using namespace frog;
-
-        geo::vec2 pos = engine.mouse_pos_in_ui();
-
-        auto rect = ui->sprite.rect;
-        bool collides = geo::is_collision(rect, pos);
-        bool l_pressed = engine.input->mouse().but_l.pressed;
-        bool l_released = engine.input->mouse().but_l.released;
-
-        if (not input_from_engine)
-        {
-            l_pressed = override_press;
-            l_released = override_release;
-        }
-
-        reset_override_input();
-
-        if (collides && l_pressed)
-            down = true;
-
-        if (l_released)
-        {
-            if (down && collides)
-                if (action)
-                {
-                    action->action();
-                    action->action(obj, engine);
-                }
-            down = false;
-        }
-        else if (down)
-            if (action)
-            {
-                action->frame_holding();
-                action->frame_holding(obj, engine);
-            }
-
-        if (down)
-            set_state(pressing, obj);
-        else if (collides)
-            set_state(hovering, obj);
-        else
-            set_state(idling, obj);
-    }
+    {}
 
     void end_frame_update(typename Script::GameObject& obj,
                           typename Script::Engine&) override
@@ -272,6 +276,8 @@ public:
     void stable_update(typename Script::GameObject& obj,
                        typename Script::Engine& engine) override
     {
+        button_update(obj, engine);
+
         if (down)
             if (action)
             {
