@@ -3,9 +3,9 @@
 #include "exception.hpp"
 
 #include <filesystem>
+#include <source_location>
 
 namespace frog {
-
 
 inline std::string basename(const std::string& path)
 {
@@ -13,6 +13,14 @@ inline std::string basename(const std::string& path)
         return std::filesystem::path(path).filename().string();
 
     return path;
+}
+
+template< typename T >
+T* assert_ptr(T* ptr, const std::source_location loc = std::source_location::current())
+{
+    if ( not ptr )
+            throw frog::error( "assert failed ", frog::basename( loc.file_name() ), ":", loc.line() );
+    return ptr;
 }
 
 } // namespace frog
