@@ -262,8 +262,8 @@ public:
         game_obj = &obj;
     }
 
-    void frame_update(typename Script::GameObject& obj,
-                      typename Script::Engine& engine) override
+    void frame_update([[maybe_unused]] typename Script::GameObject& obj,
+                      [[maybe_unused]] typename Script::Engine& engine) override
     {}
 
     void end_frame_update(typename Script::GameObject& obj,
