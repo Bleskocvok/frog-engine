@@ -47,6 +47,10 @@ struct script_base
 
     virtual void destroyed(GameObject&, Engine&) {}
 
+    virtual void scene_activated(GameObject&, Engine&) {}
+
+    virtual void scene_deactivated(GameObject&, Engine&) {}
+
     const GameObject* object() const { return object_; }
           GameObject* object()       { return object_; }
 

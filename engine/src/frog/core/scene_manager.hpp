@@ -37,6 +37,22 @@ private:
         self.current().for_each_object(func);
     }
 
+    void activated(Engine& eng)
+    {
+        if (empty())
+            return;
+
+        current().activated(eng);
+    }
+
+    void deactivated(Engine& eng)
+    {
+        if (empty())
+            return;
+
+        current().deactivated(eng);
+    }
+
 public:
     scene_manager() = default;
 
@@ -107,8 +123,12 @@ public:
         {
             prev_next.emplace(_current, *_next);
 
+            deactivated(eng);
+
             _current = std::move(*_next);
             _next.reset();
+
+            activated(eng);
         }
 
         current().stable_update(eng);

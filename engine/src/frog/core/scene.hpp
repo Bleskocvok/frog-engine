@@ -233,6 +233,22 @@ public:
         if (eng.global->init_obj_immediately)
             add_objects(eng);
     }
+
+    void deactivated(Engine& eng)
+    {
+        for_each_object([&](auto& obj) { obj.scene_deactivated(eng); });
+
+        if (eng.global->init_obj_immediately)
+            add_objects(eng);
+    }
+
+    void activated(Engine& eng)
+    {
+        for_each_object([&](auto& obj) { obj.scene_activated(eng); });
+
+        if (eng.global->init_obj_immediately)
+            add_objects(eng);
+    }
 };
 
 

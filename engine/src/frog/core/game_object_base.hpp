@@ -260,6 +260,18 @@ public:
         init(engine);
         for_each_script([&](auto& sc){ sc.destroyed(get(), engine); });
     }
+
+    void scene_activated(Engine& engine)
+    {
+        init(engine);
+        for_each_script([&](auto& sc){ sc.scene_activated(get(), engine); });
+    }
+
+    void scene_deactivated(Engine& engine)
+    {
+        init(engine);
+        for_each_script([&](auto& sc){ sc.scene_deactivated(get(), engine); });
+    }
 };
 
 
