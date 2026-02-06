@@ -162,17 +162,21 @@ public:
 
     void add_objects(Engine& eng)
     {
-        std::vector<ptr<GameObject>> queue = std::move(to_add);
-        to_add.clear();
-
-        for (auto& obj : queue)
+        do
         {
-            if (not obj)
-                continue;
+            std::vector<ptr<GameObject>> queue = std::move(to_add);
+            to_add.clear();
 
-            obj->init(eng);
-            objects_.push_back(std::move(obj));
-        }
+            for (auto& obj : queue)
+            {
+                if (not obj)
+                    continue;
+
+                obj->init(eng);
+                objects_.push_back(std::move(obj));
+            }
+
+        } while (not to_add.empty() && eng.global->init_obj_recursive);
 
         // for (size_t i = 0; i < to_add.size(); i++)
         // {
@@ -193,26 +197,41 @@ public:
     void stable_update(Engine& eng)
     {
         for_each_object([&](auto& obj) { obj.stable_update(eng); });
+
+        if (eng.global->init_obj_immediately)
+            add_objects(eng);
     }
 
     void pre_update(Engine& eng)
     {
         for_each_object([&](auto& obj) { obj.pre_update(eng); });
+
+        if (eng.global->init_obj_immediately)
+            add_objects(eng);
     }
 
     void end_update(Engine& eng)
     {
         for_each_object([&](auto& obj) { obj.end_update(eng); });
+
+        if (eng.global->init_obj_immediately)
+            add_objects(eng);
     }
 
     void frame_update(Engine& eng)
     {
         for_each_object([&](auto& obj) { obj.frame_update(eng); });
+
+        if (eng.global->init_obj_immediately)
+            add_objects(eng);
     }
 
     void end_frame_update(Engine& eng)
     {
         for_each_object([&](auto& obj) { obj.end_frame_update(eng); });
+
+        if (eng.global->init_obj_immediately)
+            add_objects(eng);
     }
 };
 

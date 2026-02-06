@@ -95,6 +95,11 @@ private:
         *it = nullptr;
     }
 
+    void init_scripts(Engine& engine)
+    {
+        for_each_script([&](auto& sc){ sc.try_init(get(), engine); });
+    }
+
 public:
     virtual ~game_object_base() = default;
 
@@ -209,8 +214,8 @@ public:
     {
         initialized = true;
         addition_removal();
-        // TODO: try_init could be solved better.
-        for_each_script([&](auto& sc){ sc.try_init(get(), engine); });
+        // Always init here.
+        init_scripts(engine);
     }
 
     void stable_update(Engine& engine)

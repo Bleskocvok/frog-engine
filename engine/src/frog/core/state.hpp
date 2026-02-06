@@ -31,6 +31,9 @@ public:
 
     const auto& asset_path() const { return m_asset_path; }
     const auto& save_path() const { return m_save_path; }
+
+    bool init_obj_immediately = true;
+    bool init_obj_recursive = true;
 };
 
 
