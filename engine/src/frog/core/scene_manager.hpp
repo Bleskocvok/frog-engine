@@ -70,6 +70,12 @@ public:
     template<typename Func>
     void for_each_object(Func func)       { for_each_impl(*this, func); }
 
+    decltype(scenes)::const_iterator begin() const { return scenes.cbegin(); }
+    decltype(scenes)::      iterator begin()       { return scenes.begin(); }
+
+    decltype(scenes)::const_iterator end() const { return scenes.cend(); }
+    decltype(scenes)::      iterator end()       { return scenes.end(); }
+
     const std::optional<std::pair<std::string, std::string>>& just_switched() const
     {
         return prev_next;
