@@ -146,7 +146,7 @@ public:
     std::vector<ptr<Script>>& get_scripts() { return scripts; }
 
     template<typename S, typename Func>
-    void for_each_script_instanceof(Func func)
+    void for_each_script_instanceof(Func&& func)
     {
         for (auto& sc : scripts)
             if (auto* converted = dynamic_cast<S*>(sc.get()))
