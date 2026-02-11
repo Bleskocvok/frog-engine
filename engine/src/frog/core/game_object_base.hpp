@@ -52,7 +52,7 @@ private:
     friend scene<Derived>;
 
     template<typename Func>
-    void for_each_script(Func func)
+    void for_each_script(Func&& func)
     {
         for (auto& ptr : scripts)
         {
