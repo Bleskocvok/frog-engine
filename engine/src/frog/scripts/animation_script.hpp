@@ -24,7 +24,9 @@ class animation_script : public frog::script2d
 
 public:
     animation_script(gx2d::Animation animation_, frog::gx::ui_element* ui = nullptr)
-        : animation_(std::move(animation_)) {}
+        : animation_(std::move(animation_))
+        , ui(ui)
+    { }
 
     void init(frog::game_object2d& obj, frog::engine2d&) override
     {
