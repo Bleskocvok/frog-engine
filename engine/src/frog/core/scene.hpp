@@ -172,8 +172,9 @@ public:
                 if (not obj)
                     continue;
 
-                obj->init(eng);
+                // obj->init(eng);
                 objects_.push_back(std::move(obj));
+                objects_.back()->init(eng);
             }
 
         } while (not to_add.empty() && eng.global->init_obj_recursive);

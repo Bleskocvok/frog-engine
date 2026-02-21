@@ -52,25 +52,38 @@ private:
     friend scene<Derived>;
 
     template<typename Func>
-    void for_each_script(Func&& func)
+    void for_each_script_internal(Engine& engine, Func&& func)
     {
         for (auto& ptr : scripts)
         {
             frog_assert(ptr);
             func(*ptr);
         }
+        addition(engine);
     }
 
-    const Derived& get() const  { return *static_cast<const Derived*>(this); }
-          Derived& get()        { return *static_cast<      Derived*>(this); }
+    const Derived& get() const { return *static_cast<const Derived*>(this); }
+          Derived& get()       { return *static_cast<      Derived*>(this); }
 
-    bool addition_removal()
+    bool addition(Engine& engine)
     {
-        bool added = not added_scripts.empty();
-        for (ptr<Script>& script : added_scripts)
-            scripts.push_back(std::move(script));
+        std::vector<ptr<Script>> vec = std::move(added_scripts);
         added_scripts.clear();
 
+        if (vec.empty())
+            return false;
+
+        for (ptr<Script>& script : vec)
+        {
+            scripts.push_back(std::move(script));
+        }
+
+        init_scripts(engine);
+        return true;
+    }
+
+    bool removal()
+    {
         auto rem_it = std::remove_if(scripts.begin(), scripts.end(),
             [&](const auto& scr)
             {
@@ -81,7 +94,14 @@ private:
         scripts.erase(rem_it, scripts.end());
         removed_scripts.clear();
 
-        return added || deleted;
+        return deleted;
+    }
+
+    bool addition_removal(Engine& engine)
+    {
+        bool a = addition(engine);
+        bool b = removal();
+        return a || b;
     }
 
     void remove_child(game_object_base* child)
@@ -97,7 +117,7 @@ private:
 
     void init_scripts(Engine& engine)
     {
-        for_each_script([&](auto& sc){ sc.try_init(get(), engine); });
+        for_each_script_internal(engine, [&](auto& sc){ sc.try_init(get(), engine); });
     }
 
 public:
@@ -159,8 +179,8 @@ public:
         scr->object_ = &get();
         Script* res = scr.get();
         added_scripts.push_back(std::move(scr));
-        if (not initialized)
-            addition_removal();
+        // if (not initialized)
+        //     addition_removal();
         return res;
     }
 
@@ -213,7 +233,7 @@ public:
     virtual void init(Engine& engine)
     {
         initialized = true;
-        addition_removal();
+        addition_removal(engine);
         // Always init here.
         init_scripts(engine);
     }
@@ -222,55 +242,55 @@ public:
     {
         // TODO cont'd: And init here could be unnecessary.
         init(engine);
-        for_each_script([&](auto& sc){ sc.stable_update(get(), engine); });
+        for_each_script_internal(engine, [&](auto& sc){ sc.stable_update(get(), engine); });
     }
 
     virtual void pre_update(Engine& engine)
     {
         init(engine);
-        for_each_script([&](auto& sc){ sc.pre_update(get(), engine); });
+        for_each_script_internal(engine, [&](auto& sc){ sc.pre_update(get(), engine); });
     }
 
     void end_update(Engine& engine)
     {
         init(engine);
-        for_each_script([&](auto& sc) { sc.end_update(get(), engine); });
+        for_each_script_internal(engine, [&](auto& sc) { sc.end_update(get(), engine); });
     }
 
     void frame_update(Engine& engine)
     {
         init(engine);
-        for_each_script([&](auto& sc){ sc.frame_update(get(), engine); });
+        for_each_script_internal(engine, [&](auto& sc){ sc.frame_update(get(), engine); });
     }
 
     void pre_frame_update(Engine& engine)
     {
         init(engine);
-        for_each_script([&](auto& sc){ sc.pre_frame_update(get(), engine); });
+        for_each_script_internal(engine, [&](auto& sc){ sc.pre_frame_update(get(), engine); });
     }
 
     void end_frame_update(Engine& engine)
     {
         init(engine);
-        for_each_script([&](auto& sc){ sc.end_frame_update(get(), engine); });
+        for_each_script_internal(engine, [&](auto& sc){ sc.end_frame_update(get(), engine); });
     }
 
     void destroyed(Engine& engine)
     {
         init(engine);
-        for_each_script([&](auto& sc){ sc.destroyed(get(), engine); });
+        for_each_script_internal(engine, [&](auto& sc){ sc.destroyed(get(), engine); });
     }
 
     void scene_activated(Engine& engine)
     {
         init(engine);
-        for_each_script([&](auto& sc){ sc.scene_activated(get(), engine); });
+        for_each_script_internal(engine, [&](auto& sc){ sc.scene_activated(get(), engine); });
     }
 
     void scene_deactivated(Engine& engine)
     {
         init(engine);
-        for_each_script([&](auto& sc){ sc.scene_deactivated(get(), engine); });
+        for_each_script_internal(engine, [&](auto& sc){ sc.scene_deactivated(get(), engine); });
     }
 };
 
