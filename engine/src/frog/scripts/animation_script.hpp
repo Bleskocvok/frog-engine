@@ -15,8 +15,15 @@ class animation_script : public frog::script2d
 {
     gx2d::Animation animation_;
 
+    frog::gx::ui_element* ui = nullptr;
+
+    gx2d::Sprite& sprite(frog::game_object2d& obj)
+    {
+        return ui == nullptr ? obj.model() : ui->sprite;
+    }
+
 public:
-    animation_script(gx2d::Animation animation_)
+    animation_script(gx2d::Animation animation_, frog::gx::ui_element* ui = nullptr)
         : animation_(std::move(animation_)) {}
 
     void init(frog::game_object2d& obj, frog::engine2d&) override
@@ -36,7 +43,7 @@ public:
 
     void apply(frog::game_object2d& obj)
     {
-        obj.model().tex = animation_.frame().tex;
+        sprite(obj).tex = animation_.frame().tex;
     }
 
     const gx2d::Animation& animation() const { return animation_; }
