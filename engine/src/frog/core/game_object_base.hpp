@@ -65,6 +65,22 @@ private:
     const Derived& get() const { return *static_cast<const Derived*>(this); }
           Derived& get()       { return *static_cast<      Derived*>(this); }
 
+    bool addition_no_init()
+    {
+        std::vector<ptr<Script>> vec = std::move(added_scripts);
+        added_scripts.clear();
+
+        if (vec.empty())
+            return false;
+
+        for (ptr<Script>& script : vec)
+        {
+            scripts.push_back(std::move(script));
+        }
+
+        return true;
+    }
+
     bool addition(Engine& engine)
     {
         std::vector<ptr<Script>> vec = std::move(added_scripts);
@@ -179,8 +195,9 @@ public:
         scr->object_ = &get();
         Script* res = scr.get();
         added_scripts.push_back(std::move(scr));
-        // if (not initialized)
-        //     addition_removal();
+        if (not initialized)
+            addition_no_init();
+            // addition_removal();
         return res;
     }
 
