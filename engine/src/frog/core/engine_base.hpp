@@ -130,13 +130,17 @@ public:
                 }
             }
 
-            end_frame_update();
+            // end_frame_update();
 
             auto frame = timer.reset_duration_us();
             global->frame_time_us = frame;
             accum += frame;
 
-            render(accum / static_cast<double>(delta));
+            auto between = accum / static_cast<double>(delta);
+            global->between_ = between;
+            end_frame_update();
+
+            render(between);
         }
     }
 };

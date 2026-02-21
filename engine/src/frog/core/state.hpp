@@ -21,6 +21,8 @@ public:
 
     unsigned max_consecutive_updates = 3;
 
+    double between_ = 0;
+
     // in seconds
     double stable_frame_time() const { return physics_delta_us / 1000000.0; }
 
@@ -28,6 +30,8 @@ public:
     double frame_time() const { return frame_time_us / 1000000.0; }
 
     double fps() const { return 1.0 / frame_time(); }
+
+    double between() const { return between_; }
 
     const auto& asset_path() const { return m_asset_path; }
     const auto& save_path() const { return m_save_path; }
