@@ -130,8 +130,6 @@ public:
                 }
             }
 
-            // end_frame_update();
-
             auto frame = timer.reset_duration_us();
             global->frame_time_us = frame;
             accum += frame;
