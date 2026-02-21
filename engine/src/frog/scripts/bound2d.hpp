@@ -8,6 +8,7 @@
 #include "frog/geometry/physics.hpp"
 #include "frog/geometry/vector.hpp"
 #include "frog/gx2d/sprite.hpp"
+#include "frog/graphics/ui_element.hpp"
 
 #include <cmath>
 #include <optional>
@@ -15,7 +16,7 @@
 
 namespace frog::scripts {
 
-class bound2d : public frog::script2d
+class Bound2d : public frog::script2d
 {
     frog::geo::soft_physics2d* physics = nullptr;
     frog::geo::soft_physics2d::idx_t idx = -1;
@@ -26,9 +27,17 @@ class bound2d : public frog::script2d
 
     float rotation_delta_deg = 0;
 
+    frog::gx::ui_element* ui = nullptr;
+
+    gx2d::Sprite& sprite(frog::game_object2d& obj)
+    {
+        return ui == nullptr ? obj.model() : ui->sprite;
+    }
+
 public:
-    bound2d(frog::geo::soft_physics2d& physics)
+    Bound2d(frog::geo::soft_physics2d& physics, frog::gx::ui_element* ui = nullptr)
         : physics(&physics)
+        , ui(ui)
     { }
 
     void bind(frog::geo::soft_physics2d::idx_t i)
@@ -66,17 +75,17 @@ public:
             const auto& a = physics->point_at(idx);
             const auto& b = physics->point_at(idx_add);
 
-            obj.model().rect.pos = frog::geo::lerp(a.pos, b.pos, 0.5f);
-            obj.model().angle = geo::angle_deg(a.pos, b.pos);
+            sprite(obj).rect.pos = frog::geo::lerp(a.pos, b.pos, 0.5f);
+            sprite(obj).angle = geo::angle_deg(a.pos, b.pos);
         }
         else if (idx != -1)
-            obj.model().rect.pos = physics->point_at(idx).pos;
+            sprite(obj).rect.pos = physics->point_at(idx).pos;
 
         if (idx_rot_a != -1 && idx_rot_b != -1)
         {
             const auto& a = physics->point_at(idx);
             const auto& b = physics->point_at(idx_add);
-            obj.model().angle = rotation_delta_deg + geo::angle_deg(a.pos, b.pos);
+            sprite(obj).angle = rotation_delta_deg + geo::angle_deg(a.pos, b.pos);
         }
     }
 };
