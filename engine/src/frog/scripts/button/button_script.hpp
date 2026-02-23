@@ -97,12 +97,19 @@ class button_script_base : public Script
 
         if (l_released)
         {
-            if (down && collides)
-                if (action)
+            if (action)
+            {
+                if (down && collides)
                 {
                     action->action();
                     action->action(obj, engine);
                 }
+                else if (not down && not collides)
+                {
+                    action->outside_press();
+                    action->outside_press(obj, engine);
+                }
+            }
             down = false;
         }
         else if (down)

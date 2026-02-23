@@ -21,6 +21,9 @@ struct button_action_base
     virtual void action(GameObject&, Engine&) {}
     virtual void action() {}
 
+    virtual void outside_press(GameObject&, Engine&) {}
+    virtual void outside_press() {}
+
     virtual void frame_holding(GameObject&, Engine&) {}
     virtual void frame_holding() {}
 
