@@ -75,6 +75,18 @@ struct ChildSprite
     Sprite sprite;
 };
 
+inline frog::geo::rect tile_at(frog::geo::ivec2 atlas_size, frog::geo::ivec2 pos)
+{
+    frog::geo::rect tex;
+
+    tex.size = { 1.0f / atlas_size.x(),
+                 1.0f / atlas_size.y() };
+
+    tex.pos = tex.size * frog::geo::vec2{ float(pos.x()), float(pos.y())};
+
+    return tex;
+}
+
 inline void calculate_prev(Sprite& sprite)
 {
     sprite.prev.pos = sprite.rect.pos;
