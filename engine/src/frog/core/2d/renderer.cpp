@@ -304,14 +304,19 @@ void Renderer::draw_text(const gx::ui_element& elem, double between)
     float height = container_height * label.height;
     auto text_size = font.size(label.str, height);
 
-    if (label.align == gx::Align::CENTER)
-        pos.x() -= text_size.x() / 2;
-    else if (label.align == gx::Align::RIGHT)
-        pos.x() = elem.sprite.rect.mid_right().x() - text_size.x();
-    else
+    switch (label.align)
     {
-        frog_assert(label.align == gx::Align::LEFT);
+    case gx::Align::CENTER:
+        pos.x() -= text_size.x() / 2;
+        break;
+    case gx::Align::RIGHT:
+        pos.x() = elem.sprite.rect.mid_right().x() - text_size.x();
+        break;
+    case gx::Align::LEFT:
         pos.x() = elem.sprite.rect.mid_left().x();
+        break;
+    default:
+        frog_assert(false);
     }
 
     gx2d::Crop crop;
