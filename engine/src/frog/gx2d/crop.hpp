@@ -18,9 +18,9 @@ struct Crop
     {
         return o << "{"
                  << " top=" << c.top
-                 << " bot=" << c.bot
-                 << " left=" << c.left
-                 << " right=" << c.right
+                 << ", bot=" << c.bot
+                 << ", left=" << c.left
+                 << ", right=" << c.right
                  << " }";
     }
 };
