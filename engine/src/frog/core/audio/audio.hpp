@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef NOT_FROG_BUILD_2D
+
 #include "frog/graphics/assets.hpp"
 #include "frog/lib2d/audio/audio.hpp"
 #include "frog/lib2d/audio/sound.hpp"
@@ -40,3 +42,5 @@ public:
 };
 
 } // namespace frog
+
+#endif
