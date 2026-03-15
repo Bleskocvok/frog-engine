@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef NOT_FROG_BUILD_2D
+
 #include "sound.hpp"
 #include "channel.hpp"
 
@@ -69,3 +71,5 @@ public:
 };
 
 } // namespace frog::lib2d
+
+#endif

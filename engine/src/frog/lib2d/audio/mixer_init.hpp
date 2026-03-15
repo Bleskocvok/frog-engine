@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef NOT_FROG_BUILD_2D
+
 // #include "frog/lib2d/sdl_include.hpp"
 // #include SDL_MIXER_HEADER
 #include "frog/lib2d/include/mixer.hpp"
@@ -53,3 +55,5 @@ using Music = std::unique_ptr<Mix_Music, SoundDeleter>;
 } // namespace detail
 
 } // namespace frog::lib2d
+
+#endif

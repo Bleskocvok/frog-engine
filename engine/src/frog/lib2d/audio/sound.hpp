@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef NOT_FROG_BUILD_2D
+
 #include "mixer_init.hpp"
 
 #include <stdexcept>
@@ -36,3 +38,5 @@ public:
 };
 
 } // namespace frog::lib2d
+
+#endif
