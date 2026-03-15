@@ -36,6 +36,10 @@ public:
             eng.camera().size = { k * w / float(h), k };
         else
             eng.camera().size = { 1, h / float(w) };
+
+        // TODO: This becomes immediate change, perhaps give an option to make
+        // it interpolated.
+        eng.camera().prev.size = eng.camera().size;
     }
 
     void stable_update(frog::game_object2d&, frog::engine2d& engine) override
