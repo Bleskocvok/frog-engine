@@ -10,6 +10,7 @@
 
 #include "frog/lib2d/structs.hpp"
 #include "frog/core/2d/camera.hpp"
+#include "frog/core/audio/audio.hpp"
 
 // bits, please
 #include "frog/lib2d/bits.hpp"      // initializer
@@ -55,6 +56,8 @@ class engine2d : public engine_base<engine2d, game_object2d, lib2d::os::timer>
 
 public:
     lib2d::initializer initializer_{ lib2d::initializer::Video };
+
+    Audio audio;
 
     lib2d::gx::window* win_raw = nullptr;
     ptr<lib2d::gx::events> input = mk_ptr<lib2d::gx::events>();

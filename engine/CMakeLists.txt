@@ -67,6 +67,7 @@ set(SRC_FILES
     src/frog/core/engine3d.cpp
     src/frog/core/object_builder.cpp
     src/frog/core/2d/renderer.cpp
+    src/frog/core/audio/audio.cpp
     src/frog/font/atlas.cpp
     src/frog/font/truetype.cpp
     src/frog/geometry/camera.cpp
@@ -333,7 +334,8 @@ if(FROG_BUILD_2D)
 
     set(SDL2_INCLUDE_DIRS "${SDL_PATH}/include"
                           "${SDL_IMAGE_PATH}/include"
-                          "${SDL_TTF_PATH}/include")
+                          "${SDL_TTF_PATH}/"
+                          "${SDL_MIXER_PATH}/include")
 
     include_directories(${SDL2_INCLUDE_DIRS})
     # TODO: remove this shit

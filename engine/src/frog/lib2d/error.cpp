@@ -23,6 +23,6 @@ void os::error_box( const std::string& title, const std::string& msg )
 }
 
 
-} // namespace frog
+} // namespace frog::lib2d
 
 #endif

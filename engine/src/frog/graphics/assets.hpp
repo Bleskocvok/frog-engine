@@ -40,15 +40,15 @@ public:
 
     // TODO: investigate why this segfaults
     // EDIT: apparently it doesn't, but keep an eye on this
-    const std::string& add(const std::string& tag, T element)
+    bool add(const std::string& tag, T element)
     {
         return add(tag, mk_ptr<T>(std::move(element)));
     }
 
-    const std::string& add(const std::string& tag, ptr<T> element)
+    bool add(const std::string& tag, ptr<T> element)
     {
-        auto[it, _] = data.emplace(tag, std::move(element));
-        return it->first;
+        auto[it, added] = data.emplace(tag, std::move(element));
+        return added;
     }
 
     bool remove(const std::string& tag)
