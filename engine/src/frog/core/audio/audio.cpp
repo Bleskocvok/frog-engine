@@ -1,3 +1,5 @@
+#ifndef NOT_FROG_BUILD_2D
+
 #include "frog/core/audio/audio.hpp"
 
 namespace frog {
@@ -25,3 +27,5 @@ void Audio::quick_play(lib2d::Sound& sound)
 }
 
 } // namespace frog
+
+#endif
