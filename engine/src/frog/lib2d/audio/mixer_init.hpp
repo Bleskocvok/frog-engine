@@ -1,7 +1,8 @@
 #pragma once
 
-#include "frog/lib2d/sdl_include.hpp"
-#include SDL_MIXER_HEADER
+// #include "frog/lib2d/sdl_include.hpp"
+// #include SDL_MIXER_HEADER
+#include "frog/lib2d/include/mixer.hpp"
 
 #include <stdexcept>
 #include <memory>
