@@ -17,6 +17,7 @@
 
 #include <optional>
 #include <utility>      // move
+#include <vector>
 
 
 namespace frog {
@@ -33,6 +34,9 @@ using button_script   = button_script_base<frog::script>;
 template<typename Script>
 class button_script_base : public Script
 {
+    using GameObject = typename Script::GameObject;
+    using Engine = typename Script::Engine;
+
     frog::gx::ui_element* ui = nullptr;
     Script::GameObject* game_obj = nullptr;
 
@@ -97,27 +101,15 @@ class button_script_base : public Script
 
         if (l_released)
         {
-            if (action)
-            {
-                if (down && collides)
-                {
-                    action->action();
-                    action->action(obj, engine);
-                }
-                else if (not down && not collides)
-                {
-                    action->outside_press();
-                    action->outside_press(obj, engine);
-                }
-            }
+            if (down && collides)
+                action(obj, engine);
+            else if (not down && not collides)
+                outside_press(obj, engine);
+
             down = false;
         }
         else if (down)
-            if (action)
-            {
-                action->frame_holding();
-                action->frame_holding(obj, engine);
-            }
+            frame_holding(obj, engine);
 
         if (down)
             set_state(pressing, obj);
@@ -127,23 +119,71 @@ class button_script_base : public Script
             set_state(idling, obj);
     }
 
+    template<typename Func>
+    void for_each_action(Func&& f)
+    {
+        for (auto& a : actions)
+            if (a)
+                f(*a);
+    }
+
+    void action(GameObject& o, Engine& e)
+    {
+        for_each_action([&](Action& a){ a.action(); a.action(o, e); });
+    }
+
+    void outside_press(GameObject& o, Engine& e)
+    {
+        for_each_action([&](Action& a){ a.outside_press(); a.outside_press(o, e); });
+    }
+
+    void frame_holding(GameObject& o, Engine& e)
+    {
+        for_each_action([&](Action& a){ a.frame_holding(); a.frame_holding(o, e); });
+    }
+
+    void stable_holding(GameObject& o, Engine& e)
+    {
+        for_each_action([&](Action& a){ a.stable_holding(); a.stable_holding(o, e); });
+    }
+
 public:
+    using Action = frog::button_action_base<typename Script::GameObject,
+                                            typename Script::Engine>;
+
     frog::gx2d::Sprite normal;
     frog::gx2d::Sprite hover;
     frog::gx2d::Sprite press;
-    frog::ptr<frog::button_action_base<typename Script::GameObject,
-                                       typename Script::Engine>> action = nullptr;
+    std::vector<frog::ptr<Action>> actions;
     frog::ptr<frog::button_style_base<typename Script::GameObject>> style = nullptr;
 
     state_t state = idling;
 
-    button_script_base(decltype(action) b_action = nullptr,
+    button_script_base(frog::ptr<Action> b_action = nullptr,
                        decltype(style) b_style = nullptr,
                        std::optional<frog::geo::rect> rect = std::nullopt)
         : default_rect(std::move(rect)),
-          action(std::move(b_action)),
           style(std::move(b_style))
-    {}
+    {
+        if (b_action)
+            actions.push_back(std::move(b_action));
+    }
+
+    template<typename T>
+    T* get_action()
+    {
+        for (auto& a : actions)
+        {
+            if (!a)
+                continue;
+
+            auto* ptr = dynamic_cast<T*>(a.get());
+
+            if (ptr)
+                return ptr;
+        }
+        return nullptr;
+    }
 
     bool initialized() const { return ui; }
 
@@ -292,11 +332,7 @@ public:
         button_update(obj, engine);
 
         if (down)
-            if (action)
-            {
-                action->stable_holding();
-                action->stable_holding(obj, engine);
-            }
+            stable_holding(obj, engine);
 
         if (style)
             style->stable_update(obj);
