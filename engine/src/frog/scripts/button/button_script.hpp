@@ -169,6 +169,11 @@ public:
             actions.push_back(std::move(b_action));
     }
 
+    void add_action(frog::ptr<Action> act)
+    {
+        actions.push_back(std::move(act));
+    }
+
     template<typename T>
     T* get_action()
     {
