@@ -1,5 +1,6 @@
 #pragma once
 
+#include "frog/debug.hpp"
 #include "vector.hpp"
 #include "rectangle.hpp"
 #include "basic.hpp"        // Pi
@@ -8,6 +9,7 @@
 #include <cstdint>          // int64_t
 #include <memory>
 #include <optional>
+#include <set>
 #include <unordered_set>
 #include <utility>          // move, pair, forward
 #include <cstddef>          // size_t
@@ -203,6 +205,19 @@ public:
               T& at(idx_t i)       { return data[ map[ i ] ].second; }
     };
 
+    static constexpr idx_t BOUNDS = -1;
+
+    // struct CollisionInfo
+    // {
+    //     idx_t a = -1;
+    //     idx_t b = -1;
+    //     bool includes(idx_t i) const
+    //     {
+    //         return a == i || b == i;
+    //     }
+    // };
+    using CollisionInfo = std::pair<idx_t, idx_t>;
+
 private:
     Settings settings_;
     limits limits_ = {};
@@ -221,9 +236,11 @@ private:
 
     std::optional<optimization_grid<std::pair<idx_t, point*>>> grid;
 
+    std::set<CollisionInfo> collisions_;
+
     void apply_inertia(point& pt, float delta);
 
-    void encapsulate(point& pt, rect rect);
+    bool encapsulate(point& pt, rect rect);
 
     void solve_joint(joint j);
 
@@ -266,16 +283,22 @@ public:
     const auto& settings() const { return settings_; }
           auto& settings()       { return settings_; }
 
-    static void solve_collision(point& a, point& b);
+    static bool solve_collision(point& a, point& b);
+
+    const auto& collisions() const { return collisions_; }
 
     void update()
     {
         if (prev_universum != settings().universum)
             grid.reset();
 
+        collisions_.clear();
+
         remove();
         verlet_solve();
         prev_universum = settings().universum;
+
+        LOGX(collisions_.size());
     }
 
     bool limit_reached() const

@@ -23,19 +23,23 @@ void soft_physics2d::apply_inertia(point& pt, float delta)
     pt.pos += settings_.gravity * delta * delta;
 }
 
-void soft_physics2d::encapsulate(point& pt, rect rect)
+bool soft_physics2d::encapsulate(point& pt, rect rect)
 {
     if (not pt.bound_by_universum)
-        return;
+        return false;
+
+    auto prev = pt.pos;
 
     rect.size *= 0.5;
     pt.pos.x() = std::clamp(pt.pos.x(), rect.pos.x() - rect.size.x() + pt.radius,
                                         rect.pos.x() + rect.size.x() - pt.radius);
     pt.pos.y() = std::clamp(pt.pos.y(), rect.pos.y() - rect.size.y() + pt.radius,
                                         rect.pos.y() + rect.size.y() - pt.radius);
+
+    return pt.pos != prev;
 }
 
-void soft_physics2d::solve_collision(point& a, point& b)
+bool soft_physics2d::solve_collision(point& a, point& b)
 {
     vec2 dif = a.pos - b.pos;
     float dist = dif.length();
@@ -58,7 +62,10 @@ void soft_physics2d::solve_collision(point& a, point& b)
             a.pos -= dif * (ratio * a.inv_weight);
             b.pos += dif * (ratio * b.inv_weight);
         }
+        return true;
     }
+
+    return false;
 }
 
 void soft_physics2d::solve_joint(joint j)
@@ -140,7 +147,10 @@ void soft_physics2d::verlet_solve()
         std::for_each(plugins_.begin(), plugins_.end(), [&](auto& p){ p->solve_all(it, points()); });
 
         for (auto& [i, pt] : points())
-            encapsulate(pt, settings_.universum);
+        {
+            if (encapsulate(pt, settings_.universum))
+                collisions_.insert(CollisionInfo{ i, BOUNDS });
+        }
 
         // grid.clear();
 
@@ -159,8 +169,11 @@ void soft_physics2d::verlet_solve()
 
             grid->for_each_around(circle(pt.pos, pt.radius), [&](std::pair<idx_t, point*> other)
                 {
-                    if (other.first > i)
-                        solve_collision(pt, *other.second);
+                    if (other.first <= i)
+                        return;
+
+                    if (solve_collision(pt, *other.second))
+                        collisions_.insert(CollisionInfo{ i, other.first });
                 });
         }
 
