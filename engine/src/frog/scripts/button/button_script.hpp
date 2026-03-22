@@ -97,7 +97,10 @@ class button_script_base : public Script
         reset_override_input();
 
         if (collides && l_pressed)
+        {
             down = true;
+            press_down(obj, engine);
+        }
 
         if (l_released)
         {
@@ -130,6 +133,11 @@ class button_script_base : public Script
     void action(GameObject& o, Engine& e)
     {
         for_each_action([&](Action& a){ a.action(); a.action(o, e); });
+    }
+
+    void press_down(GameObject& o, Engine& e)
+    {
+        for_each_action([&](Action& a){ a.press_down(); a.press_down(o, e); });
     }
 
     void outside_press(GameObject& o, Engine& e)

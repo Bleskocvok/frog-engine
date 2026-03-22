@@ -29,6 +29,9 @@ struct button_action_base
 
     virtual void stable_holding(GameObject&, Engine&) {}
     virtual void stable_holding() {}
+
+    virtual void press_down(GameObject&, Engine&) {}
+    virtual void press_down() {}
 };
 
 
