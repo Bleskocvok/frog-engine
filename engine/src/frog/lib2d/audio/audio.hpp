@@ -35,6 +35,10 @@ public:
             throw std::runtime_error(std::string("Create Audio: ") + Mix_GetError());
     }
 
+    Audio(const Audio&) = delete;
+
+    Audio& operator=(Audio&) = delete;
+
     ~Audio()
     {
         Mix_CloseAudio();
