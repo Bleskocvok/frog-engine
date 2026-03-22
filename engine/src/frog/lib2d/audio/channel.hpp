@@ -21,50 +21,23 @@ class Channel
 public:
     static constexpr int MaxVolume = MIX_MAX_VOLUME;
 
-    void play(Sound& sound)
-    {
-        Mix_PlayChannel(index, sound.chunk.get(), 0);
-    }
+    void play(Sound& sound);
 
-    void fade_in(Sound& sound, int ms)
-    {
-        Mix_FadeInChannel(index, sound.chunk.get(), 0, ms);
-    }
+    void fade_in(Sound& sound, int ms);
 
-    bool is_playing() const
-    {
-        return Mix_Playing(index);
-    }
+    bool is_playing() const;
 
-    void halt()
-    {
-        Mix_HaltChannel(index);
-    }
+    void halt();
 
-    void fade_out(int ms)
-    {
-        Mix_FadeOutChannel(index, ms);
-    }
+    void fade_out(int ms);
 
-    void pause()
-    {
-        Mix_Pause(index);
-    }
+    void pause();
 
-    void unpause()
-    {
-        Mix_Resume(index);
-    }
+    void unpause();
 
-    void set_volume(int volume)
-    {
-        Mix_Volume(index, volume);
-    }
+    void set_volume(int volume);
 
-    int get_volume() const
-    {
-        return Mix_Volume(index, -1);
-    }
+    int get_volume() const;
 
     int get_index() const
     {

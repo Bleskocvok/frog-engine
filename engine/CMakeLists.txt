@@ -93,6 +93,7 @@ set(SRC_FILES
     src/frog/lib2d/texture.cpp
     src/frog/lib2d/time.cpp
     src/frog/lib2d/window.cpp
+    src/frog/lib2d/audio/channel.cpp
     src/frog/os/input.cpp
     src/frog/os/window.cpp
     src/frog/utils/exception.cpp

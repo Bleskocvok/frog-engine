@@ -29,6 +29,7 @@ public:
     { }
 
     const auto& data() const { return channels_; }
+          auto& data()       { return channels_; }
 
     lib2d::Channel& add()
     {
@@ -117,6 +118,8 @@ public:
     void play(lib2d::Channel& chn);
 
     void set_spare_channels(int count);
+
+    SpareChannels& spare_channels_() { return spare_channels; }
 };
 
 class Audio
