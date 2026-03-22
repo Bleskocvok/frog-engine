@@ -132,6 +132,14 @@ void soft_physics2d::calculate_grid()
         grid->add_to_touching(circle(pt.pos, pt.radius), { i, &pt });
 }
 
+
+void soft_physics2d::insert_collision(CollisionInfo info)
+{
+    collisions_.insert(info);
+    if (not all_collisions_.contains(info))
+        first_collisions_.insert(info);
+}
+
 void soft_physics2d::verlet_solve()
 {
     for (auto& [idx, pt] : points())
@@ -149,7 +157,7 @@ void soft_physics2d::verlet_solve()
         for (auto& [i, pt] : points())
         {
             if (encapsulate(pt, settings_.universum))
-                collisions_.insert(CollisionInfo{ i, BOUNDS });
+                insert_collision(CollisionInfo{ i, BOUNDS });
         }
 
         // grid.clear();
@@ -173,7 +181,7 @@ void soft_physics2d::verlet_solve()
                         return;
 
                     if (solve_collision(pt, *other.second))
-                        collisions_.insert(CollisionInfo{ i, other.first });
+                        insert_collision(CollisionInfo{ i, other.first });
                 });
         }
 
