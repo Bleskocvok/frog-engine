@@ -48,9 +48,9 @@ void Group::quick_play()
 {
     const auto& sound = get();
     if (spare_channels.data().empty())
-        audio->quick_play(sound), LOG("audio");
+        audio->quick_play(sound);
     else
-        audio->play(sound, *frog::assert_ptr( spare_channels.next() )), LOG("spare");
+        audio->play(sound, *frog::assert_ptr( spare_channels.next() ));
 }
 
 void Group::set_spare_channels(int count)
@@ -88,7 +88,6 @@ void Audio::play(const std::string& tag, lib2d::Channel& chn)
 {
     if (chn.is_playing())
     {
-        LOG("FADE");
         chn.fade_in(sounds.at(tag), 30);
     }
     else
