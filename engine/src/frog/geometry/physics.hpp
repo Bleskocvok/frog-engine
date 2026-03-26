@@ -218,6 +218,38 @@ public:
     // };
     using CollisionInfo = std::pair<idx_t, idx_t>;
 
+    struct Collisions
+    {
+        std::set<CollisionInfo> current_;
+        std::set<CollisionInfo> first_;
+        std::set<CollisionInfo> all_;
+
+        void reset()
+        {
+            current_.clear();
+            first_.clear();
+        }
+
+        void update()
+        {
+            std::erase_if(all_, [&](const auto& info)
+            {
+                return not current_.contains(info);
+            });
+
+            for (const auto& info : first_)
+                all_.insert(info);
+        }
+
+        void insert_collision(CollisionInfo info);
+
+        const auto& first()   const { return first_; }
+        const auto& current() const { return current_; }
+        const auto& all()     const { return all_; }
+    };
+
+    Collisions collisions_;
+
 private:
     Settings settings_;
     limits limits_ = {};
@@ -235,10 +267,6 @@ private:
     std::vector<std::unique_ptr<iplugin>> plugins_;
 
     std::optional<optimization_grid<std::pair<idx_t, point*>>> grid;
-
-    std::set<CollisionInfo> collisions_;
-    std::set<CollisionInfo> first_collisions_;
-    std::set<CollisionInfo> all_collisions_;
 
     void apply_inertia(point& pt, float delta);
 
@@ -267,8 +295,6 @@ private:
 
     void calculate_grid();
 
-    void insert_collision(CollisionInfo info);
-
 public:
     soft_physics2d(Settings s, limits l = limits{})
         : settings_(s), limits_(l), points_(l.points), joints_(l.joints)
@@ -290,30 +316,19 @@ public:
     static bool solve_collision(point& a, point& b);
 
     const auto& collisions() const { return collisions_; }
-    const auto& first_collisions() const { return first_collisions_; }
 
     void update()
     {
         if (prev_universum != settings().universum)
             grid.reset();
 
-        collisions_.clear();
-        first_collisions_.clear();
+        collisions_.reset();
 
         remove();
         verlet_solve();
         prev_universum = settings().universum;
 
-        std::erase_if(all_collisions_, [&](const auto& info)
-        {
-            return not collisions_.contains(info);
-        });
-
-        for (const auto& info : first_collisions_)
-            all_collisions_.insert(info);
-
-        if (not first_collisions_.empty())
-            LOGX(first_collisions_.size());
+        collisions_.update();
     }
 
     bool limit_reached() const
