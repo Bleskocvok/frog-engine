@@ -54,6 +54,8 @@ public:
         // 0 = infinite weight
         float inv_weight = 1;
         bool bound_by_universum = true;
+
+        unsigned flying = 0;
     };
 
     class iplugin
@@ -220,9 +222,12 @@ public:
 
     struct Collisions
     {
-        std::set<CollisionInfo> current_;
-        std::set<CollisionInfo> first_;
-        std::set<CollisionInfo> all_;
+        template<class T>
+        using Container = std::set<T>;
+
+        Container<CollisionInfo> current_;
+        Container<CollisionInfo> first_;
+        Container<CollisionInfo> all_;
 
         void reset()
         {
@@ -246,6 +251,24 @@ public:
         const auto& first()   const { return first_; }
         const auto& current() const { return current_; }
         const auto& all()     const { return all_; }
+
+        bool contains(const Container<CollisionInfo>& container, idx_t i) const
+        {
+            // TODO: Perhaps some unit tests?
+            auto lower = container.lower_bound({ i,     0 });
+            auto upper = container.lower_bound({ i + 1, 0 });
+            if (lower != upper)
+                return true;
+
+            auto end = container.upper_bound({ i, 0 });
+            for (auto it = container.begin(); it != end; ++it)
+            {
+                const auto& [a, b] = *it;
+                if (b == i)
+                    return true;
+            }
+            return false;
+        }
     };
 
     Collisions collisions_;
@@ -321,6 +344,14 @@ public:
     {
         if (prev_universum != settings().universum)
             grid.reset();
+
+        for (auto& [idx, pt] : points_.data)
+        {
+            if (collisions_.contains(collisions_.all_, idx))
+                pt.flying = 0;
+            else
+                pt.flying++;
+        }
 
         collisions_.reset();
 
