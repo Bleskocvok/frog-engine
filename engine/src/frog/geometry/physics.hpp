@@ -228,6 +228,7 @@ public:
         Container<CollisionInfo> current_;
         Container<CollisionInfo> first_;
         Container<CollisionInfo> all_;
+        Container<CollisionInfo> all_without_joints_;
 
         void reset()
         {
@@ -235,15 +236,38 @@ public:
             first_.clear();
         }
 
-        void update()
+        void update(const container<joint>& joints)
         {
             std::erase_if(all_, [&](const auto& info)
             {
                 return not current_.contains(info);
             });
+            std::erase_if(all_without_joints_, [&](const auto& info)
+            {
+                return not current_.contains(info);
+            });
+
+            auto always = [](const auto& info)
+            {
+                return info.first == BOUNDS || info.second == BOUNDS;
+            };
 
             for (const auto& info : first_)
+            {
                 all_.insert(info);
+
+                auto joint_collision = [&](const auto& pair) -> bool
+                {
+                    const joint& j = pair.second;
+
+                    return ( j.a == info.first  && j.b == info.second )
+                        || ( j.a == info.second && j.b == info.first );
+                };
+
+                if (always(info)
+                        || not std::ranges::any_of(joints.data, joint_collision))
+                    all_without_joints_.insert(info);
+            }
         }
 
         void insert_collision(CollisionInfo info);
@@ -254,20 +278,27 @@ public:
 
         bool contains(const Container<CollisionInfo>& container, idx_t i) const
         {
-            // TODO: Perhaps some unit tests?
-            auto lower = container.lower_bound({ i,     0 });
-            auto upper = container.lower_bound({ i + 1, 0 });
-            if (lower != upper)
-                return true;
-
-            auto end = container.upper_bound({ i, 0 });
-            for (auto it = container.begin(); it != end; ++it)
+            for (const auto& info : container)
             {
-                const auto& [a, b] = *it;
-                if (b == i)
+                if (info.first == i || info.second == i)
                     return true;
             }
             return false;
+
+            // // TODO: Perhaps some unit tests?
+            // auto lower = container.lower_bound({ i,     0 });
+            // auto upper = container.lower_bound({ i + 1, 0 });
+            // if (lower != upper)
+            //     return true;
+
+            // auto end = container.upper_bound({ i, 0 });
+            // for (auto it = container.begin(); it != end; ++it)
+            // {
+            //     const auto& [a, b] = *it;
+            //     if (b == i)
+            //         return true;
+            // }
+            // return false;
         }
     };
 
@@ -347,7 +378,7 @@ public:
 
         for (auto& [idx, pt] : points_.data)
         {
-            if (collisions_.contains(collisions_.all_, idx))
+            if (collisions_.contains(collisions_.all_without_joints_, idx))
                 pt.flying = 0;
             else
                 pt.flying++;
@@ -359,7 +390,7 @@ public:
         verlet_solve();
         prev_universum = settings().universum;
 
-        collisions_.update();
+        collisions_.update(joints_);
     }
 
     bool limit_reached() const
