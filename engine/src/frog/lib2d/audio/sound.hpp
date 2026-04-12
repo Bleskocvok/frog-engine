@@ -23,7 +23,7 @@ class Sound
             : chunk(Mix_LoadWAV(filename))
     {
         if (!chunk)
-            throw std::runtime_error(std::string("Sound: ") + Mix_GetError());
+            throw std::runtime_error(std::string("Sound: ") + filename + ": " + Mix_GetError());
     }
 
 public:
