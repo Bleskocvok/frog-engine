@@ -1,5 +1,8 @@
 #include "exception.hpp"
 
+#include "frog/utils/assert.hpp"
+#include "frog/utils/string_builder.hpp"
+
 #ifdef FROG_USE_STACKTRACE
     #include <version>
     #if __has_include(<stacktrace>)
@@ -35,10 +38,6 @@ struct Free
     }
 };
 
-} // namespace
-
-namespace frog {
-
 bool demangle(std::string& mangled)
 {
     int status = 0;
@@ -55,6 +54,24 @@ bool demangle(std::string& mangled)
     return true;
 }
 
+std::string_view between(std::string_view view, char open, char close)
+{
+    auto start = view.find(open);
+    auto end = view.find(close);
+    if (start == view.npos)
+        return std::string_view{};
+
+    view = view.substr(start, end - start);
+    if (not view.empty())
+        view.remove_prefix(1);
+
+    return view;
+}
+
+} // namespace
+
+namespace frog {
+
 void error::init_stacktrace()
 {
 #ifdef FROG_HAS_STACKTRACE
@@ -67,26 +84,21 @@ void error::init_stacktrace()
     auto lines = std::unique_ptr<char*, Free>{};
     lines.reset( ::backtrace_symbols(trace.data(), size) );
 
+    stacktrace.clear();
+
     for (int i = 0; i < size; i++)
     {
-        auto view = std::string_view(lines.get()[i]);
+        auto full = std::string_view(lines.get()[i]);
 
-        LOGX(view);
-
-        auto start = view.find('(');
-        auto end = view.find('+');
-        if (start == view.npos)
-            continue;
-
-        view = view.substr(start, end - start);
-        if (not view.empty())
-            view.remove_prefix(1);
-
-        auto func_name = std::string( view );
-
+        auto func_name = std::string( between(full, '(', '+') );
         demangle(func_name);
 
-        LOGX(func_name);
+        auto lib = frog::basename( std::string( full.substr(0, full.find('(')) ) );
+        auto pos = std::string( between(full, '+', ')') );
+        auto ptr = std::string( between(full, '[', ']') );
+
+        stacktrace += frog::make_string(lib, " ( ", func_name, " +", pos, " ) [ ", ptr, " ]\n");
+        // LOG(frog::make_string(lib, " | ", func_name, " | ", pos, " | ", ptr));
     }
 }
 
