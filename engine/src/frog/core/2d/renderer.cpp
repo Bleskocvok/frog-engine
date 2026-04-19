@@ -99,10 +99,6 @@ void Renderer::draw(const RenderCtx& ctx, const gx2d::Sprite& model)
     rect.size.y() *= ctx.scale.y();
     auto top_left = rect.top_left();
 
-    // const auto& it = textures->find(model.image_tag);
-    // if (not it)
-    //     throw std::runtime_error("invalid texture '" + model.image_tag + "'");
-    // const auto& tex = *it;
     const auto& texture = textures->at(model.image_tag);
 
     auto uv_size = tex.size * geo::vec2{ float(texture.w()), float(texture.h()) };
@@ -232,38 +228,6 @@ void Renderer::draw_ui(const frog::scene_manager<frog::game_object2d>& scenes,
     std::tie(ctx.scale, ctx.shift) = ui_scale_shift();
     ctx.move_pre_scale = false;
 
-    // scenes.for_each_object([&](auto& obj)
-    // {
-    //     for (const frog::ptr<gx::ui_element>& elem : obj.elements())
-    //     {
-    //         if (elem->hide)
-    //             continue;
-
-    //         draw_recursive(ctx, elem->sprite);
-
-    //         if (not elem->sprite.image_tag.empty())
-    //         {
-    //             // auto rect = elem->sprite.rect;
-
-    //             // float angle;
-    //             // gx2d::perform_interpolation(elem->sprite, between, rect, angle);
-
-    //             // auto tex = elem->sprite.tex;
-    //             // gx2d::apply_crop(elem->sprite, between, rect, tex);
-
-    //             // draw_ui_sprite(textures->at(elem->sprite.image_tag),
-    //             //             rect,
-    //             //             tex,
-    //             //             elem->sprite.color);
-    //         }
-
-    //         if (elem->label)
-    //         {
-    //             draw_text(*elem, between);
-    //         }
-    //     }
-    // });
-
     auto queue = Queue();
 
     scenes.for_each_object([&](auto& obj)
@@ -323,17 +287,6 @@ void Renderer::draw_text(const gx::ui_element& elem, double between)
 
     if (elem.sprite.crop)
     {
-        // float dif = 0.5 * ( elem.sprite.rect.size.y() - height );
-        // crop.top = elem.sprite.crop->top - dif;
-        // crop.bot = elem.sprite.crop->bot - dif;
-
-        // float width = text_size.x();
-        // float x_dif = 0.5 * ( elem.sprite.rect.size.x() - width );
-        // crop.left = elem.sprite.crop->left - x_dif;
-        // crop.right = elem.sprite.crop->right - x_dif;
-
-        // crop = gx2d::clamp(crop);
-
         auto crop_rect = geo::rect{ pos, text_size };
         crop_rect.pos.x() += text_size.x() / 2;
         crop = gx2d::multiply_crop(elem.sprite.rect, *elem.sprite.crop, crop_rect);
