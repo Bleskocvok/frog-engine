@@ -27,6 +27,11 @@ private:
     {
         gx2d::calculate_prev(img);
 
+        for (auto& child : img.children)
+        {
+            gx2d::calculate_prev(child.sprite);
+        }
+
         for (auto& ui : elements())
             gx2d::calculate_prev(ui->sprite);
     }
