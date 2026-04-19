@@ -37,6 +37,11 @@ struct error : std::exception
         init_stacktrace();
     }
 
+    error()
+    {
+        init_stacktrace();
+    }
+
     // TODO: noexcept???
     const char* what() const noexcept override { return str.c_str(); }
 
@@ -44,12 +49,15 @@ private:
     void init_stacktrace();
 };
 
+
 struct game_error : error {
 
-template<typename... Args>
-explicit game_error(Args&&... args) : error(std::forward<Args>(args)...)
-{ }
+    template<typename... Args>
+    explicit game_error(Args&&... args) : error(std::forward<Args>(args)...)
+    { }
 
+    game_error() : error()
+    { }
 };
 
 }  // namespace frog
