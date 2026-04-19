@@ -10,6 +10,14 @@ constexpr bool is_apple()
     return false;
 }
 
+constexpr bool is_apple_ios()
+{
+#ifdef TARGET_OS_IOS
+    return true;
+#endif
+    return false;
+}
+
 constexpr bool is_android()
 {
 #ifdef __ANDROID__
