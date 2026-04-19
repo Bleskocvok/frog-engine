@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #ifndef NOT_FROG_BUILD_2D
 
 #include "frog/graphics/assets.hpp"
@@ -135,11 +136,13 @@ int run_engine2d(settings set, ptr<state> global, InitAssets init_assets,
         if constexpr (requires{ ex.stacktrace; })
         {
             auto str = ex.what() + std::string("\n\n") + ex.stacktrace;
+            std::cerr << title << "\n" << str << "\n";
             lib2d::os::error_box(title, str);
         }
         else
         {
             auto str = ex.what() + std::string("\n\n");
+            std::cerr << title << "\n" << str << "\n";
             lib2d::os::error_box(title, str);
         }
     };

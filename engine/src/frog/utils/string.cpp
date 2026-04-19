@@ -50,3 +50,17 @@ std::string_view frog::next_segment(std::string_view& str, std::string_view deli
     str.remove_prefix(res.size());
     return res;
 }
+
+std::string_view frog::between(std::string_view view, char open, char close)
+{
+    auto start = view.find(open);
+    auto end = view.find(close);
+    if (start == view.npos)
+        return std::string_view{};
+
+    view = view.substr(start, end - start);
+    if (not view.empty())
+        view.remove_prefix(1);
+
+    return view;
+}
