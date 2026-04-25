@@ -9,6 +9,7 @@
 #include "scene_manager.hpp"
 #include "state.hpp"
 
+#include <algorithm>    // clamp
 #include <utility>      // move
 
 
@@ -134,7 +135,7 @@ public:
             global->frame_time_us = frame;
             accum += frame;
 
-            auto between = accum / static_cast<double>(delta);
+            double between = std::clamp( accum / static_cast<double>(delta), 0.0, 1.0 );
             global->between_ = between;
             end_frame_update();
 
