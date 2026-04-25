@@ -28,6 +28,8 @@ struct window_settings
 
     WindowPosition pos_x = winpos_undefined{};
     WindowPosition pos_y = winpos_undefined{};
+
+    bool allow_high_dpi = false;
 };
 
 }  // frog::lib2d::gx

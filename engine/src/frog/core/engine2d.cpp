@@ -61,6 +61,7 @@ lib2d::gx::window_settings get_window_settings(const settings& s)
         .maximized = s.window.maximized,
         .pos_x = s.window.pos_x,
         .pos_y = s.window.pos_y,
+        .allow_high_dpi = s.window.allow_high_dpi,
     };
 }
 

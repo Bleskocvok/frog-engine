@@ -2,6 +2,8 @@
 
 #include "window.hpp"
 
+#include "frog/utils/target.hpp"
+
 #include "sdl_include.hpp"
 #include SDL_HEADER
 
@@ -70,6 +72,9 @@ window::window( const window_settings& settings )
         win_flags = win_flags | SDL_WINDOW_FULLSCREEN_DESKTOP;
     }
 
+    if ( settings.allow_high_dpi )
+        win_flags = win_flags | SDL_WINDOW_ALLOW_HIGHDPI;
+
     win = lib2d::detail::window( SDL_CreateWindow( settings.title.c_str(),
                                                  pos_x,
                                                  pos_y,
@@ -104,6 +109,17 @@ void window::update_size( int w, int h )
     {
         win_width = w;
         win_height = h;
+    }
+
+    // High DPI bullshit.
+    if constexpr (frog::target::is_apple_ios())
+    {
+        if ( SDL_RenderSetLogicalSize( renderer.get(), win_width, win_height ) < 0)
+        {
+            using namespace std::string_literals;
+            throw std::runtime_error( "Set logical size: "s
+                                        += SDL_GetError() );
+        }
     }
 }
 
