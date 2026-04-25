@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #ifndef NOT_FROG_BUILD_2D
 
 #include "frog/graphics/assets.hpp"
@@ -12,6 +11,7 @@
 #include "frog/lib2d/structs.hpp"
 #include "frog/core/2d/camera.hpp"
 #include "frog/core/audio/audio.hpp"
+#include "frog/os/timer.hpp"
 
 // bits, please
 #include "frog/lib2d/bits.hpp"      // initializer
@@ -28,6 +28,7 @@
 #include <stdexcept>    // exception
 #include <utility>      // move, pair
 #include <unordered_map>
+#include <iostream>
 
 
 namespace frog::font { class atlas; class truetype; } // namespace font
@@ -37,7 +38,7 @@ namespace frog {
 
 using Scene2d = scene<game_object2d>;
 
-class engine2d : public engine_base<engine2d, game_object2d, lib2d::os::timer>
+class engine2d : public engine_base<engine2d, game_object2d, os::timer>
 {
     void draw_objects(double between) override;
     void draw_ui(double between) override;
