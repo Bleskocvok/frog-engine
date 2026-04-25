@@ -100,6 +100,7 @@ set(SRC_FILES
     src/frog/utils/fs.cpp
     src/frog/utils/ini.cpp
     src/frog/utils/string.cpp
+    src/frog/utils/mobile.cpp
 )
 
 # verbose info
