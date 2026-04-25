@@ -2,17 +2,20 @@
 
 namespace frog::target {
 
-constexpr bool is_apple()
+constexpr bool is_apple_ios()
 {
-#ifdef __APPLE__
+#ifdef TARGET_OS_IOS
     return true;
 #endif
     return false;
 }
 
-constexpr bool is_apple_ios()
+constexpr bool is_apple_mac()
 {
-#ifdef TARGET_OS_IOS
+    if (is_apple_ios())
+        return false;
+
+#ifdef __APPLE__
     return true;
 #endif
     return false;
