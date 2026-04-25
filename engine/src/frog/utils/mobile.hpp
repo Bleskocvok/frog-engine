@@ -7,7 +7,7 @@ namespace ios {
 
 bool is_ipad();
 
-const char* save_path();
+const char* save_path(const char* org, const char* app);
 
 const char* asset_path();
 

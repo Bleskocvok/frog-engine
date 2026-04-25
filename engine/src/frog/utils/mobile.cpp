@@ -49,13 +49,13 @@ bool ios::is_ipad()
 }
 
 
-const char* ios::save_path()
+const char* ios::save_path(const char* org, const char* app)
 {
 #ifndef __IPHONEOS__
     throw Error("Not building for iOS");
 #else
     // TODO: SDL_free() this
-    const char* pref = SDL_GetPrefPath(ZM_IOS_PREF_ORG, ZM_IOS_PREF_APP);
+    const char* pref = SDL_GetPrefPath(org, app);
     return pref;
 #endif
 }
