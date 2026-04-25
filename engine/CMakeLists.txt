@@ -345,6 +345,8 @@ else()
     target_compile_definitions(frog_lib PUBLIC -D NOT_FROG_BUILD_2D=1)
 endif(FROG_BUILD_2D)
 
+target_compile_definitions(frog_lib PUBLIC -D FROG_USE_STACKTRACE=1)
+
 
 #
 # Doctest
