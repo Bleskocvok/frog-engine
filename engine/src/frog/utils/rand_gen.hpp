@@ -36,6 +36,7 @@ struct uniform_int
         T k = max_ - min_ + 1;
         T mod = (GEN_MAX + 1) % k;
 
+        // TODO: Possible UB? T is int, but gen() is uint64_t.
         T r;
         do
         {
