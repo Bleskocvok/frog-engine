@@ -33,6 +33,7 @@ namespace frog::lib2d::detail
         void operator()( SDL_GameController* c );
         void operator()( SDL_RWops* obj );
         void operator()( SDL_Cursor* obj );
+        void operator()( SDL_Sensor* obj );
         // TTF
         void operator()( TTF_Font* font );
     };
@@ -44,6 +45,7 @@ namespace frog::lib2d::detail
     using game_controller = std::unique_ptr<SDL_GameController, deleter>;
     using rwops = std::unique_ptr<SDL_RWops, deleter>;
     using cursor = std::unique_ptr<SDL_Cursor, deleter>;
+    using Sensor = std::unique_ptr<SDL_Sensor, deleter>;
 
     // TTF
     using font = std::unique_ptr<TTF_Font, deleter>;

@@ -36,6 +36,13 @@ public:
         int wheel = 0;
     };
 
+    struct AccelerometerState
+    {
+        float x = 0,
+              y = 0,
+              z = 0;
+    };
+
     void k_reset();
     void f_reset();
     void m_reset();
@@ -60,8 +67,10 @@ private:
 
     std::map<std::uint8_t, KeyState> other_mouse_buttons;
 
+    detail::Sensor m_accelerometer;
+
 public:
-    Events() = default;
+    Events();
 
     Events( const Events& ) = delete;
     Events& operator=( const Events& ) = delete;
@@ -87,6 +96,8 @@ public:
     {
         return resized;
     }
+
+    std::optional<AccelerometerState> accelerometer();
 };
 
 } // frog::lib2d::gx

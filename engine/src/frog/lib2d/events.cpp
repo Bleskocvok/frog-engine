@@ -7,10 +7,50 @@
 
 #include <stdexcept>        // runtime_error
 #include <vector>           // vector
+#include <utility>          // move
+#include <optional>
 
 
-namespace frog::lib2d::gx
+namespace frog::lib2d::gx {
+
+
+Events::Events()
 {
+    for (int i = 0; i < SDL_NumSensors(); i++)
+    {
+        auto sensor = detail::Sensor( SDL_SensorOpen( i ) );
+
+        if ( not sensor )
+        {
+            // TODO: Log?
+            continue;
+        }
+
+        if ( SDL_SensorGetType( sensor.get() ) == SDL_SENSOR_ACCEL )
+        {
+            if ( m_accelerometer )
+                continue;
+            m_accelerometer = std::move( sensor );
+        }
+    }
+}
+
+
+std::optional<Events::AccelerometerState> Events::accelerometer()
+{
+    if ( not m_accelerometer )
+        return std::nullopt;
+
+    float data[ 3 ] = { 0 };
+    int rv = SDL_SensorGetData( m_accelerometer.get(), data, 3 );
+    if ( rv == -1 )
+    {
+        // TODO: Log?
+        return std::nullopt;
+    }
+
+    return AccelerometerState{ .x = data[ 0 ], .y = data[ 1 ], .z = data[ 2 ] };
+}
 
 
 void Events::k_reset()
