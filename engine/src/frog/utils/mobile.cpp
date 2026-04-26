@@ -76,6 +76,8 @@ bool ios::is_ipad()
 const char* ios::save_path(const char* org, const char* app)
 {
 #ifndef __IPHONEOS__
+    (void) org;
+    (void) app;
     throw Error("Not building for iOS");
 #else
     // TODO: SDL_free() this
@@ -101,8 +103,9 @@ const char* android::save_path()
     throw Error("Not building for Android");
 #else
     const char* path = SDL_AndroidGetInternalStoragePath();
-    using std::string_literals;
+    using namespace std::string_literals;
     if (not path)
+        throw Error("Android save path: "s + SDL_GetError());
 #endif
 }
 
