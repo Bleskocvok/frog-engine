@@ -13,7 +13,7 @@ namespace frog::lib2d::gx
 {
 
 
-void events::k_reset()
+void Events::k_reset()
 {
     for ( auto& k : m_keys )
     {
@@ -23,7 +23,7 @@ void events::k_reset()
 }
 
 
-void events::f_reset()
+void Events::f_reset()
 {
     auto to_delete = std::vector< decltype( m_fingers )::key_type >{};
     to_delete.reserve( m_fingers.size() );
@@ -45,14 +45,14 @@ void events::f_reset()
 }
 
 
-void events::reset_key( key_state& k )
+void Events::reset_key( KeyState& k )
 {
     k.pressed = false;
     k.released = false;
 }
 
 
-void events::m_reset()
+void Events::m_reset()
 {
     reset_key( m_mouse.but_l );
     reset_key( m_mouse.but_r );
@@ -63,7 +63,7 @@ void events::m_reset()
 }
 
 
-void events::reset()
+void Events::reset()
 {
     k_reset();
     f_reset();
@@ -72,7 +72,7 @@ void events::reset()
 }
 
 
-events::key_state& events::mouse_button( Uint8 but )
+Events::KeyState& Events::mouse_button( Uint8 but )
 {
     switch ( but )
     {
@@ -85,7 +85,7 @@ events::key_state& events::mouse_button( Uint8 but )
 }
 
 
-void events::update()
+void Events::update()
 {
     // reset();
 
@@ -107,7 +107,7 @@ void events::update()
 
             case SDL_FINGERDOWN:
                 m_fingers.emplace( event.tfinger.fingerId,
-                                   finger{ true, false,
+                                   Finger{ true, false,
                                            event.tfinger.x,
                                            event.tfinger.y,
                                            event.tfinger.dx,
@@ -160,16 +160,16 @@ void events::update()
 }
 
 
-const events::key_state& events::k_at( SDL_Scancode k ) const
+const Events::KeyState& Events::k_at( SDL_Scancode k ) const
 {
     return m_keys.at( k );
 }
 
 
-bool events::kb_down( SDL_Scancode k ) const
+bool Events::kb_down( SDL_Scancode k ) const
 {
     if ( k >= keyboard_state_count )
-        throw std::runtime_error( "events::kb_down: k outside range" );
+        throw std::runtime_error( "Events::kb_down: k outside range" );
 
     return keyboard_state[ k ];
 }

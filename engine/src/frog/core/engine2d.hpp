@@ -62,7 +62,7 @@ public:
     Audio audio;
 
     lib2d::gx::window* win_raw = nullptr;
-    ptr<lib2d::gx::events> input = mk_ptr<lib2d::gx::events>();
+    ptr<lib2d::gx::Events> input = mk_ptr<lib2d::gx::Events>();
 
     gx::assets<lib2d::gx::texture> textures = gx::assets<lib2d::gx::texture>{ "texture" };
     gx::assets<font::base> fonts = gx::assets<font::base>{ "font" };
@@ -99,7 +99,7 @@ public:
         return camera_coords_ui(input->mouse().x, input->mouse().y);
     }
 
-    geo::vec2 camera_coords(const lib2d::gx::events::mouse_t& m)
+    geo::vec2 camera_coords(const lib2d::gx::Events::Mouse& m)
     {
         return camera_coords(m.x, m.y);
     }
