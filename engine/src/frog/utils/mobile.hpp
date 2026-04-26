@@ -1,7 +1,20 @@
 #pragma once
 
+#include <cstdint>
+
 namespace frog::mobile {
 
+struct Orientation
+{
+    enum : std::uint32_t {
+        Portrait            = 0x1,
+        PortraitUpsideDown  = 0x2,
+        LandscapeLeft       = 0x4,
+        LandscapeRight      = 0x8
+    };
+};
+
+void hint_orientations(std::uint32_t values);
 
 namespace ios {
 

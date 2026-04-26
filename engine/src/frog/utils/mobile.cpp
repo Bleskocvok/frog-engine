@@ -1,6 +1,8 @@
 #include "mobile.hpp"
+#include "frog/debug.hpp"
 
 #include <stdexcept>    // runtime_error
+#include <string>
 
 #if __APPLE__
     #if TARGET_OS_IPHONE
@@ -10,7 +12,9 @@
 
 
 #if defined(__ANDROID__) || defined(__IPHONEOS__)
-#include <SDL2/SDL.h>
+    #include <SDL2/SDL.h>
+#else
+    #include <SDL2/SDL.h>
 #endif
 
 #ifdef __IPHONEOS__
@@ -38,6 +42,26 @@
 namespace frog::mobile {
 
 using Error = std::runtime_error;
+
+void hint_orientations(std::uint32_t values)
+{
+    std::string str;
+
+    auto put = [&](const char* s)
+    {
+        if (not str.empty())
+            str += ' ';
+        str += s;
+    };
+
+    if (values & Orientation::LandscapeLeft)      put("LandscapeLeft");
+    if (values & Orientation::LandscapeRight)     put("LandscapeRight");
+    if (values & Orientation::Portrait)           put("Portrait");
+    if (values & Orientation::PortraitUpsideDown) put("PortraitUpsideDown");
+
+    LOGX(str);
+    SDL_SetHint(SDL_HINT_ORIENTATIONS, str.c_str());
+}
 
 bool ios::is_ipad()
 {
@@ -73,10 +97,12 @@ const char* ios::asset_path()
 
 const char* android::save_path()
 {
-#ifdef __ANDROID__
-    return SDL_AndroidGetInternalStoragePath();
-#else
+#ifndef __ANDROID__
     throw Error("Not building for Android");
+#else
+    const char* path = SDL_AndroidGetInternalStoragePath();
+    using std::string_literals;
+    if (not path)
 #endif
 }
 
