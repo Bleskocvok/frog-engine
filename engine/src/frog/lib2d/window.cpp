@@ -75,7 +75,7 @@ window::window( const window_settings& settings )
     if ( settings.allow_high_dpi )
         win_flags = win_flags | SDL_WINDOW_ALLOW_HIGHDPI;
 
-    win = lib2d::detail::window( SDL_CreateWindow( settings.title.c_str(),
+    win = lib2d::detail::Window( SDL_CreateWindow( settings.title.c_str(),
                                                  pos_x,
                                                  pos_y,
                                                  settings.width,
@@ -84,7 +84,7 @@ window::window( const window_settings& settings )
     if ( not win )
         throw std::runtime_error( "Create window: "s += SDL_GetError() );
 
-    renderer = lib2d::detail::renderer( SDL_CreateRenderer( win.get(), -1,
+    renderer = lib2d::detail::Renderer( SDL_CreateRenderer( win.get(), -1,
                                                           ren_flags ) );
     if ( not renderer )
         throw std::runtime_error( "Create Renderer: "s
@@ -142,7 +142,7 @@ void window::swap_buffers()
 }
 
 
-void window::set_icon( lib2d::detail::surface& surface )
+void window::set_icon( lib2d::detail::Surface& surface )
 {
     SDL_SetWindowIcon( win.get(), surface.get() );
 }
@@ -154,7 +154,7 @@ texture window::make_texture( const char* filename ) const
 }
 
 
-texture window::make_texture( lib2d::detail::surface& surface ) const
+texture window::make_texture( lib2d::detail::Surface& surface ) const
 {
     return texture( renderer, surface );
 }
@@ -284,7 +284,7 @@ void window::screenshot( const std::string& filename ) const
     using namespace std::string_literals;
     int w, h;
     SDL_GetRendererOutputSize( renderer.get(), &w, &h );
-    lib2d::detail::surface surface( create_surface( w, h ) );
+    lib2d::detail::Surface surface( create_surface( w, h ) );
     if ( SDL_RenderReadPixels( renderer.get(),
                                 nullptr,
                                 surface->format->format,

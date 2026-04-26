@@ -23,7 +23,7 @@ typedef struct _TTF_Font TTF_Font;
 
 namespace frog::lib2d::detail
 {
-    struct deleter
+    struct Deleter
     {
         // CORE/IMG
         void operator()( SDL_Surface* obj );
@@ -38,19 +38,19 @@ namespace frog::lib2d::detail
         void operator()( TTF_Font* font );
     };
 
-    using surface = std::unique_ptr<SDL_Surface, deleter>;
-    using texture = std::unique_ptr<SDL_Texture, deleter>;
-    using window = std::unique_ptr<SDL_Window, deleter>;
-    using renderer = std::unique_ptr<SDL_Renderer, deleter>;
-    using game_controller = std::unique_ptr<SDL_GameController, deleter>;
-    using rwops = std::unique_ptr<SDL_RWops, deleter>;
-    using cursor = std::unique_ptr<SDL_Cursor, deleter>;
-    using Sensor = std::unique_ptr<SDL_Sensor, deleter>;
+    using Surface = std::unique_ptr<SDL_Surface, Deleter>;
+    using Texture = std::unique_ptr<SDL_Texture, Deleter>;
+    using Window = std::unique_ptr<SDL_Window, Deleter>;
+    using Renderer = std::unique_ptr<SDL_Renderer, Deleter>;
+    using GameController = std::unique_ptr<SDL_GameController, Deleter>;
+    using RWops = std::unique_ptr<SDL_RWops, Deleter>;
+    using Cursor = std::unique_ptr<SDL_Cursor, Deleter>;
+    using Sensor = std::unique_ptr<SDL_Sensor, Deleter>;
 
     // TTF
-    using font = std::unique_ptr<TTF_Font, deleter>;
+    using Font = std::unique_ptr<TTF_Font, Deleter>;
 
-    surface load_img( const std::string& filename );
+    Surface load_img( const std::string& filename );
 
 }  // namespace frog::lib2d::detail
 

@@ -19,7 +19,7 @@ std::string file_read( const char* filename, mode m )
 {
     using namespace std::string_literals;
 
-    lib2d::detail::rwops rw( SDL_RWFromFile( filename, bool(m) ? "rb" : "r" ) );
+    lib2d::detail::RWops rw( SDL_RWFromFile( filename, bool(m) ? "rb" : "r" ) );
 
     if ( not rw )
         throw std::runtime_error( "file_read: open: "s + "'" + filename + "':"
@@ -57,7 +57,7 @@ void file_write( const char* filename, const std::string& data, mode m )
 {
     using namespace std::string_literals;
 
-    lib2d::detail::rwops rw( SDL_RWFromFile( filename, bool(m) ? "wb" : "w" ) );
+    lib2d::detail::RWops rw( SDL_RWFromFile( filename, bool(m) ? "wb" : "w" ) );
 
     if ( not rw )
         throw std::runtime_error( "file_write: open: "s + "'" + filename + "':"

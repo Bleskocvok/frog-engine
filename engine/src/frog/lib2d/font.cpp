@@ -22,20 +22,20 @@ font::font(const std::string& path, int size)
         throw std::runtime_error("cannot load font: "s + TTF_GetError());
 }
 
-detail::surface font::render_text(const std::string& text, std::uint8_t r,
+detail::Surface font::render_text(const std::string& text, std::uint8_t r,
                                   std::uint8_t g, std::uint8_t b,
                                   std::uint8_t a)
 {
     using namespace std::string_literals;
 
     SDL_Color fg = { r, g, b, a };
-    auto res = detail::surface{ TTF_RenderUTF8_Blended(font_.get(), text.c_str(), fg) };
+    auto res = detail::Surface{ TTF_RenderUTF8_Blended(font_.get(), text.c_str(), fg) };
     if (not res)
         throw std::runtime_error("cannot render text: "s + TTF_GetError());
     return res;
 }
 
-detail::surface font::render_text(const std::string& text)
+detail::Surface font::render_text(const std::string& text)
 {
     return render_text(text, 255, 255, 255, 255);
 }

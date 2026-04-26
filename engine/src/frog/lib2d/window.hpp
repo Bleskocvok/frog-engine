@@ -84,9 +84,9 @@ public:
 
     texture make_texture( const char* filename ) const;
 
-    texture make_texture( lib2d::detail::surface& surface ) const;
+    texture make_texture( lib2d::detail::Surface& surface ) const;
 
-    void set_icon( lib2d::detail::surface& surface );
+    void set_icon( lib2d::detail::Surface& surface );
 
     void draw( const texture& tex, int u, int v, int cut_width, int cut_height,
             int x, int y, int tex_width, int tex_height );
@@ -120,8 +120,8 @@ public:
                             bool flipped = false );
 
 private:
-    lib2d::detail::window win;
-    lib2d::detail::renderer renderer;
+    lib2d::detail::Window win;
+    lib2d::detail::Renderer renderer;
     int win_width, win_height;
 
     SDL_Surface* create_surface( int width, int height ) const;

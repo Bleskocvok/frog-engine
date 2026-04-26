@@ -86,7 +86,7 @@ engine2d::engine2d(settings set, ptr<state> _global)
     if (set.window.icon)
     {
         std::string filename = global->asset_path() + "/" + *set.window.icon;
-        lib2d::detail::surface img = lib2d::detail::load_img(filename);
+        lib2d::detail::Surface img = lib2d::detail::load_img(filename);
         win_raw->set_icon( img );
     }
 }
@@ -218,7 +218,7 @@ bool engine2d::add_cursor(const std::string& tag, const std::string& path)
 
     auto surface = lib2d::detail::load_img( full );
     frog_assert(surface);
-    cursors.add(tag, mk_ptr<lib2d::detail::cursor>( SDL_CreateColorCursor( surface.get(), 0, 0 ) ));
+    cursors.add(tag, mk_ptr<lib2d::detail::Cursor>( SDL_CreateColorCursor( surface.get(), 0, 0 ) ));
     return has;
 }
 
@@ -237,7 +237,7 @@ void engine2d::set_cursor(const std::string& tag)
 void engine2d::reset_cursor()
 {
     auto* def = SDL_CreateSystemCursor( SDL_SystemCursor::SDL_SYSTEM_CURSOR_ARROW );
-    auto cursor = lib2d::detail::cursor( def );
+    auto cursor = lib2d::detail::Cursor( def );
     // TODO: Doesn't belong here.
     SDL_SetCursor(cursor.get());
 }

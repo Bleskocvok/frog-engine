@@ -13,14 +13,14 @@ namespace frog::lib2d::gx
 {
 
 
-texture::texture( const lib2d::detail::renderer& renderer, const char* filename )
+texture::texture( const lib2d::detail::Renderer& renderer, const char* filename )
 {
     using namespace std::string_literals;
-    lib2d::detail::surface img = lib2d::detail::load_img( filename );
+    lib2d::detail::Surface img = lib2d::detail::load_img( filename );
 
     tex_width = img->w;
     tex_height = img->h;
-    tex = lib2d::detail::texture(
+    tex = lib2d::detail::Texture(
             SDL_CreateTextureFromSurface( renderer.get(), img.get() ) );
     if ( not tex )
     {
@@ -30,13 +30,13 @@ texture::texture( const lib2d::detail::renderer& renderer, const char* filename 
     }
 }
 
-texture::texture( const lib2d::detail::renderer& renderer,
-                  lib2d::detail::surface& img )
+texture::texture( const lib2d::detail::Renderer& renderer,
+                  lib2d::detail::Surface& img )
 {
     using namespace std::string_literals;
     tex_width = img ? img->w : 1;
     tex_height = img ? img->h : 1;
-    tex = lib2d::detail::texture( SDL_CreateTextureFromSurface(
+    tex = lib2d::detail::Texture( SDL_CreateTextureFromSurface(
                                     renderer.get(), img.get() ) );
     if ( not tex && img )
     {

@@ -32,12 +32,12 @@ namespace frog::lib2d::gx
     private:
         friend window;
 
-        lib2d::detail::texture tex;
+        lib2d::detail::Texture tex;
         int tex_width, tex_height;
 
-        texture( const lib2d::detail::renderer& renderer, const char* filename );
+        texture( const lib2d::detail::Renderer& renderer, const char* filename );
 
-        texture( const lib2d::detail::renderer& renderer, lib2d::detail::surface& img );
+        texture( const lib2d::detail::Renderer& renderer, lib2d::detail::Surface& img );
 
         SDL_Texture* src() const { return tex.get(); }
     };

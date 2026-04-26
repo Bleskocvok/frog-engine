@@ -108,7 +108,7 @@ public:
 
     geo::vec2 camera_coords_ui(int mouse_x, int mouse_y);
 
-    gx::assets<frog::lib2d::detail::cursor> cursors = gx::assets<frog::lib2d::detail::cursor>{ "cursor" };
+    gx::assets<frog::lib2d::detail::Cursor> cursors = gx::assets<frog::lib2d::detail::Cursor>{ "cursor" };
 
     bool add_cursor(const std::string& tag, const std::string& path);
     bool remove_cursor(const std::string& tag);

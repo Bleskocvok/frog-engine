@@ -10,21 +10,21 @@
 namespace frog::lib2d::detail
 {
     // CORE/IMG
-    void deleter::operator()( SDL_Surface* obj ) { SDL_FreeSurface( obj ); }
-    void deleter::operator()( SDL_Texture* obj ) { SDL_DestroyTexture( obj ); }
-    void deleter::operator()( SDL_Window* obj ) { SDL_DestroyWindow( obj ); }
-    void deleter::operator()( SDL_Renderer* obj ) { SDL_DestroyRenderer( obj ); }
-    void deleter::operator()( SDL_GameController* c ) { SDL_GameControllerClose( c ); }
-    void deleter::operator()( SDL_RWops* obj ){ SDL_RWclose( obj ); }
-    void deleter::operator()( SDL_Cursor* obj ){ SDL_FreeCursor( obj ); }
-    void deleter::operator()( SDL_Sensor* obj ){ SDL_SensorClose( obj ); }
+    void Deleter::operator()( SDL_Surface* obj ) { SDL_FreeSurface( obj ); }
+    void Deleter::operator()( SDL_Texture* obj ) { SDL_DestroyTexture( obj ); }
+    void Deleter::operator()( SDL_Window* obj ) { SDL_DestroyWindow( obj ); }
+    void Deleter::operator()( SDL_Renderer* obj ) { SDL_DestroyRenderer( obj ); }
+    void Deleter::operator()( SDL_GameController* c ) { SDL_GameControllerClose( c ); }
+    void Deleter::operator()( SDL_RWops* obj ){ SDL_RWclose( obj ); }
+    void Deleter::operator()( SDL_Cursor* obj ){ SDL_FreeCursor( obj ); }
+    void Deleter::operator()( SDL_Sensor* obj ){ SDL_SensorClose( obj ); }
     // TTF
-    void deleter::operator()( TTF_Font* font ) { TTF_CloseFont(font); }
+    void Deleter::operator()( TTF_Font* font ) { TTF_CloseFont(font); }
 
-    surface load_img( const std::string& filename )
+    Surface load_img( const std::string& filename )
     {
         using namespace std::string_literals;
-        surface img{ IMG_Load( filename.c_str() ) };
+        Surface img{ IMG_Load( filename.c_str() ) };
         if ( not img )
         {
             throw std::runtime_error( ( "load_img: Cannot load file '"s )
