@@ -43,9 +43,23 @@ public:
               z = 0;
     };
 
-    void k_reset();
-    void f_reset();
-    void m_reset();
+    enum Orientation : std::uint32_t {
+        Portrait            = 0x1,
+        PortraitUpsideDown  = 0x2,
+        LandscapeLeft       = 0x4,
+        LandscapeRight      = 0x8,
+        Unknown             = 0x10
+    };
+
+    struct Display
+    {
+        using enum Orientation;
+
+        Orientation orientation = Unknown;
+
+        bool changed = false;
+    };
+
     void reset();
 
 private:
@@ -68,6 +82,12 @@ private:
     std::map<std::uint8_t, KeyState> other_mouse_buttons;
 
     detail::Sensor m_accelerometer;
+
+    Display m_display;
+
+    void k_reset();
+    void f_reset();
+    void m_reset();
 
 public:
     Events();
@@ -98,6 +118,8 @@ public:
     }
 
     std::optional<AccelerometerState> accelerometer();
+
+    Display display() const;
 };
 
 } // frog::lib2d::gx

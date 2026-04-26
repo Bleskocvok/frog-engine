@@ -53,6 +53,12 @@ std::optional<Events::AccelerometerState> Events::accelerometer()
 }
 
 
+Events::Display Events::display() const
+{
+    return m_display;
+}
+
+
 void Events::k_reset()
 {
     for ( auto& k : m_keys )
@@ -197,6 +203,20 @@ void Events::update()
     }
 
     keyboard_state = SDL_GetKeyboardState( &keyboard_state_count );
+
+    auto get_enum = [](auto val)
+    {
+        switch (val)
+        {
+            // TODO: This might be wrong.
+            case SDL_ORIENTATION_UNKNOWN: return Display::Unknown;
+            case SDL_ORIENTATION_LANDSCAPE: return Display::LandscapeRight;
+            case SDL_ORIENTATION_LANDSCAPE_FLIPPED: return Display::LandscapeLeft;
+            case SDL_ORIENTATION_PORTRAIT: return Display::Portrait;
+            case SDL_ORIENTATION_PORTRAIT_FLIPPED: return Display::PortraitUpsideDown;
+        }
+    };
+    m_display.orientation = get_enum(SDL_GetDisplayOrientation(0));
 }
 
 

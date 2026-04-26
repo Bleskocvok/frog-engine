@@ -1,5 +1,7 @@
 #include "mobile.hpp"
 
+#ifndef NOT_FROG_BUILD_2D
+
 #include <stdexcept>    // runtime_error
 #include <string>
 
@@ -105,3 +107,5 @@ const char* android::save_path()
 }
 
 } // namespace frog
+
+#endif
