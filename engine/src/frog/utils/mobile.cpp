@@ -73,17 +73,11 @@ bool ios::is_ipad()
 }
 
 
-const char* ios::save_path(const char* org, const char* app)
+const char* pref_path(const char* org, const char* app)
 {
-#ifndef __IPHONEOS__
-    (void) org;
-    (void) app;
-    throw Error("Not building for iOS");
-#else
     // TODO: SDL_free() this
     const char* pref = SDL_GetPrefPath(org, app);
     return pref;
-#endif
 }
 
 const char* ios::asset_path()
@@ -97,18 +91,30 @@ const char* ios::asset_path()
 #endif
 }
 
-const char* android::save_path()
+const char* android::asset_path()
 {
 #ifndef __ANDROID__
     throw Error("Not building for Android");
 #else
     const char* path = SDL_AndroidGetInternalStoragePath();
-    using namespace std::string_literals;
-    if (not path)
-        throw Error("Android save path: "s + SDL_GetError());
+    // using namespace std::string_literals;
+    // if (path == nullptr)
+    //     throw Error("Android save path: "s + SDL_GetError());
+    return path;
 #endif
 }
 
-} // namespace frog
+} // namespace frog::mobile
+
+
+// #ifdef __ANDROID__
+
+// #include <android/log.h>
+
+// void frog::mobile::android::log(const std::string& app, const std::string& str)
+// {
+//     __android_log_print(ANDROID_LOG_INFO, app.c_str(), "%s", str.c_str());
+// }
+// #endif
 
 #endif

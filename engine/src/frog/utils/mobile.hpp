@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
 
 namespace frog::mobile {
 
@@ -16,11 +17,11 @@ struct Orientation
 
 void hint_orientations(std::uint32_t values);
 
+const char* pref_path(const char* org, const char* app);
+
 namespace ios {
 
 bool is_ipad();
-
-const char* save_path(const char* org, const char* app);
 
 const char* asset_path();
 
@@ -29,9 +30,12 @@ const char* asset_path();
 
 namespace android {
 
-const char* save_path();
+const char* asset_path();
+
+// Would need link against some lib.
+// void log(const std::string& app, const std::string& str);
 
 } // namespace android
 
 
-} // namespace frog
+} // namespace frog::mobile
