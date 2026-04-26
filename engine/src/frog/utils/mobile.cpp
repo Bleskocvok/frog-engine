@@ -1,5 +1,4 @@
 #include "mobile.hpp"
-#include "frog/debug.hpp"
 
 #include <stdexcept>    // runtime_error
 #include <string>
@@ -59,7 +58,6 @@ void hint_orientations(std::uint32_t values)
     if (values & Orientation::Portrait)           put("Portrait");
     if (values & Orientation::PortraitUpsideDown) put("PortraitUpsideDown");
 
-    LOGX(str);
     SDL_SetHint(SDL_HINT_ORIENTATIONS, str.c_str());
 }
 
