@@ -10,9 +10,23 @@ struct state
 {
     std::string m_asset_path;
     std::string m_save_path;
+
+    static void path_normalize(std::string& path)
+    {
+        if (path.empty())
+            path = ".";
+
+        if (not path.ends_with("/"))
+            path += '/';
+    }
+
 public:
-    state(std::string m_asset_path, std::string m_save_path)
-        : m_asset_path(m_asset_path), m_save_path(m_save_path) {}
+    state(std::string asset_path_, std::string save_path_)
+        : m_asset_path(asset_path_), m_save_path(save_path_)
+    {
+        path_normalize(m_asset_path);
+        path_normalize(m_save_path);
+    }
 
     unsigned physics_delta_us = 20000;  // default value = 20 ms = 50 fps
     unsigned frame_time_us    = 20000;  // default value = 20 ms = 50 fps
