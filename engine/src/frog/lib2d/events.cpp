@@ -66,6 +66,8 @@ void Events::k_reset()
         k.pressed = false;
         k.released = false;
     }
+
+    m_app.reset();
 }
 
 
@@ -198,6 +200,9 @@ void Events::update()
             case SDL_MOUSEWHEEL:
                 m_mouse.wheel = event.wheel.y;
 
+            case SDL_APP_TERMINATING:
+
+
             default: break;
         }
     }
@@ -219,6 +224,11 @@ void Events::update()
     m_display.orientation = get_enum(SDL_GetDisplayOrientation(0));
 }
 
+
+void Events::App::reset()
+{
+    *this = Events::App{};
+}
 
 const Events::KeyState& Events::k_at( SDL_Scancode k ) const
 {

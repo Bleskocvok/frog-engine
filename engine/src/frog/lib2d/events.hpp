@@ -60,6 +60,18 @@ public:
         bool changed = false;
     };
 
+    struct App
+    {
+        bool terminating = false,
+             low_memory = false,
+             will_enter_bg = false,
+             entered_bg = false,
+             will_enter_fg = false,
+             entered_fg = false;
+
+        void reset();
+    };
+
     void reset();
 
 private:
@@ -84,6 +96,8 @@ private:
     detail::Sensor m_accelerometer;
 
     Display m_display;
+
+    App m_app;
 
     void k_reset();
     void f_reset();
@@ -120,6 +134,8 @@ public:
     std::optional<AccelerometerState> accelerometer();
 
     Display display() const;
+
+    App app() const;
 };
 
 } // frog::lib2d::gx
