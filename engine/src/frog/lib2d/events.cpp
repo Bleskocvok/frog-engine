@@ -201,7 +201,22 @@ void Events::update()
                 m_mouse.wheel = event.wheel.y;
 
             case SDL_APP_TERMINATING:
+                m_app.terminating = true;
 
+            case SDL_APP_LOWMEMORY:
+                m_app.low_memory = true;
+
+            case SDL_APP_WILLENTERBACKGROUND:
+                m_app.will_enter_bg = true;
+
+            case SDL_APP_DIDENTERBACKGROUND:
+                m_app.entered_bg = true;
+
+            case SDL_APP_WILLENTERFOREGROUND:
+                m_app.will_enter_fg = true;
+
+            case SDL_APP_DIDENTERFOREGROUND:
+                m_app.entered_fg = true;
 
             default: break;
         }
