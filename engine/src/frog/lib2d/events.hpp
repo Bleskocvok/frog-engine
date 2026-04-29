@@ -133,7 +133,7 @@ public:
 
     Display display() const;
 
-    App app() const;
+    App app() const { return m_app; }
 };
 
 } // frog::lib2d::gx
