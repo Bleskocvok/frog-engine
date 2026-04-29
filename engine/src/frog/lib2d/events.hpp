@@ -68,8 +68,6 @@ public:
              entered_bg = false,
              will_enter_fg = false,
              entered_fg = false;
-
-        void reset();
     };
 
     void reset();

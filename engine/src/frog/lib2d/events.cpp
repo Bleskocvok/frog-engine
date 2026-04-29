@@ -117,6 +117,8 @@ void Events::reset()
     f_reset();
     resized.reset();
     m_reset();
+
+    m_app = App{};
 }
 
 
@@ -222,12 +224,6 @@ void Events::update()
         }
     };
     m_display.orientation = get_enum(SDL_GetDisplayOrientation(0));
-}
-
-
-void Events::App::reset()
-{
-    *this = Events::App{};
 }
 
 const Events::KeyState& Events::k_at( SDL_Scancode k ) const
