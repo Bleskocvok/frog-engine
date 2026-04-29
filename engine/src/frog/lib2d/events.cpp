@@ -66,8 +66,6 @@ void Events::k_reset()
         k.pressed = false;
         k.released = false;
     }
-
-    m_app.reset();
 }
 
 
