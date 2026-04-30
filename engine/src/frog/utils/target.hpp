@@ -2,9 +2,13 @@
 
 namespace frog::target {
 
+#ifdef __APPLE__
+    #include <TargetConditionals.h>
+#endif
+
 constexpr bool is_apple_ios()
 {
-#ifdef TARGET_OS_IOS
+#if TARGET_OS_IPHONE
     return true;
 #endif
     return false;
@@ -15,7 +19,7 @@ constexpr bool is_apple_mac()
     if (is_apple_ios())
         return false;
 
-#ifdef __APPLE__
+#ifdef TARGET_OS_OSX
     return true;
 #endif
     return false;
