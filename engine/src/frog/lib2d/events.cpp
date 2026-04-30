@@ -178,6 +178,15 @@ void Events::update()
             case SDL_WINDOWEVENT:
                 if ( event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED )
                     resized = { event.window.data1, event.window.data2 };
+                if ( event.window.event == SDL_WINDOWEVENT_FOCUS_LOST )
+                {
+                    // TODO
+                }
+
+                if ( event.window.event == SDL_WINDOWEVENT_FOCUS_GAINED )
+                {
+                    // TODO
+                }
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
