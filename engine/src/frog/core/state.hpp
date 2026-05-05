@@ -16,8 +16,9 @@ struct state
         if (path.empty())
             path = ".";
 
-        if (not path.ends_with("/"))
-            path += '/';
+        // Android has trouble with double /
+        if (path.ends_with('/'))
+            path.pop_back();
     }
 
 public:
