@@ -36,22 +36,25 @@ class Animation
     std::string next = "";
     int frame_ = 0;
 
-    float delay = 0.16667;
+    float delay_ = 0.16667;
     float accum = 0;
 
 public:
-    Animation(Sprite atlas, geo::ivec2 atlas_size, float delay = 0.16667, std::string start = "")
+    Animation(Sprite atlas, geo::ivec2 atlas_size, float delay_ = 0.16667, std::string start = "")
         : atlas(std::move(atlas))
         , atlas_size(atlas_size)
         , current_(std::move(start))
-        , delay(delay)
+        , delay_(delay_)
     { }
 
-    Animation(geo::ivec2 atlas_size, float delay = 0.16667, std::string start = "")
-        : Animation({}, atlas_size, delay, start)
+    Animation(geo::ivec2 atlas_size, float delay_ = 0.16667, std::string start = "")
+        : Animation({}, atlas_size, delay_, start)
     { }
 
     const Sprite& get_atlas() const { return atlas; }
+
+    float  delay() const { return delay_; }
+    float& delay()       { return delay_; }
 
     void add_frame(std::string name, AnimationFrame frame)
     {
@@ -77,9 +80,9 @@ public:
     void update(float delta)
     {
         accum += delta;
-        while (accum >= delay)
+        while (accum >= delay_)
         {
-            accum -= delay;
+            accum -= delay_;
             ++frame_;
             if (frame_ >= length_of(current()))
                 set(next);
@@ -106,7 +109,7 @@ public:
 
     float frame_duration(const std::string& f) const
     {
-        return length_of(at(f)) * delay;
+        return length_of(at(f)) * delay_;
     }
 
     int length_of(const AnimationFrame& f) const
