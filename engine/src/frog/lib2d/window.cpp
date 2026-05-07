@@ -90,6 +90,11 @@ window::window( const window_settings& settings )
         throw std::runtime_error( "Create Renderer: "s
                                     += SDL_GetError() );
 
+    clear_color(settings.clear_r * 255,
+                settings.clear_g * 255,
+                settings.clear_b * 255,
+                settings.clear_a * 255);
+
     // TODO: move somewhere else and give the option to use linear instead
     // nearest pixel sampling
     SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "0" );
