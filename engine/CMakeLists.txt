@@ -368,6 +368,7 @@ target_link_libraries(frog_lib PRIVATE ${LIST_OF_LIBRARIES})
 # alias, so that it games can link against Frog::Frog
 add_library(Frog::Frog ALIAS frog_lib)
 
+set_property(TARGET frog_lib PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 
 # ################################################
