@@ -95,6 +95,8 @@ window::window( const window_settings& settings )
                 settings.clear_b * 255,
                 settings.clear_a * 255);
 
+    clear();
+
     // TODO: move somewhere else and give the option to use linear instead
     // nearest pixel sampling
     SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "0" );
