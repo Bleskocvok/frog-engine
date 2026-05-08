@@ -16,9 +16,9 @@ struct state
         if (path.empty())
             path = ".";
 
-        // Android has trouble with double /
-        if (path.ends_with('/'))
-            path.pop_back();
+        // // Android has trouble with double /
+        // if (path.ends_with('/'))
+        //     path.pop_back();
     }
 
 public:
@@ -50,6 +50,15 @@ public:
 
     const auto& asset_path() const { return m_asset_path; }
     const auto& save_path() const { return m_save_path; }
+
+    std::string in_save_path(const std::string& file) const
+    {
+        auto path = save_path();
+        if (not path.ends_with('/'))
+            path += '/';
+        path += file;
+        return path;
+    }
 
     bool init_obj_immediately = true;
     bool init_obj_recursive = true;
