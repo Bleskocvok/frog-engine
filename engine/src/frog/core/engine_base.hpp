@@ -8,6 +8,7 @@
 
 #include "scene_manager.hpp"
 #include "state.hpp"
+#include "async_jobs.hpp"
 
 #include <algorithm>    // clamp
 #include <utility>      // move
@@ -68,6 +69,8 @@ public:
     ptr<scene_manager<GameObject>> scenes = mk_ptr<scene_manager<GameObject>>();
     ptr<state> global;
 
+    AsyncJobs async_jobs;
+
     virtual ~engine_base() = default;
 
     engine_base(ptr<os::window_base> window, ptr<gx::renderer_base> renderer,
@@ -107,6 +110,8 @@ public:
         {
             update_controls();
             frame_update();
+
+            async_jobs.cleanup_finished();
 
             unsigned i = 0;
             while (accum >= decltype(accum)(delta))
