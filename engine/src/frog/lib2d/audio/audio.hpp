@@ -29,49 +29,19 @@ class Audio
     std::vector<Entry> channels;
 
 public:
-    Audio(int frequency = 22050, int channels = 2, int chunk_size = 1024)
-    {
-        if (Mix_OpenAudio(frequency, MIX_DEFAULT_FORMAT, channels, chunk_size) != 0)
-            throw std::runtime_error(std::string("Create Audio: ") + Mix_GetError());
-    }
+    Audio(int frequency = 22050, int channels = 2, int chunk_size = 1024);
 
     Audio(const Audio&) = delete;
 
     Audio& operator=(Audio&) = delete;
 
-    ~Audio()
-    {
-        Mix_CloseAudio();
-    }
+    ~Audio();
 
-    Sound make_sound(const char* filename)
-    {
-        return Sound(filename);
-    }
+    Sound make_sound(const char* filename);
 
-    Channel& add_channel()
-    {
-        for (Entry& entry : channels)
-        {
-            if (!entry.assigned)
-            {
-                entry.assigned = true;
-                return *entry.channel_ptr;
-            }
-        }
-        if (channels.size() + 1 > allocated_channels)
-        {
-            Mix_AllocateChannels(allocated_channels * 2);
-            allocated_channels *= 2;
-        }
-        channels.emplace_back(Channel(channels.size()));
-        return *channels.back().channel_ptr;
-    }
+    Channel& add_channel();
 
-    void remove_channel(Channel& channel)
-    {
-        channels.at(channel.get_index()).assigned = false;
-    }
+    void remove_channel(Channel& channel);
 };
 
 } // namespace frog::lib2d

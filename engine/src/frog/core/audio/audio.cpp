@@ -1,13 +1,13 @@
-#include "frog/lib2d/audio/sound.hpp"
-#include "frog/utils/assert.hpp"
-#include <string>
 #ifndef NOT_FROG_BUILD_2D
 
+#include "frog/lib2d/audio/sound.hpp"
+#include "frog/utils/assert.hpp"
 #include "frog/core/audio/audio.hpp"
 #include "frog/utils/todo.hpp"
 
 #include <vector>
 #include <random>
+#include <string>
 
 namespace frog {
 
