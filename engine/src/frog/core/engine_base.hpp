@@ -77,7 +77,8 @@ public:
                 ptr<state> global = nullptr)
         : window(std::move(window)),
           renderer(std::move(renderer)),
-          global(std::move(global)) {}
+          global(std::move(global))
+    { }
 
     geo::ivec2 window_size() const { return { window->width(), window->height() }; }
 

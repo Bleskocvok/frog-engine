@@ -1,6 +1,7 @@
 #pragma once
 
 #include "frog/utils/ptr.hpp"
+
 #include <algorithm>    // clamp
 #include <atomic>
 #include <functional>
@@ -29,11 +30,22 @@ inline void runner(JobData* data, std::function<void()> f)
 
 class AsyncJobs
 {
-    std::unordered_map<std::string, frog::ptr<std::jthread>> async_jobs;
+    std::unordered_map<std::string, frog::ptr<std::thread>> async_jobs;
 
     std::unordered_map<std::string, frog::ptr<detail::JobData>> data;
 
 public:
+    AsyncJobs() = default;
+
+    ~AsyncJobs()
+    {
+        for (const auto& [key, val] : data)
+            async_jobs.at(key)->join();
+    }
+
+    AsyncJobs(const AsyncJobs&) = delete;
+    AsyncJobs& operator=(const AsyncJobs&) = delete;
+
     bool add(std::string name, std::function<void()> f)
     {
         auto [it, added] = data.emplace(name, frog::mk_ptr<detail::JobData>());
@@ -41,7 +53,7 @@ public:
             return false;
 
         async_jobs.emplace(std::move(name),
-                           frog::mk_ptr<std::jthread>(detail::runner, it->second.get(), std::move(f)));
+                           frog::mk_ptr<std::thread>(detail::runner, it->second.get(), std::move(f)));
 
         return true;
     }
