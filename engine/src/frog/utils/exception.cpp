@@ -32,7 +32,7 @@ bool demangle(std::string& mangled)
     demangled.reset( abi::__cxa_demangle(mangled.c_str(), nullptr, nullptr, &status) );
 
     static constexpr int OK = 0;
-    static constexpr int INVALID_MANGLE = -2;
+    // static constexpr int INVALID_MANGLE = -2;
 
     if (status != OK)
         return false;
@@ -48,7 +48,6 @@ bool demangle(std::string& mangled)
     #include <version>
     #if __has_include(<stacktrace>)
         #include <stacktrace>
-        #pragma message("ahoj")
         #if __cpp_lib_stacktrace >= 202011L
             #define FROG_HAS_STACKTRACE 1
             #define FROG_STACKTRACE_STD 1

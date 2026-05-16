@@ -65,11 +65,7 @@ void hint_orientations(std::uint32_t values)
 
 bool ios::is_ipad()
 {
-#ifndef __IPHONEOS__
-    return false;
-#else
     return is_ipad_impl();
-#endif
 }
 
 

@@ -19,7 +19,7 @@ initializer::initializer(std::uint32_t flags)
     : core(flags_to_lib(flags))
     , ttf() { }
 
-std::uint32_t initializer::flags_to_lib(std::uint32_t flags)
+std::uint32_t initializer::flags_to_lib(std::uint32_t /*flags*/)
 {
     // std::uint32_t res = 0;
     // if (flags & OnlyEvents) res |= SDL_INIT_EVENTS;
