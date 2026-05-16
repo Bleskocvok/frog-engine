@@ -14,7 +14,8 @@
 namespace frog::lib2d::gx {
 
 
-Events::Events()
+Events::Events( bool debug )
+    : debug( debug )
 {
     for (int i = 0; i < SDL_NumSensors(); i++)
     {
@@ -98,14 +99,14 @@ void Events::reset_key( KeyState& k )
 }
 
 
-void Events::m_reset()
+void Events::m_reset( Mouse& m )
 {
-    reset_key( m_mouse.but_l );
-    reset_key( m_mouse.but_r );
-    reset_key( m_mouse.but_m );
-    m_mouse.dx = 0;
-    m_mouse.dy = 0;
-    m_mouse.wheel = 0;
+    reset_key( m.but_l );
+    reset_key( m.but_r );
+    reset_key( m.but_m );
+    m.dx = 0;
+    m.dy = 0;
+    m.wheel = 0;
 }
 
 
@@ -114,7 +115,9 @@ void Events::reset()
     k_reset();
     f_reset();
     resized.reset();
-    m_reset();
+    m_reset( m_mouse );
+
+    m_reset( m_mouse_debug );
 
     m_app = App{};
 }
@@ -253,6 +256,29 @@ void Events::update()
         }
     };
     m_display.orientation = get_enum(SDL_GetDisplayOrientation(0));
+
+    if ( debug )
+        apply_debug();
+}
+
+void Events::apply_debug()
+{
+    if ( m_mouse.but_l.released && m_mouse_debug.but_l.down )
+        m_mouse_debug.but_l.released = true;
+
+    if ( not k_at( SDL_SCANCODE_LCTRL ).down )
+        return;
+
+    auto link = [](auto& src, auto& dst)
+    {
+        if ( src )
+            dst = true;
+        src = false;
+    };
+
+    link( m_mouse.but_l.pressed,    m_mouse_debug.but_l.pressed );
+    link( m_mouse.but_l.released,   m_mouse_debug.but_l.released );
+    link( m_mouse.but_l.down,       m_mouse_debug.but_l.down );
 }
 
 const Events::KeyState& Events::k_at( SDL_Scancode k ) const

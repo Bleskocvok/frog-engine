@@ -74,6 +74,7 @@ public:
 
 private:
     bool has_quit = false;
+    bool debug = false;
 
     std::array< KeyState, SCANCODES_MAX > m_keys;
 
@@ -81,6 +82,8 @@ private:
     int keyboard_state_count = 0;
 
     Mouse m_mouse;
+
+    Mouse m_mouse_debug;
 
     std::map< SDL_FingerID, Finger > m_fingers;
 
@@ -99,10 +102,12 @@ private:
 
     void k_reset();
     void f_reset();
-    void m_reset();
+    void m_reset( Mouse& );
+
+    void apply_debug();
 
 public:
-    Events();
+    Events( bool debug = false );
 
     Events( const Events& ) = delete;
     Events& operator=( const Events& ) = delete;
@@ -120,6 +125,8 @@ public:
 
     // mouse
     const Mouse& mouse() const { return m_mouse; }
+
+    const Mouse& debug_mouse() const { return m_mouse_debug; }
 
     // touch
     const decltype( m_fingers )& fingers() const { return m_fingers; }

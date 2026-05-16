@@ -85,6 +85,7 @@ engine2d::engine2d(settings set, ptr<state> _global)
                    std::move(_global) )
     , audio(global->asset_path())
     , win_raw(static_cast<lib2d::gx::window*>(window.get()))
+    , input( mk_ptr<lib2d::gx::Events>(global->debug) )
 {
     renderer = mk_ptr<gx::renderer2d>(static_cast<lib2d::gx::window*>(window.get()));
 

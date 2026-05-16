@@ -34,6 +34,8 @@ public:
 
     bool quit = false;
 
+    bool debug = false;
+
     unsigned max_consecutive_updates = 3;
 
     double between_ = 0;
