@@ -67,8 +67,7 @@ public:
     gx::assets<lib2d::gx::texture> textures = gx::assets<lib2d::gx::texture>{ "texture" };
     gx::assets<font::base> fonts = gx::assets<font::base>{ "font" };
 
-    // geo::rect camera_ = { geo::vec2{ 0 }, geo::vec2{ 1, 1 } };
-    const camera2d default_camera = { geo::vec2{ 0 }, geo::vec2{ 1, 1 } };
+    const camera2d default_camera = { camera2d::DEFAULT_POS, camera2d::DEFAULT_SIZE };
     std::unordered_map<std::string, camera2d> cameras;
 
     engine2d(settings set, ptr<state> global);
