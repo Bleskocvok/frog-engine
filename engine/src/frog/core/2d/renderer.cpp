@@ -7,6 +7,7 @@
 #include "frog/utils/assert.hpp"
 #include "frog/geometry/rectangle.hpp"
 #include "frog/graphics/ui_element.hpp"
+#include "frog/geometry/vector.hpp"
 
 #include <map>
 
@@ -32,9 +33,14 @@ std::pair<geo::vec2, geo::vec2> Renderer::ui_scale_shift() const
 {
     geo::vec2 scale = { window->w() / camera.size.x(),
                         window->h() / camera.size.y() };
-    geo::vec2 shift = { 0 };
-    shift.x() += window->w() * 0.5;
-    shift.y() += window->h() * 0.5;
+    geo::vec2 shift = 0.5 * frog::geo::vec2{ float(window->w()), float(window->h()) };
+
+    if (scale.x() != 0 && scale.y() != 0)
+    {
+        shift.x() /= scale.x();
+        shift.y() /= scale.y();
+    }
+
     return { scale, shift };
 }
 
@@ -117,9 +123,6 @@ void Renderer::draw_sprite(const lib2d::gx::texture& tex, geo::rect dest,
 {
     RenderCtx ctx;
     std::tie(ctx.scale, ctx.shift) = ui_scale_shift();
-
-    ctx.move_pre_scale = false;
-
     draw(ctx, tex, dest, uv, color, crop);
 }
 
@@ -229,7 +232,6 @@ void Renderer::draw_ui(const frog::scene_manager<frog::game_object2d>& scenes,
     auto ctx = RenderCtx{};
     ctx.between = between;
     std::tie(ctx.scale, ctx.shift) = ui_scale_shift();
-    ctx.move_pre_scale = false;
 
     auto queue = Queue();
 
