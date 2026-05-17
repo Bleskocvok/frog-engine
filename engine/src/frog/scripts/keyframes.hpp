@@ -123,9 +123,26 @@ class Keyframes : public frog::script2d
     uint64_t accum = 0;
 
     template<typename T>
-    void solve(double between, const detail::Node<T>& prev, detail::Node<T>& next)
+    void solve(double, const detail::Node<T>&, detail::Node<T>&)
     {
+        static_assert(false);
+    }
 
+    template<>
+    void solve<Position>(double between,
+            const detail::Node<Position>& prev,
+            detail::Node<Position>& next)
+    {
+        frog_assert(sprite);
+
+        auto& accum = timelines.get<Position>().accum;
+
+        sprite->rect.pos -= accum.delta;
+
+        auto delta = frog::geo::lerp(prev.key.delta, next.key.delta, float(between));
+        accum.delta = delta;
+
+        sprite->rect.pos += delta;
     }
 
     template<>
@@ -159,8 +176,6 @@ class Keyframes : public frog::script2d
         if (not prev)
             prev = &def;
 
-        LOGX(prev->t, next->t);
-
         uint64_t range = next->t - prev->t;
 
         double between = (accum - prev->t) / double(range);
@@ -181,7 +196,9 @@ public:
     void frame_update(frog::game_object2d&, frog::engine2d& eng) override
     {
         accum += eng.global->frame_time() * 1000;
+
         solve_transition<Scale>();
+        solve_transition<Position>();
     }
 
     void stable_update(frog::game_object2d& obj, frog::engine2d&) override
