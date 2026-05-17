@@ -2,6 +2,7 @@
 
 #include "frog/core/script.hpp"
 #include "frog/core/engine2d.hpp"
+#include "frog/geometry/general.hpp"
 #include "frog/geometry/vector.hpp"
 #include "frog/graphics/color.hpp"
 #include "frog/gx2d/sprite.hpp"
@@ -21,9 +22,30 @@
 
 namespace frog::scripts {
 
+enum class InterFunc
+{
+    Lerp,
+    Smoothstep,
+    Smootherstep
+};
+
+template<typename T>
+T interpolate(InterFunc interf, T a, T b, double t)
+{
+    switch (interf)
+    {
+        case InterFunc::Lerp:         return frog::geo::lerp(a, b, t);
+        case InterFunc::Smoothstep:   return frog::geo::smoothstep(a, b, t);
+        case InterFunc::Smootherstep: return frog::geo::smootherstep(a, b, t);
+    }
+    frog_assert(false);
+}
+
 struct Scale
 {
     frog::geo::vec2 scale = { 1 };
+
+    InterFunc interfunc = InterFunc::Smoothstep;
 
     friend auto& operator<<(auto& o, Scale s)
     {
@@ -34,7 +56,11 @@ struct Scale
 struct Position
 {
     frog::geo::vec2 delta = { 0 };
-    bool relative = true;
+
+    // TODO: Relative to scale?
+    // bool relative = true;
+
+    InterFunc interfunc = InterFunc::Smoothstep;
 };
 
 struct Color
@@ -139,7 +165,7 @@ class Keyframes : public frog::script2d
 
         sprite->rect.pos -= accum.delta;
 
-        auto delta = frog::geo::lerp(prev.key.delta, next.key.delta, float(between));
+        auto delta = interpolate(next.key.interfunc, prev.key.delta, next.key.delta, between);
         accum.delta = delta;
 
         sprite->rect.pos += delta;
@@ -158,7 +184,7 @@ class Keyframes : public frog::script2d
         if (accum.scale.y() != 0)
             sprite->rect.size.y() /= accum.scale.y();
 
-        auto scale = frog::geo::lerp(prev.key.scale, next.key.scale, float(between));
+        auto scale = interpolate(next.key.interfunc, prev.key.scale, next.key.scale, between);
         accum.scale = scale;
 
         sprite->rect.size *= scale;
@@ -195,10 +221,6 @@ public:
     Keyframes(gx2d::Sprite& sprite)
         : sprite(&sprite)
     { }
-
-    void init(frog::game_object2d& obj, frog::engine2d&) override
-    {
-    }
 
     void frame_update(frog::game_object2d&, frog::engine2d& eng) override
     {
