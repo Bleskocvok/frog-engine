@@ -47,6 +47,8 @@ class Renderer
         geo::vec2 scale_mult = { 1 };
         geo::vec2 pos_mult = { 1 };
 
+        double angle = 0;
+
         bool move_pre_scale = true;
         double between = 0;
     };

@@ -77,7 +77,7 @@ void Renderer::draw(const RenderCtx& ctx, const gx2d::Sprite& model)
 
     auto rect = model.rect;
     auto tex = model.tex;
-    float angle = model.angle;
+    float angle = model.angle + ctx.angle;
 
     perform_interpolation(model, ctx.between, rect, angle);
 
@@ -159,6 +159,9 @@ void Renderer::draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite)
 
         if (sub.anchor.rel_size)
             sub_ctx.scale_mult *= sprite.rect.size;
+
+        if (sub.anchor.rel_angle)
+            sub_ctx.angle += sprite.angle;
 
         draw(sub_ctx, sub.sprite);
     };

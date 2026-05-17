@@ -34,7 +34,7 @@ T interpolate(InterFunc interf, T a, T b, double t)
 {
     switch (interf)
     {
-        case InterFunc::Lerp:         return frog::geo::lerp(a, b, t);
+        case InterFunc::Lerp:         return frog::geo::lerp_t(a, b, t);
         case InterFunc::Smoothstep:   return frog::geo::smoothstep(a, b, t);
         case InterFunc::Smootherstep: return frog::geo::smootherstep(a, b, t);
     }
@@ -60,6 +60,12 @@ struct Position
     // TODO: Relative to scale?
     // bool relative = true;
 
+    InterFunc interfunc = InterFunc::Smoothstep;
+};
+
+struct Rotation
+{
+    double deg = 0;
     InterFunc interfunc = InterFunc::Smoothstep;
 };
 
@@ -144,7 +150,7 @@ class Keyframes : public frog::script2d
         { return std::get<detail::Timeline<T>>(data); }
     };
 
-    Timelines<Scale, Position, Color, Loop, End> timelines;
+    Timelines<Scale, Rotation, Position, Color, Loop, End> timelines;
 
     uint64_t accum = 0;
 
@@ -190,6 +196,21 @@ class Keyframes : public frog::script2d
         sprite->rect.size *= scale;
     }
 
+    template<>
+    void solve<Rotation>(double between, const detail::Node<Rotation>& prev, detail::Node<Rotation>& next)
+    {
+        frog_assert(sprite);
+
+        auto& accum = timelines.get<Rotation>().accum;
+
+        sprite->angle -= accum.deg;
+
+        auto deg = interpolate(next.key.interfunc, prev.key.deg, next.key.deg, between);
+        accum.deg = deg;
+
+        sprite->angle += deg;
+    }
+
     template<typename T>
     void solve_transition()
     {
@@ -227,6 +248,7 @@ public:
         accum += eng.global->frame_time() * 1000;
 
         solve_transition<Scale>();
+        solve_transition<Rotation>();
         solve_transition<Position>();
     }
 

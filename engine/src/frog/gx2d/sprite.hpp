@@ -63,6 +63,7 @@ struct Anchor
     enum class Position { NONE, RELATIVE, SIZE_RELATIVE };
     Position position = Position::NONE;
     bool rel_size = false;
+    bool rel_angle = false;
 };
 
 enum class RelLayer { BELOW, ABOVE };

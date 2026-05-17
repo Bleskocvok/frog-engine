@@ -53,25 +53,23 @@ inline float angle_diff_deg(float a, float b)
 
 
 template<typename T>
+T lerp_t(T a, T b, double t)
+{
+    return a + t * (b - a);
+}
+
+template<typename T>
 T smootherstep(T a, T b, double t)
 {
     t = t * t * t * (t * (6 * t - 15) + 10);
-    return lerp(std::forward<T>(a), std::forward<T>(b), t);
+    return lerp_t(a, b, t);
 }
-
 
 template<typename T>
 T smoothstep(T a, T b, double t)
 {
     t = t * t * (3 - 2 * t);
-    return lerp(std::forward<T>(a), std::forward<T>(b), t);
-}
-
-
-template<typename T>
-T lerp(T a, T b, double t)
-{
-    return a + t * (b - a);
+    return lerp_t(a, b, t);
 }
 
 
