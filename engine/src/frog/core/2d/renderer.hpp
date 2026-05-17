@@ -98,13 +98,10 @@ public:
         , camera(camera_)
     { }
 
-    void draw_sprite(const lib2d::gx::texture& tex, geo::rect dest,
-                           geo::rect uv, gx::rgba_t color, gx2d::Crop crop = {});
-
     void draw_objects(const frog::scene_manager<frog::game_object2d>& scenes, double between);
 
     void draw_ui_sprite(const lib2d::gx::texture& tex, geo::rect dest,
-                           geo::rect uv, gx::rgba_t color);
+                           geo::rect uv, gx::rgba_t color, gx2d::Crop crop = {});
 
     void draw_ui(const frog::scene_manager<frog::game_object2d>& scenes, double between);
 };

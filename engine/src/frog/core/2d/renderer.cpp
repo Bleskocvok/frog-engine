@@ -118,18 +118,12 @@ void Renderer::draw(const RenderCtx& ctx, const gx2d::Sprite& model)
                                   angle);
 }
 
-void Renderer::draw_sprite(const lib2d::gx::texture& tex, geo::rect dest,
-                       geo::rect uv, gx::rgba_t color, gx2d::Crop crop)
+void Renderer::draw_ui_sprite(const lib2d::gx::texture& tex, geo::rect dest,
+                              geo::rect uv, gx::rgba_t color, gx2d::Crop crop)
 {
     RenderCtx ctx;
     std::tie(ctx.scale, ctx.shift) = ui_scale_shift();
     draw(ctx, tex, dest, uv, color, crop);
-}
-
-void Renderer::draw_ui_sprite(const lib2d::gx::texture& tex, geo::rect dest,
-                              geo::rect uv, gx::rgba_t color)
-{
-    draw_sprite(tex, dest, uv, color);
 }
 
 void Renderer::draw_text(const gx::Text& label, geo::vec2 pos,

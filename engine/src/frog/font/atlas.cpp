@@ -89,7 +89,7 @@ void atlas::draw(frog::r2d::Renderer& renderer, const frog::gx::Text& label,
         gx2d::crop_tex(crop, char_rect, tex);
         gx2d::crop_rect(crop, char_rect);
 
-        renderer.draw_sprite(texture, char_rect, tex, label.color);
+        renderer.draw_ui_sprite(texture, char_rect, tex, label.color);
         pos.x() += char_size(height).x();
     }
 }

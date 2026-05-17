@@ -7,7 +7,6 @@
 #include "crop.hpp"
 
 #include <cmath>        // lerp
-#include <cstdint>      // int16_t, INT16_MIN, INT16_MAX
 #include <optional>
 #include <string>
 #include <vector>
@@ -55,9 +54,6 @@ struct Sprite
     std::vector<ChildSprite> children;
 };
 
-// constexpr std::int16_t BELOW = INT16_MIN;
-// constexpr std::int16_t ABOVE = INT16_MAX;
-
 struct Anchor
 {
     enum class Position { NONE, RELATIVE, SIZE_RELATIVE };
@@ -70,7 +66,6 @@ enum class RelLayer { BELOW, ABOVE };
 
 struct ChildSprite
 {
-    // std::int16_t layer = ABOVE;
     RelLayer layer = RelLayer::ABOVE;
     Anchor anchor;
     Sprite sprite;

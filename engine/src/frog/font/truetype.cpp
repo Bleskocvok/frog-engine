@@ -46,7 +46,7 @@ void truetype::draw(frog::r2d::Renderer& engine, const frog::gx::Text& label,
     auto* cached = texture_cache.get(label.str);
     if (cached)
     {
-        engine.draw_sprite(*cached, rect, { 0, 0, 1, 1 }, label.color, crop);
+        engine.draw_ui_sprite(*cached, rect, { 0, 0, 1, 1 }, label.color, crop);
     }
     else
     {
@@ -54,7 +54,7 @@ void truetype::draw(frog::r2d::Renderer& engine, const frog::gx::Text& label,
                                       label.color.b(), label.color.a());
         auto texture = engine.window->make_texture(surf);
 
-        engine.draw_sprite(texture, rect, { 0, 0, 1, 1 }, label.color, crop);
+        engine.draw_ui_sprite(texture, rect, { 0, 0, 1, 1 }, label.color, crop);
 
         texture_cache.put(label.str, std::move(texture));
     }

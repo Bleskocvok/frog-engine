@@ -250,6 +250,13 @@ public:
         solve_transition<Scale>();
         solve_transition<Rotation>();
         solve_transition<Position>();
+
+        // auto solves = [this]<typename... Ts>()
+        // {
+        //     (solve_transition<Ts>(), ...);
+        // };
+
+        // solves.template operator()<Scale, Rotation, Position>();
     }
 
     void stable_update(frog::game_object2d& obj, frog::engine2d&) override
