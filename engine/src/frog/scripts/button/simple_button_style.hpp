@@ -19,18 +19,22 @@ struct simple_button_style_base : button_style_base<GameObject>
 {
     frog::gx::ui_element* ui = nullptr;
 
+    GameObject* obj = nullptr;
+
     simple_button_style_base(frog::gx::ui_element* ui)
         : ui(ui) {}
 
-    void init(GameObject& obj) override
+    void init(GameObject& o) override
     {
+        obj = &o;
+
         if (ui)
             return;
 
-        if (obj.elements().empty())
-            ui = obj.add_element(frog::mk_ptr<gx::ui_element>());
+        if (o.elements().empty())
+            ui = o.add_element(frog::mk_ptr<gx::ui_element>());
         else
-            ui = obj.elements().front().get();
+            ui = o.elements().front().get();
     }
 
     void idle(GameObject&) override { idle(*ui); }
