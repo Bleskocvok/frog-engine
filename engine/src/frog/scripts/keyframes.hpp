@@ -184,6 +184,13 @@ class Keyframes : public frog::script2d
         solve<T>(between, *prev, *next);
     }
 
+    template<typename T>
+    bool reached()
+    {
+        auto [prev, next] = timelines.get<T>().prev_next(accum);
+        return prev != nullptr || ( next != nullptr && accum >= next->t );
+    }
+
 public:
     Keyframes(gx2d::Sprite& sprite)
         : sprite(&sprite)
@@ -203,6 +210,12 @@ public:
 
     void stable_update(frog::game_object2d& obj, frog::engine2d&) override
     {
+        if (reached<End>())
+            obj.remove_script(this);
+
+        // TODO: Accum -= Loop.t
+        if (reached<Loop>())
+            accum = 0;
     }
 
     template<typename T>
