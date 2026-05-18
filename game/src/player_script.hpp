@@ -1,6 +1,7 @@
 #pragma once
 
 #include "frog/core/script.hpp"
+#include "frog/graphics/color.hpp"
 
 #include "constants.hpp"
 #include "paddle_script.hpp"
@@ -46,7 +47,7 @@ struct player_script : frog::script
         auto* display = self->add_element(mk_ptr<gx::ui_element>());
         display->label = { "score: "s + std::to_string(score) };
         display->label->align = gx::Align::CENTER;
-        display->color() = gx::color_to_255({ 0.3, 0.3, 0.8, 1 });
+        display->color() = gx::vec_to_rgb({ 0.3, 0.3, 0.8, 1 });
         display->pos() = { 0, 1 - IconSize - Offset };
         display->size() = { IconSize * 0.75 };
     }
