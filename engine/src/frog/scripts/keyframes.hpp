@@ -158,27 +158,31 @@ class Keyframes : public frog::script2d
     uint64_t prev_accum = 0;
 
     template<typename T>
-    void solve(double, const detail::Node<T>&, detail::Node<T>&)
+    void solve(double, const detail::Node<T>*, detail::Node<T>&)
     {
         static_assert(false);
     }
 
     template<>
-    void solve<Position>(double between,
-            const detail::Node<Position>& prev,
-            detail::Node<Position>& next)
+    void solve<Position>(double between, const detail::Node<Position>* prev, detail::Node<Position>& next)
     {
         auto& accum = timelines.get<Position>().accum;
         sprite->rect.pos -= accum.delta;
 
-        auto delta = interpolate(next.key.interfunc, prev.key.delta, next.key.delta, between);
+        auto delta = interpolate(next.key.interfunc, get_default(prev).key.delta, next.key.delta, between);
         accum.delta = delta;
 
         sprite->rect.pos += delta;
     }
 
+    template<typename T>
+    detail::Node<T> get_default(const detail::Node<T>* node)
+    {
+        return node ? *node : detail::Node<T>{};
+    }
+
     template<>
-    void solve<Scale>(double between, const detail::Node<Scale>& prev, detail::Node<Scale>& next)
+    void solve<Scale>(double between, const detail::Node<Scale>* prev, detail::Node<Scale>& next)
     {
         auto& accum = timelines.get<Scale>().accum;
 
@@ -188,36 +192,46 @@ class Keyframes : public frog::script2d
         if (accum.scale.y() != 0)
             sprite->rect.size.y() /= accum.scale.y();
 
-        auto scale = interpolate(next.key.interfunc, prev.key.scale, next.key.scale, between);
+        auto scale = interpolate(next.key.interfunc, get_default(prev).key.scale, next.key.scale, between);
 
         accum.scale = scale;
         sprite->rect.size *= scale;
     }
 
     template<>
-    void solve<Rotation>(double between, const detail::Node<Rotation>& prev, detail::Node<Rotation>& next)
+    void solve<Rotation>(double between, const detail::Node<Rotation>* prev, detail::Node<Rotation>& next)
     {
         auto& accum = timelines.get<Rotation>().accum;
         sprite->angle -= accum.deg;
 
-        auto deg = interpolate(next.key.interfunc, prev.key.deg, next.key.deg, between);
+        auto deg = interpolate(next.key.interfunc, get_default(prev).key.deg, next.key.deg, between);
 
         accum.deg = deg;
         sprite->angle += deg;
     }
 
     template<>
-    void solve<Color>(double between, const detail::Node<Color>& prev, detail::Node<Color>& next)
+    void solve<Color>(double between, const detail::Node<Color>* prev, detail::Node<Color>& next)
     {
         auto& accum = timelines.get<Color>().accum;
         sprite->color -= accum.color;
 
-        auto a = gx::rgb_to_vec( prev.key.color );
+        auto a = gx::rgb_to_vec( prev ? prev->key.color : sprite->color );
         auto b = gx::rgb_to_vec( next.key.color );
         auto color = interpolate(next.key.interfunc, a, b, between);
 
+        // TODO: Move this to rgba_t. Omfg.
+        auto safe_add = [](gx::rgba_t& dst, const gx::rgba_t& src)
+        {
+            auto add = [](uint16_t a, uint16_t b){ return std::min(a + b, 255); };
+            dst.r() = add(dst.r(), src.r());
+            dst.g() = add(dst.g(), src.g());
+            dst.b() = add(dst.b(), src.b());
+            dst.a() = add(dst.a(), src.a());
+        };
+
         accum.color = frog::gx::vec_to_rgb( color );
-        sprite->color += frog::gx::vec_to_rgb( color );
+        safe_add( sprite->color, frog::gx::vec_to_rgb( color ) );
     }
 
     template<typename T>
@@ -236,7 +250,8 @@ class Keyframes : public frog::script2d
             detail::Node<T> def;
 
             if (before.second != nullptr)
-                solve<T>(1.0, before.first == nullptr ? def : *before.first, *before.second);
+                // solve<T>(1.0, before.first == nullptr ? def : *before.first, *before.second);
+                solve<T>(1.0, before.first, *before.second);
         }
 
         auto [prev, next] = now;
@@ -244,16 +259,18 @@ class Keyframes : public frog::script2d
         if (not next)
             return;
 
-        detail::Node<T> def;
-        if (not prev)
-            prev = &def;
+        // detail::Node<T> def;
+        // if (not prev)
+        //     prev = &def;
 
-        uint64_t range = next->t - prev->t;
+        auto prev_t = prev ? prev->t : 0;
 
-        double between = (accum - prev->t) / double(range);
+        uint64_t range = next->t - prev_t;
+
+        double between = (accum - prev_t) / double(range);
         between = std::clamp(between, 0.0, 1.0);
 
-        solve<T>(between, *prev, *next);
+        solve<T>(between, prev, *next);
     }
 
     template<typename T>

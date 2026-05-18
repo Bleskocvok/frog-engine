@@ -3,6 +3,7 @@
 #include "frog/geometry/vector.hpp"
 #include "frog/utils/assert.hpp"
 
+#include <algorithm>
 #include <cmath>        // fabs, fmod
 #include <cstdint>      // uint8_t
 #include <stdexcept>
@@ -18,6 +19,11 @@ using rgba_t = geo::vec<std::uint8_t, 4>;
 
 inline rgba_t vec_to_rgb(geo::vec4 v)
 {
+    auto clamp = [](auto& x){ x = std::clamp<float>(x, 0, 1); };
+    clamp( v.r() );
+    clamp( v.g() );
+    clamp( v.b() );
+    clamp( v.a() );
     return { std::uint8_t( v.r() * 255.0f ), std::uint8_t( v.g() * 255.0f ),
              std::uint8_t( v.b() * 255.0f ), std::uint8_t( v.a() * 255.0f ) };
 }

@@ -2,6 +2,7 @@
 
 #include "basic.hpp"
 
+#include <type_traits>
 #include <utility>      // std::forward
 #include <algorithm>    // std::min
 #include <string>       // std::to_string
@@ -85,7 +86,11 @@ std::string to_str(const Array& array,
     res << l_border;
     for (auto& elem : array)
     {
-        res << del << elem;
+        if constexpr (std::is_same_v<std::decay_t<decltype(elem)>, char>
+                    || std::is_same_v<std::decay_t<decltype(elem)>, unsigned char>)
+            res << del << int(elem);
+        else
+            res << del << elem;
         del = delimiter;
     }
     res << r_border;
