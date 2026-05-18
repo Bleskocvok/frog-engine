@@ -2,7 +2,6 @@
 
 #include "frog/geometry/vector.hpp"
 #include "frog/utils/assert.hpp"
-#include "frog/utils/exception.hpp"
 
 #include <cmath>        // fabs, fmod
 #include <cstdint>      // uint8_t

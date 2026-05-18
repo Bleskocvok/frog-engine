@@ -71,7 +71,9 @@ struct Rotation
 
 struct Color
 {
-    frog::gx::rgba_t color;
+    frog::gx::rgba_t color = gx::colors::WHITE;
+    // TODO: Allow choice between HSV and RGB interpolation.
+    InterFunc interfunc = InterFunc::Smoothstep;
 };
 
 struct Loop {};
@@ -166,10 +168,7 @@ class Keyframes : public frog::script2d
             const detail::Node<Position>& prev,
             detail::Node<Position>& next)
     {
-        frog_assert(sprite);
-
         auto& accum = timelines.get<Position>().accum;
-
         sprite->rect.pos -= accum.delta;
 
         auto delta = interpolate(next.key.interfunc, prev.key.delta, next.key.delta, between);
@@ -181,8 +180,6 @@ class Keyframes : public frog::script2d
     template<>
     void solve<Scale>(double between, const detail::Node<Scale>& prev, detail::Node<Scale>& next)
     {
-        frog_assert(sprite);
-
         auto& accum = timelines.get<Scale>().accum;
 
         if (accum.scale.x() != 0)
@@ -192,29 +189,42 @@ class Keyframes : public frog::script2d
             sprite->rect.size.y() /= accum.scale.y();
 
         auto scale = interpolate(next.key.interfunc, prev.key.scale, next.key.scale, between);
-        accum.scale = scale;
 
+        accum.scale = scale;
         sprite->rect.size *= scale;
     }
 
     template<>
     void solve<Rotation>(double between, const detail::Node<Rotation>& prev, detail::Node<Rotation>& next)
     {
-        frog_assert(sprite);
-
         auto& accum = timelines.get<Rotation>().accum;
-
         sprite->angle -= accum.deg;
 
         auto deg = interpolate(next.key.interfunc, prev.key.deg, next.key.deg, between);
-        accum.deg = deg;
 
+        accum.deg = deg;
         sprite->angle += deg;
+    }
+
+    template<>
+    void solve<Color>(double between, const detail::Node<Color>& prev, detail::Node<Color>& next)
+    {
+        auto& accum = timelines.get<Color>().accum;
+        sprite->color -= accum.color;
+
+        auto a = gx::rgb_to_vec( prev.key.color );
+        auto b = gx::rgb_to_vec( next.key.color );
+        auto color = interpolate(next.key.interfunc, a, b, between);
+
+        accum.color = frog::gx::vec_to_rgb( color );
+        sprite->color += frog::gx::vec_to_rgb( color );
     }
 
     template<typename T>
     void solve_transition()
     {
+        frog_assert(sprite);
+
         auto before = timelines.get<T>().prev_next(prev_accum);
         auto now = timelines.get<T>().prev_next(accum);
 
@@ -266,6 +276,7 @@ public:
         solve_transition<Scale>();
         solve_transition<Rotation>();
         solve_transition<Position>();
+        solve_transition<Color>();
 
         // auto solves = [this]<typename... Ts>()
         // {
