@@ -28,6 +28,18 @@ vec<T, Dim> lerp(const vec<T, Dim>& a, const vec<T, Dim>& b, const T& t)
 }
 
 
+template<typename T>
+T max(const vec<T, 3>& vec)
+{
+    return std::max(vec.x(), std::max(vec.y(), vec.z()));
+}
+
+template<typename T>
+T min(const vec<T, 3>& vec)
+{
+    return std::min(vec.x(), std::min(vec.y(), vec.z()));
+}
+
 template<typename T, unsigned Dim>
 class vec : public element<T, Dim, vec<T, Dim>>
 {
@@ -56,7 +68,8 @@ public:
             Base::data[i] = v.data[i];
     }
 
-    constexpr vec(vec<T, Dim - 1> v, T&& val)
+    // TODO: Figure out perfect forwarding for val.
+    constexpr vec(vec<T, Dim - 1> v, T val)
     {
         for (size_t i = 0; i < Dim - 1; i++)
         {
@@ -115,6 +128,8 @@ public:
     constexpr       T& a()       { return w(); }
 
     constexpr vec<T, 2> xy() const { return { x(), y() }; }
+
+    constexpr vec<T, 3> xyz() const { return { x(), y(), z() }; }
 
 
     constexpr void is_color() const

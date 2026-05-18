@@ -1,8 +1,10 @@
 #pragma once
 
 #include "frog/geometry/vector.hpp"
+#include "frog/utils/assert.hpp"
 #include "frog/utils/exception.hpp"
 
+#include <cmath>        // fabs, fmod
 #include <cstdint>      // uint8_t
 #include <stdexcept>
 #include <string_view>
@@ -15,7 +17,7 @@ namespace frog::gx
 using rgba_t = geo::vec<std::uint8_t, 4>;
 
 
-inline rgba_t color_to_255(geo::vec4 v)
+inline rgba_t vec_to_rgb(geo::vec4 v)
 {
     return { std::uint8_t( v.r() * 255.0f ), std::uint8_t( v.g() * 255.0f ),
              std::uint8_t( v.b() * 255.0f ), std::uint8_t( v.a() * 255.0f ) };
@@ -24,9 +26,80 @@ inline rgba_t color_to_255(geo::vec4 v)
 
 inline geo::vec4 rgb_to_vec( gx::rgba_t rgb )
 {
-    return { rgb.a() / 255.0f, rgb.g() / 255.0f, rgb.b() / 255.0f,
-             rgb.a() / 255.0f };
+    geo::vec4 vec = { float(rgb.r()), float(rgb.g()), float(rgb.b()), float(rgb.a()) };
+    vec /= 255;
+    return vec;
 }
+
+
+inline geo::vec4 vec_to_hsv(geo::vec4 vec)
+{
+    auto x_max = geo::max( vec.xyz() );
+    auto x_min = geo::min( vec.xyz() );
+    auto value = x_max;
+    auto chroma = x_max - x_min;
+
+    auto get_hue = [&]() -> float
+    {
+        auto c = chroma;
+
+        if (c == 0)
+            return 0;
+
+        if (value == vec.r())
+            return 60 * std::fmod( ( vec.g() - vec.b() ) / c, 6 );
+
+        if (value == vec.g())
+            return 60 * ( 2 + ( vec.b() - vec.r() ) / c );
+
+        if (value == vec.b())
+            return 60 * ( 4 + ( vec.r() - vec.g() ) / c );
+
+        frog_assert(false);
+    };
+
+    auto hue = get_hue();
+    auto saturation = value == 0 ? 0 : chroma / value;
+
+    auto hsv = geo::vec4(hue, saturation, value, vec.a());
+    return hsv;
+}
+
+
+inline geo::vec4 hsv_to_vec(geo::vec4 hsv)
+{
+    auto hue = hsv.x();         // [0, 360]
+    auto saturation = hsv.y();  // [0, 1]
+    auto value = hsv.z();       // [0, 1]
+
+    auto chroma = value * saturation;
+
+    auto h = hue / 60;
+
+    float x = chroma * (1 - std::fabs(std::fmod(h, 2) - 1));
+
+    auto table = [&]() -> geo::vec3
+    {
+        auto c = chroma;
+        if (h < 1) return { c, x, 0 };
+        if (h < 2) return { x, c, 0 };
+        if (h < 3) return { 0, c, x };
+        if (h < 4) return { 0, x, c };
+        if (h < 5) return { x, 0, c };
+        if (h < 6) return { c, 0, x };
+        frog_assert(false);
+    };
+
+    auto m = value - chroma;
+    auto rgb = table();
+
+    // Adds it to all three components.
+    rgb += m;
+
+    auto vec = geo::vec4(rgb, hsv.a());
+    return vec;
+}
+
 
 namespace color {
 
@@ -73,8 +146,7 @@ inline constexpr rgba_t from_hex(std::string_view str)
 
 } // namespace color
 
-namespace colors
-{
+namespace colors {
 
 inline const auto WHITE = rgba_t{ 255, 255, 255, 255 };
 inline const auto BLACK = rgba_t{   0,   0,   0, 255 };
