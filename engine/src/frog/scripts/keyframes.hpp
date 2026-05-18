@@ -153,6 +153,7 @@ class Keyframes : public frog::script2d
     Timelines<Scale, Rotation, Position, Color, Loop, End> timelines;
 
     uint64_t accum = 0;
+    uint64_t prev_accum = 0;
 
     template<typename T>
     void solve(double, const detail::Node<T>&, detail::Node<T>&)
@@ -214,7 +215,21 @@ class Keyframes : public frog::script2d
     template<typename T>
     void solve_transition()
     {
-        auto [prev, next] = timelines.get<T>().prev_next(accum);
+        auto before = timelines.get<T>().prev_next(prev_accum);
+        auto now = timelines.get<T>().prev_next(accum);
+
+        // This is to ensure that there is no drift from incomplete between.
+        // So, this way for every passed keyframe, there will be between=1 once.
+        // TODO: Sort this out in regards to End{}.
+        if (before != now)
+        {
+            detail::Node<T> def;
+
+            if (before.second != nullptr)
+                solve<T>(1.0, before.first == nullptr ? def : *before.first, *before.second);
+        }
+
+        auto [prev, next] = now;
 
         if (not next)
             return;
@@ -245,6 +260,7 @@ public:
 
     void frame_update(frog::game_object2d&, frog::engine2d& eng) override
     {
+        prev_accum = accum;
         accum += eng.global->frame_time() * 1000;
 
         solve_transition<Scale>();
