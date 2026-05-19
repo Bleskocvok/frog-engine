@@ -247,10 +247,7 @@ class Keyframes : public frog::script2d
         // TODO: Sort this out in regards to End{}.
         if (before != now)
         {
-            detail::Node<T> def;
-
             if (before.second != nullptr)
-                // solve<T>(1.0, before.first == nullptr ? def : *before.first, *before.second);
                 solve<T>(1.0, before.first, *before.second);
         }
 
@@ -258,10 +255,6 @@ class Keyframes : public frog::script2d
 
         if (not next)
             return;
-
-        // detail::Node<T> def;
-        // if (not prev)
-        //     prev = &def;
 
         auto prev_t = prev ? prev->t : 0;
 
