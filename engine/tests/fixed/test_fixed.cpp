@@ -10,6 +10,7 @@
 #include <random>       // mt19937_64
 #include <string>       // string
 #include <ostream>
+#include <cstdlib>      // abort
 
 struct thing
 {
@@ -74,6 +75,7 @@ bool is_close( float a, float b, float D = FloatDelta )
 
 void test_string_conversion();
 void test_string_exact();
+void test_safe_int();
 void test_exp();
 
 int main()
@@ -92,6 +94,7 @@ int main()
 
     test_string_exact();
     test_string_conversion();
+    test_safe_int();
     test_exp();
 
     assert( is_close( fx32( 5, 10 ), 0.5 ) );
@@ -376,6 +379,96 @@ void test_string_conversion()
     //         test_str_value< fx32 >( "fx32", num );
     //     }
     // }
+}
+
+void test_safe_int()
+{
+    using namespace frog::geo;
+    using u = i64s;
+
+    auto ass = [](auto a, auto b)
+    {
+        if (a == b)
+            std::cout << "OK  " << a << " == " << b << std::endl;
+        else
+        {
+            std::cout << "NOK " << a << " != " << b << std::endl;
+            std::abort();
+        }
+    };
+
+    auto test_int = [&](auto a, auto b, auto op, const char* str)
+    {
+        auto res = op( a, b );
+        std::cout << a << " " << str << " " << b << " = " << res << " | ";
+        ass( op( u( a ), u( b ) ), u( res ) );
+    };
+
+    auto plus  = [](auto a, auto b){ return a + b; };
+    auto minus = [](auto a, auto b){ return a - b; };
+    auto mult  = [](auto a, auto b){ return a * b; };
+    auto div   = [](auto a, auto b){ return a / b; };
+
+    // auto eq    = [](auto a, auto b){ return a == b; };
+    // auto neq   = [](auto a, auto b){ return a != b; };
+    // auto less  = [](auto a, auto b){ return a < b; };
+    // auto leq   = [](auto a, auto b){ return a <= b; };
+    // auto grea  = [](auto a, auto b){ return a > b; };
+    // auto geq   = [](auto a, auto b){ return a >= b; };
+
+    auto test_all = [&](auto a, auto b)
+    {
+        test_int( a, b, plus, "+");
+        test_int( a, b, minus, "-");
+        test_int( a, b, mult, "*");
+        test_int( a, b, div, "/");
+    };
+
+    test_all(1, 1);
+    test_all(1, 2);
+    test_all(2, 1);
+    test_all(-1, 1);
+    test_all(1, -1);
+    test_all(2, -1);
+    test_all(2, -2);
+    test_all(4, -2);
+    test_all(4, -8);
+    test_all(-8, -4);
+    test_all(-8, 4);
+
+    ass( u( -1 ), -u( 1 ) );
+    ass( u( -2 ), -u( 2 ) );
+    ass( -u( -2 ), u( 2 ) );
+    ass( -u( -23 ), u( 23 ) );
+
+    auto n = u(-2);
+    LOGX(n.val);
+    ass( u( -4 ) >> 1 , u( -2 ) );
+    ass( u( -2 ) >> 1 , u( -1 ) );
+    ass( u( -23 ) >> 1 , u( -12 ) );
+    ass( u( -23 ) >> 2 , u( -6 ) );
+    ass( u( -2 ) << 1 , u( -4 ) );
+
+    ass( u(  1 ) + u( 2 ), u( 3 ) );
+    ass( u( -2 ) + u( 2 ), u( 0 ) );
+    ass( -u( 2 ) + u( 2 ), u( 0 ) );
+    ass( u( 7 ) + u( 3 ), u( 10 ) );
+    ass( u( -7 ) + u( -3 ), u( -10 ) );
+
+    ass( u(  1 ) - u( 2 ), u( -1 ) );
+    ass( u( -2 ) - u( 2 ), u( -4 ) );
+    ass( -u( 2 ) - u( 2 ), u( -4 ) );
+    ass( u( 7 )  - u( 3 ), u( 4 ) );
+    ass( u( -7 ) - u( -3 ), u( -4 ) );
+
+    ass( u(  2 ) * u( 4 ), u(  8 ) );
+    ass( u( -2 ) * u( 4 ), u( -8 ) );
+
+    ass( u( 8 ) /  u( 2 ),  u( 4 ) );
+    ass( u( 8 ) / -u( 2 ), -u( 4 ) );
+
+    assert_eq( -u( -1337 ), u( 1337 ) );
+    assert_eq( -( -u( 1337 ) ), u( 1337 ) );
 }
 
 void test_exp()
