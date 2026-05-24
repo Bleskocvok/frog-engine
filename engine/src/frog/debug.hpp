@@ -151,6 +151,12 @@ void log(Out& out, Arg&& arg, Args&& ... args)
 }
 
 
+template<bool Space, int Depth, typename Out>
+void log(Out&)
+{
+}
+
+
 template<typename ... Args>
 void log_ln(Args&& ... args)
 {
