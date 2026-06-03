@@ -2,14 +2,12 @@
 
 #include "frog/core/script.hpp"
 #include "frog/core/engine2d.hpp"
-#include "frog/gx2d/sprite.hpp"
-#include "frog/gx2d/animation.hpp"
 
 #include <string>
 #include <unordered_map>
 #include <utility>      // move
 
-namespace frog {
+namespace frog::scripts {
 
 class ProfilerGuard
 {
@@ -36,6 +34,11 @@ public:
     {
 
     }
+
+    static const auto& times()
+    {
+        return times_us;
+    }
 };
 
 class ProfilerScript : public frog::script2d
@@ -53,6 +56,11 @@ public:
     {
 
     }
+
+    static const auto& times()
+    {
+        return ProfilerGuard::times();
+    }
 };
 
-} // namespace frog
+} // namespace frog::scripts
