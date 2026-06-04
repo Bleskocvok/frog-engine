@@ -3,6 +3,7 @@
 #include "frog/core/script.hpp"
 #include "frog/core/engine2d.hpp"
 
+#include <cstdint>
 #include <string>
 #include <unordered_map>
 #include <utility>      // move
@@ -11,14 +12,19 @@ namespace frog::scripts {
 
 class ProfilerGuard
 {
-    static std::unordered_map<std::string, double> times_us;
+    static std::unordered_map<std::string, std::uint64_t> times_us;
 
     std::string name;
+
+using Timer = frog::os::timer;
+
+    Timer timer;
 
 public:
     ProfilerGuard(std::string name)
         : name(std::move(name))
     {
+        timer.reset();
     }
 
     ProfilerGuard(const ProfilerGuard&) = delete;
@@ -26,8 +32,7 @@ public:
 
     ~ProfilerGuard()
     {
-        double us = 0;
-        times_us[name] += us;
+        times_us[name] += timer.duration_us();
     }
 
     static void reset()
