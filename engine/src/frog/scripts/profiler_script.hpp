@@ -2,17 +2,27 @@
 
 #include "frog/core/script.hpp"
 #include "frog/core/engine2d.hpp"
+#include "frog/utils/string.hpp"
 
 #include <cstdint>
+#include <iomanip>
+#include <iostream>
+#include <map>
+#include <ostream>
+#include <source_location>
+#include <sstream>
 #include <string>
+#include <string_view>
 #include <unordered_map>
 #include <utility>      // move
+
+#define FROG_PROFILE_FUNC() auto guard = scripts::ProfilerGuard()
 
 namespace frog::scripts {
 
 class ProfilerGuard
 {
-    static std::unordered_map<std::string, std::uint64_t> times_us;
+    static inline std::unordered_map<std::string, std::uint64_t> times_us;
 
     std::string name;
 
@@ -27,6 +37,12 @@ public:
         timer.reset();
     }
 
+    ProfilerGuard(const std::source_location& location = std::source_location::current())
+        : name( strip( location.function_name() ) )
+    {
+        timer.reset();
+    }
+
     ProfilerGuard(const ProfilerGuard&) = delete;
     ProfilerGuard& operator=(const ProfilerGuard&) = delete;
 
@@ -35,9 +51,22 @@ public:
         times_us[name] += timer.duration_us();
     }
 
-    static void reset()
+    static std::string strip(const char* str)
     {
 
+        auto ooga = frog::between(std::string_view(str), ' ', '(');
+        auto last = ooga.find_last_of(':');
+        auto sub = ooga.substr(last);
+        if (last != std::string_view::npos)
+            sub.remove_prefix(1);
+        return std::string( sub );
+
+        // return std::string( frog::between(std::string_view(str), ' ', '(') );
+    }
+
+    static void reset()
+    {
+        times_us.clear();
     }
 
     static const auto& times()
@@ -48,23 +77,92 @@ public:
 
 class ProfilerScript : public frog::script2d
 {
+    double accum = 0;
+
+    std::map<std::string, std::uint64_t> times_us;
+    std::map<std::string, std::uint64_t> snapshot;
+
+    void out(std::ostream& o) const
+    {
+        for (const auto& val : times_us)
+            out_line(o, val);
+
+        o << "\n";
+    }
+
+    bool emit = false;
+    bool changed_announce = false;
+
 public:
     ProfilerScript()
     { }
 
-    void init(frog::game_object2d& obj, frog::engine2d&) override
-    {
-
-    }
-
     void stable_update(frog::game_object2d& obj, frog::engine2d&) override
     {
+        changed_announce = false;
 
+        if (emit)
+        {
+            emit = false;
+
+            changed_announce = true;
+        }
     }
 
-    static const auto& times()
+    void frame_update(frog::game_object2d& obj, frog::engine2d& e) override
     {
-        return ProfilerGuard::times();
+        accum += e.global->frame_time();
+
+        for (const auto&[key, us] : ProfilerGuard::times())
+            times_us[key] += us;
+
+        ProfilerGuard::reset();
+
+        if (accum >= 1)
+        {
+            accum -= 1;
+
+            // print();
+            snapshot = times_us;
+            emit = true;
+
+            times_us.clear();
+        }
+    }
+
+    void out_line(std::ostream& o, const std::pair<std::string, double>& val) const
+    {
+        const auto&[key, us] = val;
+        auto ms = us / 1000.0;
+        o
+            << std::right
+            << std::setw(12)
+            << std::fixed
+            << std::setprecision(3)
+            << ms << " ms "
+            << key << "" << "\n";
+    }
+
+    void print() const
+    {
+        out(std::cout);
+    }
+
+    std::string to_string() const
+    {
+        std::ostringstream o;
+        out(o);
+        return std::move(o).str();
+    }
+
+    const auto& times()
+    {
+        return snapshot;
+    }
+
+    bool changed() const
+    {
+        return changed_announce;
     }
 };
 
