@@ -31,6 +31,6 @@ void for_each_segment(std::string_view str, std::string_view delim, Func&& func)
     func(segment);
 }
 
-std::string_view between(std::string_view view, char open, char close);
+std::string_view between(std::string_view view, char open, char close, bool require_start = true);
 
 } // namespace frog

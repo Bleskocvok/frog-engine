@@ -51,15 +51,21 @@ std::string_view frog::next_segment(std::string_view& str, std::string_view deli
     return res;
 }
 
-std::string_view frog::between(std::string_view view, char open, char close)
+std::string_view frog::between(std::string_view view, char open, char close, bool require_start)
 {
     auto start = view.find(open);
     auto end = view.find(close);
-    if (start == view.npos)
+
+    bool start_found = start != view.npos;
+
+    if (require_start && not start_found)
         return std::string_view{};
 
+    if (not require_start && not start_found)
+        start = 0;
+
     view = view.substr(start, end - start);
-    if (not view.empty())
+    if (not view.empty() && start_found)
         view.remove_prefix(1);
 
     return view;
