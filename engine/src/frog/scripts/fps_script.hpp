@@ -7,6 +7,7 @@
 #include "frog/core/game_object2d.hpp"
 #include "frog/core/engine2d.hpp"
 
+#include <cmath>
 #include <utility>      // move
 #include <sstream>      // ostringstream
 #include <iomanip>      // setw, setprecision
@@ -23,7 +24,8 @@ struct fps_script : frog::script2d
 
     frog::geo::vec2 pos = { -0.5, -0.5 };
 
-    explicit fps_script(frog::geo::vec2 pos) : pos(pos) {}
+    explicit fps_script(frog::geo::vec2 pos) : pos(pos)
+    { }
 
     fps_script() = default;
 
@@ -37,14 +39,36 @@ struct fps_script : frog::script2d
         display->size() = { 0, label_height };
     }
 
-    void frame_update(frog::game_object2d&, frog::engine2d& engine) override
+    double accum = 0;
+    double actual_length = 0;
+    int count = 0;
+
+    void recalc(double fps)
     {
         auto out = std::ostringstream{};
 
         out << "fps: " << std::setw(7) << std::fixed << std::setprecision(2)
-            << engine.global->fps();
+            << fps;
 
         display->label->str = std::move(out).str();
+
+    }
+
+    void frame_update(frog::game_object2d&, frog::engine2d& engine) override
+    {
+        count++;
+
+        accum += engine.global->frame_time();
+        actual_length += engine.global->frame_time();
+
+        if (accum > 1)
+        {
+            recalc(count / actual_length);
+
+            accum = std::fmod(accum, 1);
+            count = 0;
+            actual_length = 0;
+        }
     }
 };
 
