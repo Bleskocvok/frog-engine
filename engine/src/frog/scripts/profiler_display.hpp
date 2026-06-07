@@ -9,6 +9,7 @@
 #include "frog/scripts/profiler_script.hpp"
 #include "frog/utils/string_builder.hpp"
 
+#include <algorithm>
 #include <sstream>
 #include <string>
 #include <utility>      // move
@@ -18,6 +19,8 @@ namespace frog::scripts {
 
 class ProfilerDisplay : public frog::script2d
 {
+    static constexpr float label_height = 0.03;
+
     frog::geo::vec2 start;
 
     std::vector<gx::ui_element*> elems;
@@ -27,29 +30,26 @@ public:
         : start(start)
     { }
 
+    void init(frog::game_object2d& obj, frog::engine2d& e) override
+    {
+        mk_bg(obj, nullptr);
+    }
+
     void frame_update(frog::game_object2d& obj, frog::engine2d& e) override
     {
-        for (auto* elem : elems)
-            obj.remove_element(elem);
-
-        static constexpr float label_height = 0.03;
-        auto pos = start;
-
         auto* profiler = e.scenes->current().get_script<frog::scripts::ProfilerScript>();
         if (not profiler)
             return;
 
-        {
-            auto* bg = obj.add_element(frog::mk_ptr<frog::gx::ui_element>());
-            elems.push_back(bg);
+        if (not profiler->changed())
+            return;
 
-            bg->sprite.image_tag = "box";
-            bg->sprite.color = { 0, 0, 0, 128 };
+        for (auto* elem : elems)
+            obj.remove_element(elem);
 
-            bg->sprite.rect.size = { 1, label_height * profiler->times().size() * 2 };
-            bg->sprite.rect.pos = start;
-            bg->sprite.rect.pos.y() += 0.5 * label_height * profiler->times().size();
-        }
+        auto pos = start;
+
+        mk_bg(obj, profiler);
 
         for (const auto& t : profiler->times())
         {
@@ -69,6 +69,24 @@ public:
 
             pos.y() += 0.025;
         }
+    }
+
+    void mk_bg(frog::game_object2d& obj, frog::scripts::ProfilerScript* profiler)
+    {
+        auto count = profiler ? profiler->times().size() : 5;
+        count = std::max(decltype(count)(5), count);
+
+        auto* bg = obj.add_element(frog::mk_ptr<frog::gx::ui_element>());
+        elems.push_back(bg);
+
+        bg->sprite.image_tag = "box";
+        bg->sprite.color = { 0, 0, 0, 128 };
+
+        bg->sprite.rect.size = { 1, label_height * count * 2 };
+        bg->sprite.rect.pos = start;
+        bg->sprite.rect.pos.y() += 0.5 * label_height * count;
+
+        LOGX(bg->sprite.rect);
     }
 };
 
