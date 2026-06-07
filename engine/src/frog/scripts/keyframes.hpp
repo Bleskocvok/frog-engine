@@ -6,19 +6,15 @@
 #include "frog/geometry/vector.hpp"
 #include "frog/graphics/color.hpp"
 #include "frog/gx2d/sprite.hpp"
-#include "frog/gx2d/animation.hpp"
 #include "frog/utils/assert.hpp"
 
 #include <algorithm>
 #include <cmath>        // lerp
 #include <cstdint>
 #include <iterator>
-#include <list>
 #include <map>
 #include <tuple>        // get
 #include <utility>      // move, forward
-#include <variant>
-#include <vector>
 
 namespace frog::scripts {
 

@@ -24,6 +24,10 @@ struct fps_script : frog::script2d
 
     frog::geo::vec2 pos = { -0.5, -0.5 };
 
+    double accum = 0;
+    double actual_length = 0;
+    int count = 0;
+
     explicit fps_script(frog::geo::vec2 pos) : pos(pos)
     { }
 
@@ -38,10 +42,6 @@ struct fps_script : frog::script2d
         display->pos() = pos + geo::vec2(0, label_height * 0.5);
         display->size() = { 0, label_height };
     }
-
-    double accum = 0;
-    double actual_length = 0;
-    int count = 0;
 
     void recalc(double fps)
     {
