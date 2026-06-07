@@ -16,21 +16,42 @@
 #include <unordered_map>
 #include <utility>      // move
 
-#define FROG_PROFILE_FUNC() auto guard = scripts::ProfilerGuard()
+#define FROG_PROFILE_FUNC() auto guard = ::frog::scripts::ProfilerGuard()
 
 namespace frog::scripts {
 
 class ProfilerGuard
 {
-    static inline std::unordered_map<std::string, std::uint64_t> times_us;
-
-    std::string name;
-
-using Timer = frog::os::timer;
-
-    Timer timer;
-
 public:
+    struct Item
+    {
+        std::uint64_t sum = 0;
+        unsigned count = 0;
+
+        Item() = default;
+
+        double avg() const
+        {
+            if (count == 0)
+                return 0;
+
+            return double(sum) / count;
+        }
+
+        void put(std::uint64_t t)
+        {
+            sum += t;
+            count++;
+        }
+
+        friend Item& operator+=(Item& a, const Item& b)
+        {
+            a.sum += b.sum;
+            a.count += b.count;
+            return a;
+        }
+    };
+
     ProfilerGuard(std::string name)
         : name(std::move(name))
     {
@@ -48,7 +69,7 @@ public:
 
     ~ProfilerGuard()
     {
-        times_us[name] += timer.duration_us();
+        times_us[name].put( timer.duration_us() );
     }
 
     static std::string strip(const char* str)
@@ -73,22 +94,34 @@ public:
     {
         return times_us;
     }
+
+private:
+    static inline std::unordered_map<std::string, Item> times_us;
+
+    std::string name;
+
+    using Timer = frog::os::timer;
+
+    Timer timer;
 };
 
 class ProfilerScript : public frog::script2d
 {
     double accum = 0;
 
-    std::map<std::string, std::uint64_t> times_us;
-    std::map<std::string, std::uint64_t> snapshot;
+    std::map<std::string, ProfilerGuard::Item> times_us;
+    decltype(times_us) snapshot;
 
-    void out(std::ostream& o) const
-    {
-        for (const auto& val : times_us)
-            out_line(o, val);
+    // void out(std::ostream& o) const
+    // {
+    //     for (const auto& val : times_us)
+    //     {
+    //         out_line(o, val);
+    //         o << "\n";
+    //     }
 
-        o << "\n";
-    }
+    //     o << "\n";
+    // }
 
     bool emit = false;
     bool changed_announce = false;
@@ -130,30 +163,42 @@ public:
         }
     }
 
-    void out_line(std::ostream& o, const std::pair<std::string, double>& val) const
+    void out_line(std::ostream& o, const std::pair<std::string, ProfilerGuard::Item>& val) const
     {
-        const auto&[key, us] = val;
-        auto ms = us / 1000.0;
+        const auto&[key, item] = val;
+        auto ms = item.sum / 1000.0;
         o
             << std::right
-            << std::setw(12)
+            << std::setw(8)
             << std::fixed
             << std::setprecision(3)
             << ms << " ms "
-            << key << "" << "\n";
+
+            << std::left
+            << std::setw(20)
+            << key
+
+            << " | "
+            << std::right
+            << std::setw(8)
+            << std::fixed
+            << std::setprecision(3)
+            << item.avg() / 1000.0
+            << " ms avg "
+        ;
     }
 
-    void print() const
-    {
-        out(std::cout);
-    }
+    // void print() const
+    // {
+    //     out(std::cout);
+    // }
 
-    std::string to_string() const
-    {
-        std::ostringstream o;
-        out(o);
-        return std::move(o).str();
-    }
+    // std::string to_string() const
+    // {
+    //     std::ostringstream o;
+    //     out(o);
+    //     return std::move(o).str();
+    // }
 
     const auto& times()
     {
