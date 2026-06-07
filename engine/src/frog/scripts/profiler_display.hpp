@@ -65,7 +65,7 @@ public:
 
             std::ostringstream o;
             profiler->out_line(o, t);
-            ui->label->str = frog::make_string("|", std::move(o).str());
+            ui->label->str = frog::make_string(std::move(o).str());
 
             pos.y() += 0.025;
         }
@@ -82,11 +82,9 @@ public:
         bg->sprite.image_tag = "box";
         bg->sprite.color = { 0, 0, 0, 128 };
 
-        bg->sprite.rect.size = { 1, label_height * count * 2 };
+        bg->sprite.rect.size = { 0.6, label_height * count * 2 };
         bg->sprite.rect.pos = start;
         bg->sprite.rect.pos.y() += 0.5 * label_height * count;
-
-        LOGX(bg->sprite.rect);
     }
 };
 

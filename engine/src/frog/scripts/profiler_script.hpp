@@ -175,16 +175,16 @@ public:
             << ms << " ms "
 
             << std::left
-            << std::setw(20)
+            << std::setw(18)
             << key
 
-            << " | "
+            << " |"
             << std::right
             << std::setw(8)
             << std::fixed
             << std::setprecision(3)
             << item.avg() / 1000.0
-            << " ms avg "
+            << " ms avg"
         ;
     }
 
