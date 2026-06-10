@@ -223,7 +223,52 @@ public:
     struct Collisions
     {
         template<class T>
-        using Container = std::set<T>;
+        // using Container = std::set<T>;
+        struct Container
+        {
+            std::set<CollisionInfo> data;
+            std::set<idx_t> bag;
+
+            void clear()
+            {
+                data.clear();
+                bag.clear();
+            }
+
+            bool contains(CollisionInfo info) const
+            {
+                return data.contains(info);
+            }
+
+            auto begin()       { return data.begin(); }
+            auto begin() const { return data.begin(); }
+            auto end() const { return data.end(); }
+            auto end()       { return data.end(); }
+
+            auto insert(CollisionInfo info)
+            {
+                auto ret = data.insert(std::move(info));
+                bag.insert(info.first);
+                bag.insert(info.second);
+                return ret;
+            }
+
+            template<class F>
+            friend size_t erase_if(Container& cont, F&& f)
+            {
+                auto ret = std::erase_if(cont.data, std::forward<F>(f));
+
+                cont.bag.clear();
+
+                for (const auto&[a, b] : cont.data)
+                {
+                    cont.bag.insert(a);
+                    cont.bag.insert(b);
+                }
+
+                return ret;
+            }
+        };
 
         Container<CollisionInfo> current_;
         Container<CollisionInfo> first_;
@@ -238,11 +283,12 @@ public:
 
         void update(const container<joint>& joints)
         {
-            std::erase_if(all_, [&](const auto& info)
+            using std::erase_if;
+            erase_if(all_, [&](const auto& info)
             {
                 return not current_.contains(info);
             });
-            std::erase_if(all_without_joints_, [&](const auto& info)
+            erase_if(all_without_joints_, [&](const auto& info)
             {
                 return not current_.contains(info);
             });
@@ -278,12 +324,19 @@ public:
 
         bool contains(const Container<CollisionInfo>& container, idx_t i) const
         {
-            for (const auto& info : container)
+            if constexpr (std::is_same_v<Container<CollisionInfo>, std::set<CollisionInfo>>)
             {
-                if (info.first == i || info.second == i)
-                    return true;
+                for (const auto& info : container)
+                {
+                    if (info.first == i || info.second == i)
+                        return true;
+                }
+                return false;
             }
-            return false;
+            else
+            {
+                return container.bag.contains(i);
+            }
 
             // // TODO: Perhaps some unit tests?
             // auto lower = container.lower_bound({ i,     0 });
