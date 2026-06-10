@@ -9,7 +9,7 @@ INCLUDES = -I../libraries/doctest/ \
 
 CXXFLAGS += $(INCLUDES)
 
-TESTS = test_geometry test_fixed test_string test_color
+TESTS = test_geometry test_fixed test_string test_color test_physics
 
 GEO_DEPS = ../src/frog/geometry/general.cpp \
            ../src/frog/geometry/camera.cpp \
@@ -24,6 +24,8 @@ STR_DEPS = ../src/frog/utils/string.cpp \
            ../src/frog/utils/exception.cpp
 
 COL_DEPS = ../src/frog/utils/exception.cpp
+
+PHY_DEPS = $(GEO_DEPS)
 
 RUN_TESTS = $(TESTS:%=run.%)
 
@@ -48,6 +50,9 @@ test_string: test_string.cpp $(STR_DEPS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
 test_color: test_color.cpp $(COL_DEPS)
+	$(CXX) $(CXXFLAGS) -o $@ $^
+
+test_physics: test_physics.cpp $(PHY_DEPS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
 clean:
