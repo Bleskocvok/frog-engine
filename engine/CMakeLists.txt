@@ -125,6 +125,11 @@ set(SRC_STRING_TEST
     src/frog/utils/exception.cpp
 )
 
+set(SRC_COLOR_TEST
+    tests/test_color.cpp
+    src/frog/utils/exception.cpp
+)
+
 set(SRC_FIXED_TEST tests/fixed/test_fixed.cpp)
 set(SRC_FIXED_BENCH tests/fixed/bench_fixed.cpp)
 
@@ -161,6 +166,7 @@ if (FROG_TEST)
     add_executable(test_fixed ${SRC_FIXED_TEST})
     add_executable(bench_fixed ${SRC_FIXED_BENCH})
     add_executable(test_string ${SRC_STRING_TEST})
+    add_executable(test_color ${SRC_COLOR_TEST})
 endif(FROG_TEST)
 
 # window test
