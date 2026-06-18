@@ -212,7 +212,10 @@ class Keyframes : public frog::script2d
         auto& accum = timelines.get<Color>().accum;
         sprite->color -= accum.color;
 
+        // TODO: Choice between absolute and relative to all types, not just
+        // color.
         auto a = gx::rgb_to_vec( prev ? prev->key.color : sprite->color );
+
         auto b = gx::rgb_to_vec( next.key.color );
         auto color = interpolate(next.key.interfunc, a, b, between);
 
