@@ -119,7 +119,7 @@ void window::update_size( int w, int h )
     }
 
     // High DPI bullshit.
-    if constexpr (frog::target::is_apple_ios())
+    if constexpr (frog::target::is_apple_ios() || frog::target::is_apple_mac())
     {
         if ( SDL_RenderSetLogicalSize( renderer.get(), win_width, win_height ) < 0)
         {
