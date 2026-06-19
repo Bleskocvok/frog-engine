@@ -47,7 +47,10 @@ class engine2d : public engine_base<engine2d, game_object2d, os::timer>
     void reset_controls() override;
 
     void stable_update() override;
+    void end_frame_update() override;
     void frame_update() override;
+
+    void render(double between) override;
 
     void init() override;
 

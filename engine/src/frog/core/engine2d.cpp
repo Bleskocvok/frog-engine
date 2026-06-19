@@ -15,6 +15,7 @@
 #include "frog/utils/ptr.hpp"
 #include "frog/utils/assert.hpp"
 #include "frog/core/2d/renderer.hpp"
+#include "frog/scripts/profiler_script.hpp"
 
 #include "frog/lib2d/structs.hpp"
 #include "frog/lib2d/window.hpp"
@@ -139,6 +140,8 @@ void engine2d::prepend_path_prefix(std::string& path)
 
 void engine2d::update_controls()
 {
+    FROG_PROFILE_FUNC();
+
     input->update();
 
     // resize renderer if window has been resized
@@ -158,14 +161,32 @@ void engine2d::reset_controls()
     input->reset();
 }
 
+void engine2d::end_frame_update()
+{
+    FROG_PROFILE_FUNC();
+
+    engine_base::end_frame_update();
+}
+
+void engine2d::render(double between)
+{
+    FROG_PROFILE_FUNC();
+
+    engine_base::render(between);
+}
+
 void engine2d::stable_update()
 {
+    FROG_PROFILE_FUNC();
+
     camera().prev = camera();
     engine_base::stable_update();
 }
 
 void engine2d::frame_update()
 {
+    FROG_PROFILE_FUNC();
+
     engine_base::frame_update();
 }
 

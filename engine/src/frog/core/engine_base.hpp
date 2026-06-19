@@ -45,7 +45,7 @@ protected:
         scenes->cleanup(get());
     }
 
-    void end_frame_update()
+    virtual void end_frame_update()
     {
         scenes->end_frame_update(get());
     }
