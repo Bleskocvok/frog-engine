@@ -11,7 +11,10 @@ namespace frog::lib2d {
 Audio::Audio(int frequency, int channels, int chunk_size)
 {
     if (Mix_OpenAudio(frequency, MIX_DEFAULT_FORMAT, channels, chunk_size) != 0)
+    {
+        // TODO: Allow for no audio and don't crash.
         throw std::runtime_error(std::string("Create Audio: ") + Mix_GetError());
+    }
 }
 
 Audio::~Audio()
