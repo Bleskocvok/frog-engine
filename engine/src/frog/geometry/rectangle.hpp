@@ -26,16 +26,16 @@ struct rect_t
     constexpr rect_t(vec<T, 2> mid, vec<T, 2> size) : pos(mid), size(size) {}
     constexpr rect_t(T x, T y, T w, T h) : pos(x, y), size(w, h) {}
 
-    constexpr vec<T, 2> top_left()  const { return pos - size * 0.5; }
-    constexpr vec<T, 2> top_right() const { return pos + 0.5 * vec<T, 2>{ +size.x(), -size.y() }; }
-    constexpr vec<T, 2> bot_left()  const { return pos + 0.5 * vec<T, 2>{ -size.x(), +size.y() }; }
-    constexpr vec<T, 2> bot_right() const { return pos + 0.5 * vec<T, 2>{ +size.x(), +size.y() }; }
+    constexpr vec<T, 2> top_left()  const { return pos - size / T(2); }
+    constexpr vec<T, 2> top_right() const { return pos + vec<T, 2>{ +size.x(), -size.y() } / T(2); }
+    constexpr vec<T, 2> bot_left()  const { return pos + vec<T, 2>{ -size.x(), +size.y() } / T(2); }
+    constexpr vec<T, 2> bot_right() const { return pos + vec<T, 2>{ +size.x(), +size.y() } / T(2); }
 
-    constexpr vec<T, 2> top_mid() const { return pos + 0.5 * vec<T, 2>{ 0, -size.y() }; }
-    constexpr vec<T, 2> bot_mid() const { return pos + 0.5 * vec<T, 2>{ 0, +size.y() }; }
+    constexpr vec<T, 2> top_mid() const { return pos + vec<T, 2>{ 0, -size.y() } / T(2); }
+    constexpr vec<T, 2> bot_mid() const { return pos + vec<T, 2>{ 0, +size.y() } / T(2); }
 
-    constexpr vec<T, 2> mid_left() const { return pos + 0.5 * vec<T, 2>{ -size.x(), 0 }; }
-    constexpr vec<T, 2> mid_right() const { return pos + 0.5 * vec<T, 2>{ +size.x(), 0 }; }
+    constexpr vec<T, 2> mid_left() const { return pos + vec<T, 2>{ -size.x(), 0 } / T(2); }
+    constexpr vec<T, 2> mid_right() const { return pos + vec<T, 2>{ +size.x(), 0 } / T(2); }
 
     friend auto& operator<<(std::ostream& o, const rect_t& rect)
     {
