@@ -1,3 +1,4 @@
+#include "frog/utils/assert.hpp"
 #ifndef NOT_FROG_BUILD_2D
 
 #include "events.hpp"
@@ -254,6 +255,7 @@ void Events::update()
             case SDL_ORIENTATION_PORTRAIT: return Display::Portrait;
             case SDL_ORIENTATION_PORTRAIT_FLIPPED: return Display::PortraitUpsideDown;
         }
+        frog_assert(false);
     };
     m_display.orientation = get_enum(SDL_GetDisplayOrientation(0));
 
