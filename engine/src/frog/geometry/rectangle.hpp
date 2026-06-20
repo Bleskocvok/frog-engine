@@ -37,6 +37,11 @@ struct rect_t
     constexpr vec<T, 2> mid_left() const { return pos + vec<T, 2>{ -size.x(), 0 } / T(2); }
     constexpr vec<T, 2> mid_right() const { return pos + vec<T, 2>{ +size.x(), 0 } / T(2); }
 
+    constexpr T left_x()  const { return mid_left().x(); }
+    constexpr T right_x() const { return mid_right().x(); }
+    constexpr T top_y()   const { return top_left().y(); }
+    constexpr T bot_y()   const { return bot_left().y(); }
+
     friend auto& operator<<(std::ostream& o, const rect_t& rect)
     {
         return o << "rect_t{ pos=" << rect.pos << ", size=" << rect.size << " }";
