@@ -10,7 +10,6 @@
 #include <map>
 #include <ostream>
 #include <source_location>
-#include <sstream>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -130,7 +129,7 @@ public:
     ProfilerScript()
     { }
 
-    void stable_update(frog::game_object2d& obj, frog::engine2d&) override
+    void stable_update(frog::game_object2d&, frog::engine2d&) override
     {
         changed_announce = false;
 
@@ -142,7 +141,7 @@ public:
         }
     }
 
-    void frame_update(frog::game_object2d& obj, frog::engine2d& e) override
+    void frame_update(frog::game_object2d&, frog::engine2d& e) override
     {
         accum += e.global->frame_time();
 
