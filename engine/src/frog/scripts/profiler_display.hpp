@@ -30,7 +30,7 @@ public:
         : start(start)
     { }
 
-    void init(frog::game_object2d& obj, frog::engine2d& e) override
+    void init(frog::game_object2d& obj, frog::engine2d&) override
     {
         mk_bg(obj, nullptr);
     }

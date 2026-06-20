@@ -1,6 +1,7 @@
 #pragma once
 
 #include "frog/core/script.hpp"
+#include "frog/frog.hpp"
 
 #include <cmath>
 #include <cstdint>
