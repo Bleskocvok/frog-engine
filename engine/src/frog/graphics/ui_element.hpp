@@ -6,6 +6,7 @@
 
 #include <string>
 #include <optional>
+#include <utility>
 
 
 namespace frog::gx
@@ -26,6 +27,13 @@ struct Text
     gx::rgba_t color = gx::colors::WHITE;
     std::string font = "default";
     frog::geo::vec2 rel_pos = { 0 };
+
+    Text(std::string txt, float h = 1)
+        : str(std::move(txt))
+        , height(h)
+    { }
+
+    Text() = default;
 };
 
 
