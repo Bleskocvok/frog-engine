@@ -107,8 +107,7 @@ set(SRC_FILES
 # verbose info
 print_list("Source files" "${SRC_FILES}")
 
-set(SRC_TESTS
-    tests/test_geometry.cpp
+set(GEO_SRC
     src/frog/geometry/camera.cpp
     src/frog/geometry/general.cpp
     src/frog/geometry/objects.cpp
@@ -116,6 +115,11 @@ set(SRC_TESTS
     src/frog/geometry/physics.cpp
     src/frog/geometry/polar.cpp
     src/frog/geometry/transform.cpp
+)
+
+set(SRC_TESTS
+    tests/test_geometry.cpp
+    ${GEO_SRC}
 )
 
 set(SRC_STRING_TEST
@@ -132,7 +136,7 @@ set(SRC_COLOR_TEST
 
 set(SRC_PHYSICS_TEST
     tests/test_physics.cpp
-    src/frog/geometry/physics.cpp
+    ${GEO_SRC}
 )
 
 set(SRC_FIXED_TEST tests/fixed/test_fixed.cpp)
