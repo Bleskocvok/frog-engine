@@ -3,6 +3,7 @@
 #include "frog/core/script.hpp"
 #include "frog/graphics/ui_element.hpp"
 #include "frog/scripts/button/button_style.hpp"
+#include "frog/utils/assert.hpp"
 #include "frog/utils/ptr.hpp"
 
 namespace frog
@@ -37,11 +38,11 @@ struct simple_button_style_base : button_style_base<GameObject>
             ui = o.elements().front().get();
     }
 
-    void idle(GameObject&) override { idle(*ui); }
+    void idle(GameObject&) override { idle( *frog::assert_ptr( ui ) ); }
 
-    void hover(GameObject&) override { hover(*ui); }
+    void hover(GameObject&) override { hover( *frog::assert_ptr( ui ) ); }
 
-    void press(GameObject&) override { press(*ui); }
+    void press(GameObject&) override { press( *frog::assert_ptr( ui ) ); }
 
     virtual void idle(gx::ui_element&) {}
 
