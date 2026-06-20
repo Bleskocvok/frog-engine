@@ -1,7 +1,8 @@
-#include "frog/utils/assert.hpp"
 #ifndef NOT_FROG_BUILD_2D
 
 #include "events.hpp"
+
+#include "frog/utils/assert.hpp"
 
 #include "sdl_include.hpp"
 #include SDL_HEADER
