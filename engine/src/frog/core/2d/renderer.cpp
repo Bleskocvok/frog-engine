@@ -1,3 +1,4 @@
+#include "frog/graphics/color.hpp"
 #ifndef NOT_FROG_BUILD_2D
 
 #include "renderer.hpp"
@@ -248,7 +249,9 @@ void Renderer::draw_text(const gx::ui_element& elem, double between)
     if (not elem.label)
         return;
 
-    const auto& label = *elem.label;
+    // const auto& label = *elem.label;
+    auto label = *elem.label;
+    label.color = frog::gx::vec_to_rgb( frog::gx::rgb_to_vec(label.color) * frog::gx::rgb_to_vec(elem.color()) );
 
     auto& font = fonts->at(label.font);
 
