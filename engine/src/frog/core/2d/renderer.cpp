@@ -1,4 +1,3 @@
-#include "frog/graphics/color.hpp"
 #ifndef NOT_FROG_BUILD_2D
 
 #include "renderer.hpp"
@@ -9,6 +8,8 @@
 #include "frog/geometry/rectangle.hpp"
 #include "frog/graphics/ui_element.hpp"
 #include "frog/geometry/vector.hpp"
+#include "frog/graphics/color.hpp"
+#include "frog/utils/profiler_guard.hpp"
 
 #include <map>
 
@@ -136,6 +137,8 @@ void Renderer::draw_text(const gx::Text& label, geo::vec2 pos,
                         float container_height, frog::gx2d::Crop crop)
 {
     auto& font = fonts->at(label.font);
+
+    auto guard = ::frog::ProfilerGuard("font_render");
     font.draw(*this, label, pos, container_height, crop);
 }
 
@@ -302,6 +305,7 @@ void Renderer::draw_text(const gx::ui_element& elem, double between)
         crop = gx2d::multiply_crop(elem.sprite.rect, *elem.sprite.crop, crop_rect);
     }
 
+    auto guard = ::frog::ProfilerGuard("font_render");
     font.draw(*this, label, pos, height, crop);
 }
 
