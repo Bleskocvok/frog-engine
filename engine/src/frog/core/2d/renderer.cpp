@@ -261,7 +261,7 @@ void Renderer::draw_text(const gx::ui_element& elem, double between)
 
     auto& font = fonts->at(label.font);
 
-    auto pos = elem.pos() + elem.label->rel_pos;
+    auto pos = elem.pos();
 
     if (auto inter = elem.sprite.interpolation; inter != gx2d::Interpolation::NONE)
     {
@@ -290,6 +290,8 @@ void Renderer::draw_text(const gx::ui_element& elem, double between)
     default:
         frog_assert(false);
     }
+
+    pos += elem.label->rel_pos;
 
     gx2d::Crop crop;
 
