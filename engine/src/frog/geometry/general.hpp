@@ -52,6 +52,16 @@ inline float angle_diff_deg(float a, float b)
 }
 
 
+template<typename T, unsigned Dim>
+vec<T, Dim> relativize(vec<T, Dim> what, const vec<T, Dim>& to)
+{
+    for (unsigned i = 0; i < Dim; i++)
+        what[i] -= to[i];
+
+    return what;
+}
+
+
 template<typename T>
 T lerp_t(T a, T b, double t)
 {
