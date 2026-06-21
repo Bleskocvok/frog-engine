@@ -68,6 +68,8 @@ void Renderer::draw(const RenderCtx& ctx, const lib2d::gx::texture& tex, geo::re
     uv.pos *= geo::vec2(tex.w(), tex.h());
     uv.size *= geo::vec2(tex.w(), tex.h());
 
+    color = gx::rgb_multiply(color, ctx.color);
+
     window->draw_colored_rotated(tex, uv.pos.x(), uv.pos.y(),
                                  uv.size.x(), uv.size.y(),
                                  top_left.x(), top_left.y(),
@@ -110,7 +112,10 @@ void Renderer::draw(const RenderCtx& ctx, const gx2d::Sprite& model)
 
     auto uv_size = tex.size * geo::vec2{ float(texture.w()), float(texture.h()) };
     auto uv      = tex.pos  * geo::vec2{ float(texture.w()), float(texture.h()) };
+
     gx::rgba_t color = model.color;
+    color = gx::rgb_multiply(color, ctx.color);
+
     window->draw_colored_rotated(texture, uv.x(), uv.y(), uv_size.x(), uv_size.y(),
                                   top_left.x(), top_left.y(),
                                   rect.size.x(), rect.size.y(),
@@ -160,6 +165,8 @@ void Renderer::draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite)
 
         if (sub.anchor.rel_angle)
             sub_ctx.angle += sprite.angle;
+
+        sub_ctx.color = gx::rgb_multiply(sub_ctx.color, sprite.color);
 
         draw(sub_ctx, sub.sprite);
     };
@@ -250,7 +257,7 @@ void Renderer::draw_text(const gx::ui_element& elem, double between)
         return;
 
     auto label = *elem.label;
-    label.color = frog::gx::vec_to_rgb( frog::gx::rgb_to_vec(label.color) * frog::gx::rgb_to_vec(elem.color()) );
+    label.color = frog::gx::rgb_multiply( label.color, elem.color() );
 
     auto& font = fonts->at(label.font);
 

@@ -37,6 +37,12 @@ inline geo::vec4 rgb_to_vec( gx::rgba_t rgb )
 }
 
 
+inline rgba_t rgb_multiply( gx::rgba_t a, gx::rgba_t b )
+{
+    return vec_to_rgb( rgb_to_vec( a ) * rgb_to_vec( b ) );
+}
+
+
 inline geo::vec4 vec_to_hsv(geo::vec4 vec)
 {
     auto x_max = geo::max( vec.xyz() );
