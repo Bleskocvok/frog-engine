@@ -51,6 +51,7 @@ class button_script_base : public Script
     bool override_release = false;
 
     bool is_invisible = false;
+    bool activated = true;
 
     void set_state(state_t next, typename Script::GameObject& obj)
     {
@@ -94,26 +95,40 @@ class button_script_base : public Script
             l_released = override_release;
         }
 
+        // if (not activated)
+        // {
+        //     l_pressed = false;
+        //     l_released = false;
+        // }
+
         reset_override_input();
 
         if (collides && l_pressed)
         {
             down = true;
-            press_down(obj, engine);
+
+            if (activated)
+                press_down(obj, engine);
         }
 
         if (l_released)
         {
-            if (down && collides)
-                action(obj, engine);
-            else if (not down && not collides)
-                outside_press(obj, engine);
+            if (activated)
+            {
+                if (down && collides)
+                    action(obj, engine);
+                else if (not down && not collides)
+                    outside_press(obj, engine);
+            }
 
             down = false;
         }
         else if (down)
             frame_holding(obj, engine);
 
+        // if (not activated)
+        //     set_state(deactivated, obj);
+        // else
         if (down)
             set_state(pressing, obj);
         else if (collides)
@@ -203,6 +218,22 @@ public:
     void manually_activated(bool v)
     {
         input_from_engine = not v;
+    }
+
+    void activate()
+    {
+        activated = true;
+
+        if (style)
+            style->activate();
+    }
+
+    void deactivate()
+    {
+        activated = false;
+
+        if (style)
+            style->deactivate();
     }
 
     void send_press()
