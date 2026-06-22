@@ -222,12 +222,13 @@ public:
 
     void enabled(bool b)
     {
-        auto prev = is_enabled;
+        if (is_enabled == b)
+            return;
+
         is_enabled = b;
 
-        if (b != prev)
-            if (style)
-                style->enabled(is_enabled);
+        if (style)
+            style->enabled(is_enabled);
     }
 
     bool enabled() const { return is_enabled; }
