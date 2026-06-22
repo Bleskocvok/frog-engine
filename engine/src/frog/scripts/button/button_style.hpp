@@ -36,6 +36,8 @@ struct button_style_base
 
     virtual void deactivate() {}
 
+    virtual void enabled(bool) {}
+
     virtual void stable_update(GameObject&) {}
 
     virtual void set_crop(GameObject&, gx2d::Crop) {}
