@@ -1,5 +1,7 @@
 #pragma once
 
+#include "frog/utils/exception.hpp"
+
 #include <memory>	// std::unique_ptr
 #include <utility>	// std::forward, std::move
 
@@ -38,5 +40,48 @@ shared<T> mk_shared(Args&&... args)
     return std::make_shared<T>(std::forward<Args>(args)...);
 }
 
+template<typename T>
+struct safe_ptr
+{
+    T* ptr = nullptr;
+
+    safe_ptr() = default;
+
+    safe_ptr(T* ptr)
+        : ptr(ptr)
+    { }
+
+    T& operator*()
+    {
+        if (ptr == nullptr)
+            throw frog::error("safe_ptr: dereferencing nullptr");
+
+        return *ptr;
+    }
+
+    const T& operator*() const
+    {
+        if (ptr == nullptr)
+            throw frog::error("safe_ptr: dereferencing const nullptr");
+
+        return *ptr;
+    }
+
+    safe_ptr& operator=(T* ptr)
+    {
+        this->ptr = ptr;
+        return *this;
+    }
+
+    T* operator->()
+    {
+        return &operator*();
+    }
+
+    const T* operator->() const
+    {
+        return &operator*();
+    }
+};
 
 } // namespace frog
