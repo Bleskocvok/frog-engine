@@ -43,8 +43,6 @@ shared<T> mk_shared(Args&&... args)
 template<typename T>
 struct safe_ptr
 {
-    T* ptr = nullptr;
-
     safe_ptr() = default;
 
     safe_ptr(T* ptr)
@@ -82,6 +80,9 @@ struct safe_ptr
     {
         return &operator*();
     }
+
+private:
+    T* ptr = nullptr;
 };
 
 } // namespace frog
