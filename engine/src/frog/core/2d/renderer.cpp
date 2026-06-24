@@ -180,30 +180,28 @@ void Renderer::draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite)
             case gx2d::Anchor::Angle::TRANSLATE:
                 sub_ctx.angle += sprite.angle;
 
-                if (sub.anchor.position == gx2d::Anchor::Position::RELATIVE)
+                auto get_dst = [&]()
                 {
-                    auto dst = sub.sprite.rect.pos;
-                    auto rotmat = geo::rotate2d_around_origin(sprite.angle * geo::ToRad, { 0 });
-                    auto res3 = geo::vec3( dst, 1 ) * rotmat;
-                    sub_ctx.shift += res3.xy() - dst;
-                }
-                else if (sub.anchor.position == gx2d::Anchor::Position::NONE)
-                {
-                    auto dst = sub.sprite.rect.pos - sprite.rect.pos;
-                    auto rotmat = geo::rotate2d_around_origin(sprite.angle * geo::ToRad, { 0 });
-                    auto res3 = geo::vec3( dst, 1 ) * rotmat;
-                    sub_ctx.shift += res3.xy() - dst;
-                }
-                else if (sub.anchor.position == gx2d::Anchor::Position::SIZE_RELATIVE)
-                {
-                    // TODO
-                    auto dst = sub.sprite.rect.pos * sprite.rect.size - sprite.rect.pos;
-                    auto rotmat = geo::rotate2d_around_origin(sprite.angle * geo::ToRad, { 0 });
-                    auto res3 = geo::vec3( dst, 1 ) * rotmat;
-                    sub_ctx.shift += res3.xy() - dst;
-                }
-                else
-                    frog_assert(false);
+                    switch (sub.anchor.position)
+                    {
+                        case gx2d::Anchor::Position::RELATIVE:
+                            return sub.sprite.rect.pos;
+
+                        case gx2d::Anchor::Position::NONE:
+                            return sub.sprite.rect.pos - sprite.rect.pos;
+
+                        case gx2d::Anchor::Position::SIZE_RELATIVE:
+                            return sub.sprite.rect.pos * sprite.rect.size - sprite.rect.pos;
+
+                        default:
+                            frog_assert(false);
+                    }
+                };
+
+                auto dst = get_dst();
+                auto rotmat = geo::rotate2d_around_origin(sprite.angle * geo::ToRad, { 0 });
+                auto res3 = geo::vec3( dst, 1 ) * rotmat;
+                sub_ctx.shift += res3.xy() - dst;
 
                 break;
         }
