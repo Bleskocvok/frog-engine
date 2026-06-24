@@ -231,6 +231,18 @@ public:
         return a;
     }
 
+    constexpr vec& operator/=(vec other)
+    {
+        detail::zip([](auto& u, const auto& v){ u /= v; }, this->data, other.data);
+        return *this;
+    }
+
+    constexpr friend vec operator/(vec a, vec b)
+    {
+        a /= b;
+        return a;
+    }
+
 private:
     // TODO add enable_if
     template<int Idx>
