@@ -69,6 +69,23 @@ mat2 frog::geo::rotate2d(float rad)
 }
 
 
+mat3 frog::geo::rotate2d_around_origin(float rad, frog::geo::vec2 orig)
+{
+    auto rot = frog::geo::rotate2d(-rad);
+
+    mat3 rot3 =
+    {
+        rot.at(0, 0), rot.at(1, 0), 0,
+        rot.at(0, 1), rot.at(1, 1), 0,
+                   0,            0, 1
+    };
+
+    return frog::geo::translate(orig)
+        * rot3
+        * frog::geo::translate(-orig);
+}
+
+
 /*
  * I recommend exactly one element of `axis` to
  * be one and all the other to be zero.

@@ -57,9 +57,11 @@ struct Sprite
 struct Anchor
 {
     enum class Position { NONE, RELATIVE, SIZE_RELATIVE };
+    enum class Angle { NONE = 0, INHERIT = 1, TRANSLATE };
+
     Position position = Position::NONE;
     bool rel_size = false;
-    bool rel_angle = false;
+    Angle rel_angle = Anchor::Angle::NONE;
 };
 
 enum class RelLayer { BELOW, ABOVE };

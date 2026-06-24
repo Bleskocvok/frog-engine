@@ -1,3 +1,5 @@
+#include "frog/geometry/basic.hpp"
+#include "frog/geometry/transform.hpp"
 #ifndef NOT_FROG_BUILD_2D
 
 #include "renderer.hpp"
@@ -166,8 +168,45 @@ void Renderer::draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite)
         if (sub.anchor.rel_size)
             sub_ctx.scale_mult *= sprite.rect.size;
 
-        if (sub.anchor.rel_angle)
-            sub_ctx.angle += sprite.angle;
+        switch (sub.anchor.rel_angle)
+        {
+            case gx2d::Anchor::Angle::NONE:
+                break;
+
+            case gx2d::Anchor::Angle::INHERIT:
+                sub_ctx.angle += sprite.angle;
+                break;
+
+            case gx2d::Anchor::Angle::TRANSLATE:
+                sub_ctx.angle += sprite.angle;
+
+                if (sub.anchor.position == gx2d::Anchor::Position::RELATIVE)
+                {
+                    auto dst = sub.sprite.rect.pos;
+                    auto rotmat = geo::rotate2d_around_origin(sprite.angle * geo::ToRad, { 0 });
+                    auto res3 = geo::vec3( dst, 1 ) * rotmat;
+                    sub_ctx.shift += res3.xy() - dst;
+                }
+                else if (sub.anchor.position == gx2d::Anchor::Position::NONE)
+                {
+                    auto dst = sub.sprite.rect.pos - sprite.rect.pos;
+                    auto rotmat = geo::rotate2d_around_origin(sprite.angle * geo::ToRad, { 0 });
+                    auto res3 = geo::vec3( dst, 1 ) * rotmat;
+                    sub_ctx.shift += res3.xy() - dst;
+                }
+                else if (sub.anchor.position == gx2d::Anchor::Position::SIZE_RELATIVE)
+                {
+                    // TODO
+                    auto dst = sub.sprite.rect.pos * sprite.rect.size - sprite.rect.pos;
+                    auto rotmat = geo::rotate2d_around_origin(sprite.angle * geo::ToRad, { 0 });
+                    auto res3 = geo::vec3( dst, 1 ) * rotmat;
+                    sub_ctx.shift += res3.xy() - dst;
+                }
+                else
+                    frog_assert(false);
+
+                break;
+        }
 
         sub_ctx.color = gx::rgb_multiply(sub_ctx.color, sprite.color);
 

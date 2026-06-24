@@ -17,6 +17,8 @@ mat4 scale(vec3 magnitude);
 
 mat2 rotate2d(float rad);
 
+mat3 rotate2d_around_origin(float rad, vec2 orig);
+
 mat4 rotate(int axis, float angle);
 mat4 rotate(vec3 axis, float angle);
 
@@ -29,6 +31,5 @@ mat4 rotate(T axis, float angle)
 {
     return rotate(axis.val, angle);
 }
-
 
 } // namespace frog
