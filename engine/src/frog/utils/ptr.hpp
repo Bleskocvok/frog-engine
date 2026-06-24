@@ -81,6 +81,11 @@ struct safe_ptr
         return &operator*();
     }
 
+    operator bool() const noexcept
+    {
+        return ptr != nullptr;
+    }
+
 private:
     T* ptr = nullptr;
 };
