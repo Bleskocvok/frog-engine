@@ -1,11 +1,13 @@
 #pragma once
 
+#include "frog/debug.hpp"
 #include "frog/geometry/rectangle.hpp"
 #include "frog/geometry/vector.hpp"
 #include "frog/graphics/color.hpp"
 #include "frog/geometry/general.hpp"
 #include "crop.hpp"
 
+#include <algorithm>    // min
 #include <cmath>        // lerp
 #include <optional>
 #include <string>
@@ -83,6 +85,32 @@ inline frog::geo::rect tile_at(frog::geo::ivec2 atlas_size, frog::geo::ivec2 pos
     tex.pos = tex.size * frog::geo::vec2{ float(pos.x()), float(pos.y())};
 
     return tex;
+}
+
+template<typename T>
+inline frog::geo::vec<T, 2> fit_size(frog::geo::vec<T, 2> size, frog::geo::vec<T, 2> bounds)
+{
+    if (size.x() == T(0))
+    {
+        size.y() = std::min(size.y(), bounds.y());
+        return size;
+    }
+
+    if (size.y() == T(0))
+    {
+        size.x() = std::min(size.x(), bounds.x());
+        return size;
+    }
+
+    auto prev = size;
+
+    size.x() = std::min(size.x(), bounds.x());
+    size.y() = size.x() * prev.y() / prev.x();
+
+    size.y() = std::min(size.y(), bounds.y());
+    size.x() = size.y() * prev.x() / prev.y();
+
+    return size;
 }
 
 inline void calculate_prev(Sprite& sprite)
