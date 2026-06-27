@@ -1,6 +1,10 @@
 #pragma once
 
+#include "frog/utils/assert.hpp"
+
+#include <cstddef>      // size_t
 #include <cstdint>      // uint64_t
+#include <vector>
 
 namespace frog {
 
@@ -115,7 +119,10 @@ class xorshift32
     std::uint32_t state;
 
 public:
-    constexpr explicit xorshift32(std::uint32_t seed) : state(seed ? seed : 12345) {}
+    constexpr explicit xorshift32(std::uint32_t seed) : state(seed ? seed : 12345)
+    {
+        frog_assert(state != 0);
+    }
 
     constexpr void next()
     {
@@ -140,10 +147,13 @@ public:
 
 class xorshift64
 {
-    std::uint64_t state = 0;
+    std::uint64_t state;
 
 public:
-    constexpr explicit xorshift64(std::uint64_t seed) : state(seed ? seed : 12345) {}
+    constexpr explicit xorshift64(std::uint64_t seed) : state(seed ? seed : 12345)
+    {
+        frog_assert(state != 0);
+    }
 
     constexpr void next()
     {
@@ -183,6 +193,14 @@ public:
     Float uniform_float(Float min, Float max)
     {
         return frog::uniform_float<Float>(min, max)(gen);
+    }
+
+    template<typename T>
+    T choice(const std::vector<T>& v)
+    {
+        frog_assert(not v.empty());
+
+        return v[ frog::uniform_int<std::size_t>(0, v.size() - 1)(gen) ];
     }
 };
 
