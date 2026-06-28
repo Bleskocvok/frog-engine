@@ -1,8 +1,8 @@
 #pragma once
 
-#include "circle.hpp"
-#include "rectangle.hpp"
-#include "vector.hpp"
+#include "frog/geometry/circle.hpp"
+#include "frog/geometry/rectangle.hpp"
+#include "frog/geometry/vector.hpp"
 
 #include <algorithm>        // max, min, clamp, find
 #include <vector>

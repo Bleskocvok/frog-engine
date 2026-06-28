@@ -1,10 +1,10 @@
 #pragma once
 
 #include "frog/debug.hpp"
-#include "vector.hpp"
-#include "rectangle.hpp"
-#include "basic.hpp"        // Pi
-#include "optimization_grid.hpp"
+#include "frog/geometry/vector.hpp"
+#include "frog/geometry/rectangle.hpp"
+#include "frog/geometry/basic.hpp"        // Pi
+#include "frog/geometry/physics/optimization_grid.hpp"
 
 #include <cstdint>          // int64_t
 #include <memory>

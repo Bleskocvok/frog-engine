@@ -5,7 +5,7 @@
 #include "frog/core/game_object2d.hpp"
 #include "frog/geometry/circle.hpp"
 #include "frog/geometry/general.hpp"
-#include "frog/geometry/physics.hpp"
+#include "frog/geometry/physics/physics.hpp"
 #include "frog/geometry/vector.hpp"
 #include "frog/gx2d/sprite.hpp"
 #include "frog/graphics/ui_element.hpp"

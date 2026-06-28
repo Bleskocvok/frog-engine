@@ -56,7 +56,7 @@ void init_game(frog::engine2d& eng)
 
 #include "frog/core/engine2d.hpp"
 
-#include "frog/geometry/physics.hpp"
+#include "frog/geometry/physics/physics.hpp"
 #include "frog/geometry/basic.hpp"
 #include "frog/geometry/transform.hpp"
 

@@ -1,11 +1,10 @@
 #include "physics.hpp"
 
-#include "circle.hpp"
-#include "collision.hpp"
+#include "frog/geometry/circle.hpp"
+#include "frog/geometry/collision.hpp"
 #include "frog/geometry/vector.hpp"
-#include "polar.hpp"
-#include "general.hpp"
-
+#include "frog/geometry/polar.hpp"
+#include "frog/geometry/general.hpp"
 #include "frog/debug.hpp"
 
 #include <cassert>
