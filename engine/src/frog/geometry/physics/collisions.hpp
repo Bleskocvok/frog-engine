@@ -4,21 +4,9 @@
 #include "primitives.hpp"
 #include "container.hpp"
 
-#include "frog/debug.hpp"
-#include "frog/geometry/vector.hpp"
-#include "frog/geometry/rectangle.hpp"
-#include "frog/geometry/basic.hpp"        // Pi
-
-#include <cstdint>          // int64_t
-#include <memory>
-#include <optional>
 #include <set>
-#include <unordered_set>
 #include <utility>          // move, pair, forward
 #include <cstddef>          // size_t
-#include <stdexcept>        // runtime_error
-#include <sstream>          // stringstream
-#include <vector>           // vector
 #include <algorithm>        // remove_if
 
 namespace frog::geo {
