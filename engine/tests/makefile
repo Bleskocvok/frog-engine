@@ -15,7 +15,7 @@ GEO_DEPS = ../src/frog/geometry/general.cpp \
            ../src/frog/geometry/camera.cpp \
            ../src/frog/geometry/objects.cpp \
            ../src/frog/geometry/paddle.cpp \
-           ../src/frog/geometry/physics.cpp \
+           ../src/frog/geometry/physics/physics.cpp \
            ../src/frog/geometry/polar.cpp \
            ../src/frog/geometry/transform.cpp
 

@@ -1,13 +1,8 @@
 #pragma once
 
-#include "frog/geometry/vector.hpp"
-#include "frog/utils/ptr.hpp"
-#include "frog/utils/string_builder.hpp"
+#include "frog/frog.hpp"
 #include "frog/core/engine2d.hpp"
 #include "frog/geometry/physics/physics.hpp"
-#include "frog/geometry/basic.hpp"
-#include "frog/geometry/transform.hpp"
-#include "frog/geometry/circle.hpp"
 
 namespace frog::scripts {
 
