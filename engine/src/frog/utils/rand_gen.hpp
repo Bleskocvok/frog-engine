@@ -121,7 +121,8 @@ class xorshift32
 public:
     constexpr explicit xorshift32(std::uint32_t seed) : state(seed ? seed : 12345)
     {
-        frog_assert(state != 0);
+        if (state == 0)
+            state = 0x1;
     }
 
     constexpr void next()
@@ -152,7 +153,8 @@ class xorshift64
 public:
     constexpr explicit xorshift64(std::uint64_t seed) : state(seed ? seed : 12345)
     {
-        frog_assert(state != 0);
+        if (state == 0)
+            state = 0x1;
     }
 
     constexpr void next()
