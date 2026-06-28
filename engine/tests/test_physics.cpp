@@ -7,7 +7,7 @@
  * Here go the tests.
  */
 
-#include "frog/geometry/physics.hpp"
+#include "frog/geometry/physics/physics.hpp"
 
 using namespace frog::geo;
 
