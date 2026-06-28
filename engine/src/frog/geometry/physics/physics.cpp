@@ -2,6 +2,7 @@
 
 #include "frog/geometry/circle.hpp"
 #include "frog/geometry/collision.hpp"
+#include "frog/geometry/physics/collisions.hpp"
 #include "frog/geometry/vector.hpp"
 #include "frog/geometry/polar.hpp"
 #include "frog/geometry/general.hpp"
@@ -132,13 +133,6 @@ void soft_physics2d::calculate_grid()
 }
 
 
-void soft_physics2d::Collisions::insert_collision(CollisionInfo info)
-{
-    current_.insert(info);
-    if (not all_.contains(info))
-        first_.insert(info);
-}
-
 void soft_physics2d::verlet_solve()
 {
     for (auto& [idx, pt] : points())
@@ -156,7 +150,7 @@ void soft_physics2d::verlet_solve()
         for (auto& [i, pt] : points())
         {
             if (encapsulate(pt, settings_.universum))
-                collisions_.insert_collision(CollisionInfo{ i, BOUNDS });
+                collisions_.insert_collision(CollisionInfo{ i, Collisions::BOUNDS });
         }
 
         // grid.clear();

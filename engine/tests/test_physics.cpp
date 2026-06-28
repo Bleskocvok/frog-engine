@@ -8,20 +8,23 @@
  */
 
 #include "frog/geometry/physics/physics.hpp"
+#include "frog/geometry/physics/collisions.hpp"
 
 using namespace frog::geo;
 
 
 TEST_CASE("container")
 {
-    auto collisions = soft_physics2d::Collisions{};
+    auto collisions = Collisions{};
 
     collisions.insert_collision({ 1, 2 });
 
     REQUIRE(collisions.contains(collisions.first(), 1));
     REQUIRE(collisions.contains(collisions.first(), 2));
 
-    collisions.update(soft_physics2d::container<soft_physics2d::joint>(10));
+    REQUIRE(collisions .contains(collisions.first(), 2));
+
+    collisions.update(Container<Joint>(10));
 
     REQUIRE(collisions.contains(collisions.all(), 1));
     REQUIRE(collisions.contains(collisions.all(), 2));
