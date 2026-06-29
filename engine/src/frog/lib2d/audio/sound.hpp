@@ -19,10 +19,10 @@ class Sound
 
     detail::Chunk chunk;
 
-    Sound(const char* filename)
+    Sound(const char* filename, bool ignore_error)
             : chunk(Mix_LoadWAV(filename))
     {
-        if (!chunk)
+        if (!chunk && not ignore_error)
             throw std::runtime_error(std::string("Sound: ") + filename + ": " + Mix_GetError());
     }
 

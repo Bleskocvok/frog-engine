@@ -5,6 +5,8 @@
 #include "sound.hpp"
 #include "channel.hpp"
 
+#include "frog/debug.hpp"
+#include "frog/utils/string_builder.hpp"
 
 namespace frog::lib2d {
 
@@ -13,7 +15,11 @@ Audio::Audio(int frequency, int channels, int chunk_size)
     if (Mix_OpenAudio(frequency, MIX_DEFAULT_FORMAT, channels, chunk_size) != 0)
     {
         // TODO: Allow for no audio and don't crash.
-        throw std::runtime_error(std::string("Create Audio: ") + Mix_GetError());
+        // throw std::runtime_error(std::string("Create Audio: ") + Mix_GetError());
+
+        auto str = make_string("Create Audio: ", Mix_GetError());
+        LOG(str);
+        error.emplace(str);
     }
 }
 
@@ -24,7 +30,7 @@ Audio::~Audio()
 
 Sound Audio::make_sound(const char* filename)
 {
-    return Sound(filename);
+    return Sound(filename, error.has_value());
 }
 
 Channel& Audio::add_channel()

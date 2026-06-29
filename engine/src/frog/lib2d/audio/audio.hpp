@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include <stdexcept>
+#include <optional>
 
 namespace frog::lib2d {
 
@@ -27,6 +27,8 @@ class Audio
     unsigned allocated_channels = 8;
 
     std::vector<Entry> channels;
+
+    std::optional<std::string> error;
 
 public:
     Audio(int frequency = 22050, int channels = 2, int chunk_size = 1024);
