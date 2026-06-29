@@ -1,4 +1,3 @@
-#include "frog/utils/assert.hpp"
 #ifndef NOT_FROG_BUILD_2D
 
 #include "truetype.hpp"
@@ -6,6 +5,7 @@
 #include "frog/core/engine2d.hpp"
 #include "frog/geometry/rectangle.hpp"
 #include "frog/core/2d/renderer.hpp"
+#include "frog/utils/assert.hpp"
 
 #include <utility>      // move
 #include <cstdint>
