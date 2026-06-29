@@ -15,11 +15,17 @@
 #include <unordered_set>
 #include <utility>          // move, pair, forward, swap
 #include <cstddef>          // size_t
-#include <algorithm>        // remove_if
+#include <algorithm>        // remove_if, sort, binary_search
+#include <vector>
 
 namespace frog::geo {
 
 using CollisionInfo = std::pair<idx_t, idx_t>;
+
+inline CollisionInfo canonical(CollisionInfo info)
+{
+    return CollisionInfo{ std::min(info.first, info.second), std::max(info.first, info.second) };
+}
 
 } // namespace frog::geo
 
@@ -64,7 +70,12 @@ struct CollisionBag
 
     bool contains(CollisionInfo info) const
     {
-        return data.contains(info);
+        return data.contains(canonical(info));
+    }
+
+    bool contains(idx_t i) const
+    {
+        return bag.contains(i);
     }
 
     auto begin()       { return data.begin(); }
@@ -74,7 +85,7 @@ struct CollisionBag
 
     auto insert(CollisionInfo info)
     {
-        auto ret = data.insert(info);
+        auto ret = data.insert(canonical(info));
         bag.insert(info.first);
         bag.insert(info.second);
         return ret;
@@ -128,7 +139,8 @@ inline bool contains(const CollisionBag<CollisionInfo>& container, idx_t i)
 {
     ContainsInfo::bag_count()++;
 
-    return container.bag.contains(i);
+    // return container.bag.contains(i);
+    return container.contains(i);
 }
 
 inline bool contains(const std::set<CollisionInfo>& container, idx_t i)
@@ -166,6 +178,7 @@ struct Collisions
     CollisionContainer<CollisionInfo> first_;
     CollisionContainer<CollisionInfo> all_;
     CollisionContainer<CollisionInfo> all_without_joints_;
+    CollisionContainer<CollisionInfo> first_without_joints_;
 
     void reset()
     {
@@ -204,7 +217,12 @@ struct Collisions
 
             if (always(info)
                     || not std::ranges::any_of(joints.data, joint_collision))
+            {
                 all_without_joints_.insert(info);
+
+                if (first_.contains(info))
+                    first_without_joints_.insert(info);
+            }
         }
     }
 
@@ -219,6 +237,7 @@ struct Collisions
     const auto& current() const { return current_; }
     const auto& all()     const { return all_; }
     const auto& all_without_joints() const { return all_without_joints_; }
+    const auto& first_without_joints() const { return first_without_joints_; }
 
     bool contains(const CollisionContainer<CollisionInfo>& container, idx_t i) const
     {
@@ -278,6 +297,7 @@ struct Collisions2
     static constexpr idx_t BOUNDS = -1;
 
     CollisionContainer<CollisionInfo> first_;
+    CollisionContainer<CollisionInfo> first_without_joints_;
     CollisionContainer<CollisionInfo> all_;
     CollisionContainer<CollisionInfo> all_without_joints_;
 
@@ -321,23 +341,22 @@ struct Collisions2
             return i.first == BOUNDS || i.second == BOUNDS;
         };
 
+        auto ordered_joints = std::vector<CollisionInfo>{};
+        ordered_joints.reserve(joints.size());
+        for (const auto& [i, j] : joints.data)
+            ordered_joints.emplace_back(std::min(j.a, j.b), std::max(j.a, j.b));
+        std::ranges::sort(ordered_joints);
+
         for (auto&& [info, elem] : data)
         {
-            auto joint_collision = [&info](const auto& pair) -> bool
-            {
-                const Joint& j = pair.second;
-
-                return ( j.a == info.first  && j.b == info.second )
-                    || ( j.a == info.second && j.b == info.first );
-            };
-
             elem.without_joints = always(info)
-                                || not std::ranges::any_of(joints.data, joint_collision);
+                                || not std::ranges::binary_search(ordered_joints, canonical(info));
         }
 
         first_.clear();
         all_.clear();
         all_without_joints_.clear();
+        first_without_joints_.clear();
 
         for (const auto& [info, elem] : data)
         {
@@ -348,6 +367,9 @@ struct Collisions2
 
             if (elem.without_joints)
                 all_without_joints_.insert(info);
+
+            if (elem.first && elem.without_joints)
+                first_without_joints_.insert(info);
         }
     }
 
@@ -375,6 +397,7 @@ struct Collisions2
     const auto& current() const { return all_; }
     const auto& all()     const { return all_; }
     const auto& all_without_joints() const { return all_without_joints_; }
+    const auto& first_without_joints() const { return first_without_joints_; }
 
     bool contains(const CollisionContainer<CollisionInfo>& container, idx_t i) const
     {

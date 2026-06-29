@@ -2729,33 +2729,42 @@ auto do_stuff(C collisions, const frog::geo::Container<Joint>& joints_)
     {
         // auto data = std::vector<idx_t>{ screw_a, screw_b };
 
-        bool collided = false;
-        for (const auto& info : collisions.first())
+        // bool collided = false;
+        // for (const auto& info : collisions.first())
+        // {
+        //     auto [idx_a, idx_b] = info;
+
+        //     auto included = [&](const auto& idx) -> bool
+        //     {
+        //         return idx == idx_a || idx == idx_b;
+        //     };
+
+        //     auto any_of_data = [&data](auto&& f)
+        //     {
+        //         return f(data.first) || f(data.second);
+        //     };
+
+        //     auto all_of_data = [&data](auto&& f)
+        //     {
+        //         return f(data.first) && f(data.second);
+        //     };
+
+        //     if (any_of_data(included)
+        //         && not all_of_data(included))
+        //     {
+        //         collided = true;
+        //         break;
+        //     }
+        // }
+
+        auto indices = std::vector<idx_t>{ data.first, data.second };
+
+        using frog::geo::idx_t;
+
+        bool collided = std::ranges::any_of(indices, [&](idx_t i)
         {
-            auto [idx_a, idx_b] = info;
-
-            auto included = [&](const auto& idx) -> bool
-            {
-                return idx == idx_a || idx == idx_b;
-            };
-
-            auto any_of_data = [&data](auto&& f)
-            {
-                return f(data.first) || f(data.second);
-            };
-
-            auto all_of_data = [&data](auto&& f)
-            {
-                return f(data.first) && f(data.second);
-            };
-
-            if (any_of_data(included)
-                && not all_of_data(included))
-            {
-                collided = true;
-                break;
-            }
-        }
+            return collisions.contains( collisions.first_without_joints(), i);
+        });
 
         collided_screws.push_back(collided);
     }
