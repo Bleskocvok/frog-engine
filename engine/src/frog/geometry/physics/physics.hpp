@@ -9,7 +9,6 @@
 #include "frog/geometry/vector.hpp"
 #include "frog/geometry/rectangle.hpp"
 
-#include <ios>
 #include <memory>
 #include <optional>
 #include <unordered_set>
@@ -72,16 +71,6 @@ public:
             , joints(joints)
             , angles(angles) {}
     };
-
-    // struct CollisionInfo
-    // {
-    //     idx_t a = -1;
-    //     idx_t b = -1;
-    //     bool includes(idx_t i) const
-    //     {
-    //         return a == i || b == i;
-    //     }
-    // };
 
     Collisions<std::unordered_set> collisions_;
 

@@ -51,8 +51,8 @@ namespace frog::geo {
 template<class T>
 struct CollisionBag
 {
-    std::set<CollisionInfo> data;
-    std::set<idx_t> bag;
+    std::unordered_set<CollisionInfo> data;
+    std::unordered_set<idx_t> bag;
 
     void clear()
     {
@@ -72,7 +72,7 @@ struct CollisionBag
 
     auto insert(CollisionInfo info)
     {
-        auto ret = data.insert(std::move(info));
+        auto ret = data.insert(info);
         bag.insert(info.first);
         bag.insert(info.second);
         return ret;
@@ -216,6 +216,7 @@ struct Collisions
     const auto& first()   const { return first_; }
     const auto& current() const { return current_; }
     const auto& all()     const { return all_; }
+    const auto& all_without_joints() const { return all_without_joints_; }
 
     bool contains(const CollisionContainer<CollisionInfo>& container, idx_t i) const
     {
