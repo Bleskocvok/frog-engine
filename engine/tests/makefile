@@ -25,7 +25,8 @@ STR_DEPS = ../src/frog/utils/string.cpp \
 
 COL_DEPS = ../src/frog/utils/exception.cpp
 
-PHY_DEPS = $(GEO_DEPS)
+PHY_DEPS = $(GEO_DEPS) \
+            ../src/frog/utils/exception.cpp
 
 RUN_TESTS = $(TESTS:%=run.%)
 

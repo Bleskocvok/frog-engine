@@ -4,6 +4,6 @@
 
 namespace frog::geo {
 
-using idx_t = std::int64_t;
+using idx_t = std::int32_t;
 
 } // namespace frog::geo

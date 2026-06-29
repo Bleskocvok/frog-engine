@@ -1,5 +1,6 @@
 #include "frog/geometry/physics/collisions.hpp"
 #include "frog/geometry/physics/primitives.hpp"
+#include "frog/utils/assert.hpp"
 
 #include "benchmark/benchmark.h"
 
@@ -12,6 +13,7 @@
 #include <random>
 #include <string>
 #include <vector>
+#include <tuple>
 #include <algorithm>
 #include <utility>      // pair
 #include <charconv>
@@ -2709,7 +2711,7 @@ auto prepare_joints()
 
 template<typename C>
 auto do_stuff(C collisions, const frog::geo::Container<Joint>& joints_)
-    -> std::vector<unsigned>
+    -> std::tuple< std::vector<unsigned>, std::vector<unsigned> >
 {
     collisions.reset();
 
@@ -2748,43 +2750,69 @@ auto do_stuff(C collisions, const frog::geo::Container<Joint>& joints_)
         collided_screws.push_back(collided);
     }
 
-    return collided_screws;
+    std::vector<unsigned> contains_stuff;
+
+    for (auto& [idx, j] : joints_.data)
+    {
+        contains_stuff.push_back(collisions.contains(collisions.all_without_joints_, j.a));
+        contains_stuff.push_back(collisions.contains(collisions.all_without_joints_, j.b));
+    }
+
+    return std::make_tuple( std::move(collided_screws), std::move(contains_stuff) );
 }
 
 
 static void ColllisionsSet(benchmark::State& state)
 {
+    frog::geo::detail::ContainsInfo::reset();
+
     auto joints_ = prepare_joints();
     for (auto _ : state)
     {
         auto ret = do_stuff( frog::geo::Collisions<std::set>(), joints_ );
         benchmark::DoNotOptimize(ret);
     }
+
+    frog_assert( frog::geo::detail::ContainsInfo::set_count() > 0 );
+    frog_assert( frog::geo::detail::ContainsInfo::unordered_set_count() == 0 );
+    frog_assert( frog::geo::detail::ContainsInfo::bag_count() == 0 );
 }
 
 
-// static void ColllisionsUnorderedSet(benchmark::State& state)
-// {
-//     auto joints_ = prepare_joints();
-//     for (auto _ : state)
-//     {
-//         auto ret = do_stuff( frog::geo::Collisions<std::unordered_set>(), joints_ );
-//         benchmark::DoNotOptimize(ret);
-//     }
-// }
+static void ColllisionsUnorderedSet(benchmark::State& state)
+{
+    frog::geo::detail::ContainsInfo::reset();
+
+    auto joints_ = prepare_joints();
+    for (auto _ : state)
+    {
+        auto ret = do_stuff( frog::geo::Collisions<std::unordered_set>(), joints_ );
+        benchmark::DoNotOptimize(ret);
+    }
+
+    frog_assert( frog::geo::detail::ContainsInfo::set_count() == 0 );
+    frog_assert( frog::geo::detail::ContainsInfo::unordered_set_count() > 0 );
+    frog_assert( frog::geo::detail::ContainsInfo::bag_count() == 0 );
+}
 
 static void ColllisionsBag(benchmark::State& state)
 {
+    frog::geo::detail::ContainsInfo::reset();
+
     auto joints_ = prepare_joints();
     for (auto _ : state)
     {
         auto ret = do_stuff( frog::geo::Collisions<frog::geo::CollisionBag>(), joints_ );
         benchmark::DoNotOptimize(ret);
     }
+
+    frog_assert( frog::geo::detail::ContainsInfo::set_count() == 0 );
+    frog_assert( frog::geo::detail::ContainsInfo::unordered_set_count() == 0 );
+    frog_assert( frog::geo::detail::ContainsInfo::bag_count() > 0 );
 }
 
 BENCHMARK(ColllisionsSet);
-// BENCHMARK(ColllisionsUnorderedSet);
+BENCHMARK(ColllisionsUnorderedSet);
 BENCHMARK(ColllisionsBag);
 
 BENCHMARK_MAIN();

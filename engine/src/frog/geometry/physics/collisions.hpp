@@ -8,7 +8,9 @@
 
 #include <array>
 #include <cstdint>
+#include <functional>
 #include <set>
+#include <unordered_set>
 #include <utility>          // move, pair, forward
 #include <cstddef>          // size_t
 #include <algorithm>        // remove_if
@@ -16,6 +18,35 @@
 namespace frog::geo {
 
 using CollisionInfo = std::pair<idx_t, idx_t>;
+
+} // namespace frog::geo
+
+namespace std {
+
+template <>
+struct hash< frog::geo::CollisionInfo >
+{
+    size_t operator()(const frog::geo::CollisionInfo& info) const
+    {
+        auto to_uint = [](frog::geo::idx_t x)
+        {
+            bool neg1 = x < 0;
+            std::uint64_t val = std::abs(x);
+            val |= std::uint64_t(neg1) << 31;
+            return val;
+        };
+
+        std::uint64_t a = to_uint(info.first);
+        std::uint64_t b = to_uint(info.second);
+
+        std::uint64_t comb = a | ( b << 32 );
+        return std::hash<decltype(comb)>{}(comb);
+    }
+};
+
+} // namespace std
+
+namespace frog::geo {
 
 template<class T>
 struct CollisionBag
@@ -68,7 +99,7 @@ namespace detail {
 
 struct ContainsInfo
 {
-    static inline std::array<std::uint64_t, 2> COUNTS = { 0 };
+    static inline std::array<std::uint64_t, 3> COUNTS = { 0 };
 
     static auto& bag_count()
     {
@@ -78,6 +109,11 @@ struct ContainsInfo
     static auto& set_count()
     {
         return COUNTS[ 1 ];
+    }
+
+    static auto& unordered_set_count()
+    {
+        return COUNTS[ 2 ];
     }
 
     static void reset()
@@ -96,6 +132,18 @@ inline bool contains(const CollisionBag<CollisionInfo>& container, idx_t i)
 inline bool contains(const std::set<CollisionInfo>& container, idx_t i)
 {
     ContainsInfo::set_count()++;
+
+    for (const auto& info : container)
+    {
+        if (info.first == i || info.second == i)
+            return true;
+    }
+    return false;
+}
+
+inline bool contains(const std::unordered_set<CollisionInfo>& container, idx_t i)
+{
+    ContainsInfo::unordered_set_count()++;
 
     for (const auto& info : container)
     {
