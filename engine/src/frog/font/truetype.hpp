@@ -6,13 +6,9 @@
 #include "frog/lib2d/font.hpp"
 #include "frog/lib2d/texture.hpp"
 
-#include <algorithm>        // max_element
-#include <unordered_map>
-#include <utility>          // move
-
+#include <string>
 
 namespace frog::font {
-
 
 class truetype : public base
 {
@@ -34,6 +30,5 @@ public:
               frog::geo::vec2 pos, float height,
               frog::gx2d::Crop crop = {}) override;
 };
-
 
 } // namespace frog

@@ -1,6 +1,9 @@
 #pragma once
 
+#include "frog/utils/assert.hpp"
 #include <algorithm>        // max_element
+#include <list>
+#include <stdexcept>
 #include <unordered_map>
 #include <utility>          // move
 
@@ -9,48 +12,62 @@ namespace frog::font {
 template<typename Key, typename Val>
 struct Cache
 {
-    struct entry
+    struct Entry
     {
-        int age = 0;
+        Key key;
         Val val;
-        entry(Val val) : val(std::move(val)) {}
+        Entry(Key k, Val v)
+            : key(std::move(k))
+            , val(std::move(v))
+        { }
     };
 
-    std::unordered_map<Key, entry> data;
+    std::list<Entry> lru;
+    using Iterator = decltype(lru)::iterator;
+    std::unordered_map<Key, Iterator> map;
+
     unsigned max_size;
 
     explicit Cache(unsigned size) : max_size(size) {}
 
     Val& put(Key key, Val val)
     {
-        while (data.size() >= max_size)
+        // Precond: get() returns nullptr.
+
+        while (map.size() >= max_size)
             remove_oldest();
 
-        auto it = data.emplace(std::move(key), std::move(val)).first;
-        return it->second.val;
+        lru.emplace_front(key, std::move(val));
+        auto [it, ok] = map.emplace(std::move(key), lru.begin());
+
+        frog_assert(lru.begin()->key == it->second->key);
+
+        return lru.begin()->val;
     }
 
     Val* get(const Key& key)
     {
-        auto it = data.find(key);
-        if (it == data.end())
+        auto it = map.find(key);
+        if (it == map.end())
             return nullptr;
 
-        it->second.age--;
-        return &it->second.val;
+        auto lru_it = it->second;
+        lru.splice(lru.begin(), lru, lru_it);
+
+        return &lru_it->val;
     }
 
-    bool is_present(const Key& key) const { return data.contains(key); }
+    bool is_present(const Key& key) const { return map.contains(key); }
 
     void remove_oldest()
     {
-        auto it = std::max_element(data.begin(), data.end(),
-                [](const auto& a, const auto& b)
-                {
-                    return a.second.age < b.second.age;
-                });
+        if (lru.empty())
+            throw std::runtime_error("cache::remove_oldest: empty");
 
-        data.erase(it);
+        const auto& k = lru.back().key;
+        map.erase(k);
+
+        lru.pop_back();
     }
 };
 
