@@ -9,6 +9,7 @@
 #include "frog/geometry/vector.hpp"
 #include "frog/geometry/rectangle.hpp"
 
+#include <ios>
 #include <memory>
 #include <optional>
 #include <unordered_set>
@@ -82,7 +83,7 @@ public:
     //     }
     // };
 
-    Collisions<CollisionBag> collisions_;
+    Collisions<std::unordered_set> collisions_;
 
 private:
     Settings settings_;
@@ -164,11 +165,41 @@ public:
                 pt.flying++;
         }
 
+        // recorder.clear();
+
         collisions_.reset();
 
         remove();
         verlet_solve();
         prev_universum = settings().universum;
+
+
+        // if (recorder.size() >= 3000)
+        // {
+        //     {
+        //         std::stringstream o;
+        //         o << "{\n";
+        //         for (auto info : recorder)
+        //             o << std::fixed << "{" << info.first << "," << info.second << "},\n";
+
+        //         o << "}\n";
+        //         frog::lib2d::fs::file_write("record_collisions.txt", o.str(), lib2d::fs::mode::Binary);
+        //     }
+
+        //     {
+        //         std::stringstream o;
+        //         o << "{\n";
+
+        //         for (auto j : joints_.data)
+        //         {
+        //                 o << "{" << j.first << ","
+        //                   << "Joint{.a=" << j.second.a << ",.b=" << j.second.b << ",.dist=" << std::fixed << j.second.dist << "}},\n";
+
+        //         }
+        //         o << "}\n";
+        //         frog::lib2d::fs::file_write("record_joints.txt", o.str(), lib2d::fs::mode::Binary);
+        //     }
+        // }
 
         collisions_.update(joints_);
     }
