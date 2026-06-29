@@ -120,17 +120,17 @@ public:
     {
         auto f = [&](GameObject& o)
         {
-            auto* script = go_get_script<GameObject, S>(o);
-            if constexpr (requires{ func(*script, o); })
+            o.template for_each_script_instanceof<S>( [&o, &func](auto& script)
             {
-                if (script)
-                    func(*script, o);
-            }
-            else
-            {
-                if (script)
-                    func(*script);
-            }
+                if constexpr (requires{ func(script, o); })
+                {
+                    func(script, o);
+                }
+                else
+                {
+                    func(script);
+                }
+            } );
         };
 
         for_each_object(pred, f);
