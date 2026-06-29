@@ -2725,9 +2725,9 @@ auto do_stuff(C collisions, const frog::geo::Container<Joint>& joints_)
 
     using frog::geo::idx_t;
 
-    for (auto[screw_a, screw_b] : SCREWS)
+    for (auto data : SCREWS)
     {
-        auto data = std::vector<idx_t>{ screw_a, screw_b };
+        // auto data = std::vector<idx_t>{ screw_a, screw_b };
 
         bool collided = false;
         for (const auto& info : collisions.first())
@@ -2739,8 +2739,18 @@ auto do_stuff(C collisions, const frog::geo::Container<Joint>& joints_)
                 return idx == idx_a || idx == idx_b;
             };
 
-            if (std::ranges::any_of(data, included)
-                && not std::ranges::all_of(data, included))
+            auto any_of_data = [&data](auto&& f)
+            {
+                return f(data.first) || f(data.second);
+            };
+
+            auto all_of_data = [&data](auto&& f)
+            {
+                return f(data.first) && f(data.second);
+            };
+
+            if (any_of_data(included)
+                && not all_of_data(included))
             {
                 collided = true;
                 break;
@@ -2761,8 +2771,9 @@ auto do_stuff(C collisions, const frog::geo::Container<Joint>& joints_)
     return std::make_tuple( std::move(collided_screws), std::move(contains_stuff) );
 }
 
+// Collisions
 
-static void ColllisionsSet(benchmark::State& state)
+static void CollisionsSet(benchmark::State& state)
 {
     frog::geo::detail::ContainsInfo::reset();
 
@@ -2778,8 +2789,7 @@ static void ColllisionsSet(benchmark::State& state)
     frog_assert( frog::geo::detail::ContainsInfo::bag_count() == 0 );
 }
 
-
-static void ColllisionsUnorderedSet(benchmark::State& state)
+static void CollisionsUnorderedSet(benchmark::State& state)
 {
     frog::geo::detail::ContainsInfo::reset();
 
@@ -2795,7 +2805,7 @@ static void ColllisionsUnorderedSet(benchmark::State& state)
     frog_assert( frog::geo::detail::ContainsInfo::bag_count() == 0 );
 }
 
-static void ColllisionsBag(benchmark::State& state)
+static void CollisionsBag(benchmark::State& state)
 {
     frog::geo::detail::ContainsInfo::reset();
 
@@ -2811,8 +2821,64 @@ static void ColllisionsBag(benchmark::State& state)
     frog_assert( frog::geo::detail::ContainsInfo::bag_count() > 0 );
 }
 
-BENCHMARK(ColllisionsSet);
-BENCHMARK(ColllisionsUnorderedSet);
-BENCHMARK(ColllisionsBag);
+// Collisions2
+
+static void Collisions2Set(benchmark::State& state)
+{
+    frog::geo::detail::ContainsInfo::reset();
+
+    auto joints_ = prepare_joints();
+    for (auto _ : state)
+    {
+        auto ret = do_stuff( frog::geo::Collisions2<std::set>(), joints_ );
+        benchmark::DoNotOptimize(ret);
+    }
+
+    frog_assert( frog::geo::detail::ContainsInfo::set_count() > 0 );
+    frog_assert( frog::geo::detail::ContainsInfo::unordered_set_count() == 0 );
+    frog_assert( frog::geo::detail::ContainsInfo::bag_count() == 0 );
+}
+
+static void Collisions2UnorderedSet(benchmark::State& state)
+{
+    frog::geo::detail::ContainsInfo::reset();
+
+    auto joints_ = prepare_joints();
+    for (auto _ : state)
+    {
+        auto ret = do_stuff( frog::geo::Collisions2<std::unordered_set>(), joints_ );
+        benchmark::DoNotOptimize(ret);
+    }
+
+    frog_assert( frog::geo::detail::ContainsInfo::set_count() == 0 );
+    frog_assert( frog::geo::detail::ContainsInfo::unordered_set_count() > 0 );
+    frog_assert( frog::geo::detail::ContainsInfo::bag_count() == 0 );
+}
+
+static void Collisions2Bag(benchmark::State& state)
+{
+    frog::geo::detail::ContainsInfo::reset();
+
+    auto joints_ = prepare_joints();
+    for (auto _ : state)
+    {
+        auto ret = do_stuff( frog::geo::Collisions2<frog::geo::CollisionBag>(), joints_ );
+        benchmark::DoNotOptimize(ret);
+    }
+
+    frog_assert( frog::geo::detail::ContainsInfo::set_count() == 0 );
+    frog_assert( frog::geo::detail::ContainsInfo::unordered_set_count() == 0 );
+    frog_assert( frog::geo::detail::ContainsInfo::bag_count() > 0 );
+}
+
+
+
+BENCHMARK(CollisionsSet);
+BENCHMARK(CollisionsUnorderedSet);
+BENCHMARK(CollisionsBag);
+
+BENCHMARK(Collisions2Set);
+BENCHMARK(Collisions2UnorderedSet);
+BENCHMARK(Collisions2Bag);
 
 BENCHMARK_MAIN();

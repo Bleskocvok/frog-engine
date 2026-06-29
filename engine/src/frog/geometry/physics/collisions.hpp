@@ -9,9 +9,11 @@
 #include <array>
 #include <cstdint>
 #include <functional>
+#include <ostream>
 #include <set>
+#include <unordered_map>
 #include <unordered_set>
-#include <utility>          // move, pair, forward
+#include <utility>          // move, pair, forward, swap
 #include <cstddef>          // size_t
 #include <algorithm>        // remove_if
 
@@ -251,6 +253,132 @@ struct Collisions
         //         return true;
         // }
         // return false;
+    }
+};
+
+} // namespace frog::geo
+
+
+
+
+
+
+
+
+
+
+
+
+
+namespace frog::geo {
+
+template<template<typename... Args> typename CollisionContainer>
+struct Collisions2
+{
+    static constexpr idx_t BOUNDS = -1;
+
+    CollisionContainer<CollisionInfo> first_;
+    CollisionContainer<CollisionInfo> all_;
+    CollisionContainer<CollisionInfo> all_without_joints_;
+
+    struct Elem
+    {
+        bool current = false;
+        bool first = false;
+        bool without_joints = false;
+
+        friend std::ostream& operator<<(std::ostream& o, const Elem& e)
+        {
+            return o << "Elem{ .current=" << e.current
+                     << ", .first=" << e.first
+                     << ", .without_joints=" << e.without_joints
+                     << " }";
+        }
+    };
+
+    std::unordered_map<CollisionInfo, Elem> data;
+
+    void reset()
+    {
+        for (auto& [info, elem] : data)
+        {
+            elem.current = false;
+            elem.first = false;
+        }
+    }
+
+    void update(const Container<Joint>& joints)
+    {
+        using std::erase_if;
+        erase_if(data, [&](const auto& x)
+        {
+            const auto&[info, elem] = x;
+            return not elem.current;
+        });
+
+        auto always = [](const auto& i)
+        {
+            return i.first == BOUNDS || i.second == BOUNDS;
+        };
+
+        for (auto&& [info, elem] : data)
+        {
+            auto joint_collision = [&info](const auto& pair) -> bool
+            {
+                const Joint& j = pair.second;
+
+                return ( j.a == info.first  && j.b == info.second )
+                    || ( j.a == info.second && j.b == info.first );
+            };
+
+            elem.without_joints = always(info)
+                                || not std::ranges::any_of(joints.data, joint_collision);
+        }
+
+        first_.clear();
+        all_.clear();
+        all_without_joints_.clear();
+
+        for (const auto& [info, elem] : data)
+        {
+            all_.insert(info);
+
+            if (elem.first)
+                first_.insert(info);
+
+            if (elem.without_joints)
+                all_without_joints_.insert(info);
+        }
+    }
+
+    void insert_collision(CollisionInfo info)
+    {
+        if (info.second < info.first)
+            std::swap(info.first, info.second);
+
+        auto it = data.find(info);
+        if (it == data.end())
+        {
+            data.emplace(info, Elem{
+                    .current = true,
+                    .first = true,
+                    .without_joints = false
+            });
+        }
+        else
+        {
+            it->second.current = true;
+        }
+    }
+
+    const auto& first()   const { return first_; }
+    const auto& current() const { return all_; }
+    const auto& all()     const { return all_; }
+    const auto& all_without_joints() const { return all_without_joints_; }
+
+    bool contains(const CollisionContainer<CollisionInfo>& container, idx_t i) const
+    {
+        return detail::contains(container, i);
     }
 };
 
