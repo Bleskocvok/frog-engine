@@ -26,7 +26,7 @@ frog::geo::vec2 atlas::char_size(float height) const
     return { height * spacing * size_ratio, height };
 }
 
-geo::vec2 atlas::size(const std::string& str, float height)
+geo::vec2 atlas::size(const std::string& str, float height, float /*scale*/)
 {
     return { str.length() * height
                           * spacing
@@ -35,12 +35,12 @@ geo::vec2 atlas::size(const std::string& str, float height)
 }
 
 void atlas::draw(frog::r2d::Renderer& renderer, const frog::gx::Text& label,
-          geo::vec2 pos, float height, frog::gx2d::Crop crop)
+          geo::vec2 pos, float height, float scale, frog::gx2d::Crop crop)
 {
     using namespace frog;
     using namespace frog::geo;
 
-    auto text_size = size(label.str, height);
+    auto text_size = size(label.str, height, scale);
 
     geo::rect full_rect = { pos, text_size };
 

@@ -10,6 +10,8 @@
 /bin-game2d/
 /bin-game-*/
 /bin-game2d-*/
+perf.data
+perf.data.*
 
 # test binaries
 /engine/tests/test_fixed

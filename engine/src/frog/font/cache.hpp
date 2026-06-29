@@ -1,10 +1,10 @@
 #pragma once
 
-#include "frog/utils/assert.hpp"
 #include <algorithm>        // max_element
 #include <list>
 #include <stdexcept>
 #include <unordered_map>
+#include <map>
 #include <utility>          // move
 
 namespace frog::font {
@@ -24,7 +24,7 @@ struct Cache
 
     std::list<Entry> lru;
     using Iterator = decltype(lru)::iterator;
-    std::unordered_map<Key, Iterator> map;
+    std::map<Key, Iterator> map;
 
     unsigned max_size;
 
@@ -39,8 +39,6 @@ struct Cache
 
         lru.emplace_front(key, std::move(val));
         auto [it, ok] = map.emplace(std::move(key), lru.begin());
-
-        frog_assert(lru.begin()->key == it->second->key);
 
         return lru.begin()->val;
     }
@@ -69,6 +67,10 @@ struct Cache
 
         lru.pop_back();
     }
+
+    auto size() const { return map.size(); }
+    auto begin() const { return lru.begin(); }
+    auto end() const { return lru.end(); }
 };
 
 } // namespace frog::font

@@ -137,14 +137,13 @@ void Renderer::draw_ui_sprite(const lib2d::gx::texture& tex, geo::rect dest,
     draw(ctx, tex, dest, uv, color, crop);
 }
 
-void Renderer::draw_text(const gx::Text& label, geo::vec2 pos,
-                        float container_height, frog::gx2d::Crop crop)
-{
-    auto& font = fonts->at(label.font);
-
-    auto guard = ::frog::ProfilerGuard("font_render");
-    font.draw(*this, label, pos, container_height, crop);
-}
+// void Renderer::draw_text(const gx::Text& label, geo::vec2 pos,
+//                         float container_height, frog::gx2d::Crop crop)
+// {
+//     auto& font = fonts->at(label.font);
+//     auto guard = ::frog::ProfilerGuard("font_render");
+//     font.draw(*this, label, pos, container_height, crop);
+// }
 
 // TODO: This is not recursive, retard. Fix!
 void Renderer::draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite)
@@ -314,9 +313,12 @@ void Renderer::draw_text(const gx::ui_element& elem, double between)
         pos = frog::geo::lerp(prev, pos, value);
     }
 
+    frog::geo::vec2 scale, shift;
+    std::tie(scale, shift) = ui_scale_shift();
+
     float container_height = elem.size().y();
     float height = container_height * label.height;
-    auto text_size = font.size(label.str, height);
+    auto text_size = font.size(label.str, height, scale.y());
 
     switch (label.align)
     {
@@ -345,7 +347,7 @@ void Renderer::draw_text(const gx::ui_element& elem, double between)
     }
 
     auto guard = ::frog::ProfilerGuard("font_render");
-    font.draw(*this, label, pos, height, crop);
+    font.draw(*this, label, pos, height, scale.y(), crop);
 }
 
 #endif
