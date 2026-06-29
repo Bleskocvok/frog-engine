@@ -72,7 +72,7 @@ public:
             , angles(angles) {}
     };
 
-    Collisions<std::unordered_set> collisions_;
+    Collisions2<CollisionBag> collisions_;
 
 private:
     Settings settings_;
