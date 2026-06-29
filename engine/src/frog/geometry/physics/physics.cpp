@@ -150,7 +150,7 @@ void soft_physics2d::verlet_solve()
         for (auto& [i, pt] : points())
         {
             if (encapsulate(pt, settings_.universum))
-                collisions_.insert_collision(CollisionInfo{ i, Collisions::BOUNDS });
+                collisions_.insert_collision(CollisionInfo{ i, decltype(collisions_)::BOUNDS });
         }
 
         // grid.clear();

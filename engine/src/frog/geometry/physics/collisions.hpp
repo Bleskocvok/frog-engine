@@ -6,6 +6,8 @@
 
 #include "frog/debug.hpp"
 
+#include <array>
+#include <cstdint>
 #include <set>
 #include <utility>          // move, pair, forward
 #include <cstddef>          // size_t
@@ -16,7 +18,7 @@ namespace frog::geo {
 using CollisionInfo = std::pair<idx_t, idx_t>;
 
 template<class T>
-struct CollisionContainer
+struct CollisionBag
 {
     std::set<CollisionInfo> data;
     std::set<idx_t> bag;
@@ -46,7 +48,7 @@ struct CollisionContainer
     }
 
     template<class F>
-    friend size_t erase_if(CollisionContainer& cont, F&& f)
+    friend size_t erase_if(CollisionBag& cont, F&& f)
     {
         auto ret = std::erase_if(cont.data, std::forward<F>(f));
 
@@ -64,15 +66,37 @@ struct CollisionContainer
 
 namespace detail {
 
-inline bool contains(const CollisionContainer<CollisionInfo>& container, idx_t i)
+struct ContainsInfo
 {
-    LOG("CollisionContainer::contains");
+    static inline std::array<std::uint64_t, 2> COUNTS = { 0 };
+
+    static auto& bag_count()
+    {
+        return COUNTS[ 0 ];
+    }
+
+    static auto& set_count()
+    {
+        return COUNTS[ 1 ];
+    }
+
+    static void reset()
+    {
+        COUNTS = { 0 };
+    }
+};
+
+inline bool contains(const CollisionBag<CollisionInfo>& container, idx_t i)
+{
+    ContainsInfo::bag_count()++;
+
     return container.bag.contains(i);
 }
 
 inline bool contains(const std::set<CollisionInfo>& container, idx_t i)
 {
-    LOG("std::set::contains");
+    ContainsInfo::set_count()++;
+
     for (const auto& info : container)
     {
         if (info.first == i || info.second == i)
@@ -83,12 +107,10 @@ inline bool contains(const std::set<CollisionInfo>& container, idx_t i)
 
 } // namespace detail
 
+template<template<typename... Args> typename CollisionContainer>
 struct Collisions
 {
     static constexpr idx_t BOUNDS = -1;
-
-    template<class T>
-    using CollisionContainer = std::set<T>;
 
     CollisionContainer<CollisionInfo> current_;
     CollisionContainer<CollisionInfo> first_;

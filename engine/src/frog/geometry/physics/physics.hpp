@@ -82,7 +82,7 @@ public:
     //     }
     // };
 
-    Collisions collisions_;
+    Collisions<CollisionBag> collisions_;
 
 private:
     Settings settings_;
