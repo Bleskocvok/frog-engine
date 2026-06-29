@@ -172,7 +172,24 @@ void engine2d::render(double between)
 {
     FROG_PROFILE_FUNC();
 
-    engine_base::render(between);
+    {
+        auto guard = ::frog::ProfilerGuard("window->clear");
+        renderer->clear();
+    }
+
+    {
+        auto guard = ::frog::ProfilerGuard("window->objects");
+        draw_objects(between);
+    }
+    {
+        auto guard = ::frog::ProfilerGuard("window->ui");
+        draw_ui(between);
+    }
+
+    {
+        auto guard = ::frog::ProfilerGuard("window->swap");
+        window->swap_buffers();
+    }
 }
 
 void engine2d::stable_update()

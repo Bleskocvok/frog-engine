@@ -73,6 +73,7 @@ void Renderer::draw(const RenderCtx& ctx, const lib2d::gx::texture& tex, geo::re
 
     color = gx::rgb_multiply(color, ctx.color);
 
+    auto guard = ::frog::ProfilerGuard("window->draw");
     window->draw_colored_rotated(tex, uv.pos.x(), uv.pos.y(),
                                  uv.size.x(), uv.size.y(),
                                  top_left.x(), top_left.y(),
@@ -119,6 +120,7 @@ void Renderer::draw(const RenderCtx& ctx, const gx2d::Sprite& model)
     gx::rgba_t color = model.color;
     color = gx::rgb_multiply(color, ctx.color);
 
+    auto guard = ::frog::ProfilerGuard("window->draw");
     window->draw_colored_rotated(texture, uv.x(), uv.y(), uv_size.x(), uv_size.y(),
                                   top_left.x(), top_left.y(),
                                   rect.size.x(), rect.size.y(),
@@ -247,7 +249,7 @@ void Renderer::draw_objects(const frog::scene_manager<frog::game_object2d>& scen
     //       in render queue (i.e. add reference for a new game object, remove for deleted object)
     // TODO: make this more memory efficient for unhinged layer values
     //       (i.e. don't crash the game for unsigned(-1))
-    std::map<unsigned, std::vector<const gx2d::Sprite*>> render_queue;
+    // std::map<unsigned, std::vector<const gx2d::Sprite*>> render_queue;
 
     RenderCtx ctx;
     ctx.between = between;

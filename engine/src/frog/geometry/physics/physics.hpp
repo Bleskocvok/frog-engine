@@ -8,6 +8,7 @@
 
 #include "frog/geometry/vector.hpp"
 #include "frog/geometry/rectangle.hpp"
+#include "frog/utils/profiler_guard.hpp"
 
 #include <memory>
 #include <optional>
@@ -143,6 +144,8 @@ public:
 
     void update()
     {
+        auto guard = ::frog::ProfilerGuard("physics::update");
+
         if (prev_universum != settings().universum)
             grid.reset();
 
@@ -190,6 +193,7 @@ public:
         //     }
         // }
 
+        auto guard2 = ::frog::ProfilerGuard("collisions::update");
         collisions_.update(joints_);
     }
 
