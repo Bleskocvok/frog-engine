@@ -55,6 +55,9 @@ test_color: test_color.cpp $(COL_DEPS)
 test_physics: test_physics.cpp $(PHY_DEPS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
+bench_physics: bench_physics.cpp $(PHY_DEPS)
+	$(CXX) $(CXXFLAGS) -o $@ $^ -lbenchmark -lpthread
+
 clean:
 
 distclean:
