@@ -10,7 +10,6 @@
 
 namespace frog::font {
 
-
 frog::font::truetype::truetype(const std::string& file, int size, int outline)
     : font_(file, size)
 {
