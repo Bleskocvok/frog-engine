@@ -9,7 +9,7 @@ INCLUDES = -I../libraries/doctest/ \
 
 CXXFLAGS += $(INCLUDES)
 
-TESTS = test_geometry test_fixed test_string test_color test_physics
+TESTS = test_geometry test_fixed test_string test_color test_physics test_cache
 
 GEO_DEPS = ../src/frog/geometry/general.cpp \
            ../src/frog/geometry/camera.cpp \
@@ -58,6 +58,9 @@ test_physics: test_physics.cpp $(PHY_DEPS)
 
 bench_physics: bench_physics.cpp $(PHY_DEPS)
 	$(CXX) $(CXXFLAGS) -g -o $@ $^ -lbenchmark -lpthread
+
+test_cache: test_cache.cpp
+	$(CXX) $(CXXFLAGS) -o $@ $^
 
 clean:
 
