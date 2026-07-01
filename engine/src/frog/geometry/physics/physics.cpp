@@ -231,7 +231,10 @@ void soft_physics2d::explode(circle c, float power)
         float dist = c.radius == 0 || len == 0
                    ? 1.0
                    : 1 - len / c.radius;
-        dif /= len;
+
+        if (len != 0)
+            dif /= len;
+
         push(idx, dif * dist * power);
     });
 }
