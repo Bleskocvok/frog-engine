@@ -281,6 +281,8 @@ void engine2d::set_cursor(const std::string& tag)
 void engine2d::reset_cursor()
 {
     auto* def = SDL_CreateSystemCursor( SDL_SystemCursor::SDL_SYSTEM_CURSOR_ARROW );
+    // Btw, docs say this is fine. SDL_FreeCursor is expected to be called on
+    // things created by SDL_CreateSystemCursor.
     auto cursor = lib2d::detail::Cursor( def );
     // TODO: Doesn't belong here.
     SDL_SetCursor(cursor.get());
