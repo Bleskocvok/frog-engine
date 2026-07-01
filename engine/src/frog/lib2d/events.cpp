@@ -164,7 +164,7 @@ void Events::update()
                                            event.tfinger.x,
                                            event.tfinger.y,
                                            event.tfinger.dx,
-                                           event.tfinger.dx,
+                                           event.tfinger.dy,
                                            event.tfinger.pressure } );
                 break;
 
