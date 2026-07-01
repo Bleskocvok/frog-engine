@@ -83,8 +83,11 @@ public:
 
         if (idx_rot_a != -1 && idx_rot_b != -1)
         {
-            const auto& a = physics->point_at(idx);
-            const auto& b = physics->point_at(idx_add);
+            // Wtf was this bug. Who programmed it this way?
+            // const auto& a = physics->point_at(idx);
+            // const auto& b = physics->point_at(idx_add);
+            const auto& a = physics->point_at(idx_rot_a);
+            const auto& b = physics->point_at(idx_rot_b);
             sprite(obj).angle = rotation_delta_deg + geo::angle_deg(a.pos, b.pos);
         }
     }
