@@ -19,7 +19,6 @@ struct Container
     std::vector<std::pair<idx_t, T>> data;
     std::vector<idx_t> free;
     std::vector<int> map;
-    idx_t last = 0;
 
     explicit Container(int limit) : limit_(limit), map(limit, -1)
     {
@@ -29,7 +28,7 @@ struct Container
     template<typename... Args>
     idx_t emplace(Args&&... args)
     {
-        if (free.empty() && last >= limit_)
+        if (free.empty() && size() >= limit_)
             throw std::runtime_error("physics container emplace: limit reached");
 
         idx_t i;
