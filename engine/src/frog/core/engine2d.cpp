@@ -257,13 +257,13 @@ bool engine2d::remove_texture(const std::string& tag)
 
 bool engine2d::add_cursor(const std::string& tag, const std::string& path)
 {
-    bool has = textures.contains(tag);
+    bool has = cursors.contains(tag);
     auto full = global->asset_path() + "/" + path;
 
     auto surface = lib2d::detail::load_img( full );
     frog_assert(surface);
     cursors.add(tag, mk_ptr<lib2d::detail::Cursor>( SDL_CreateColorCursor( surface.get(), 0, 0 ) ));
-    return has;
+    return not has;
 }
 
 bool engine2d::remove_cursor(const std::string& tag)
