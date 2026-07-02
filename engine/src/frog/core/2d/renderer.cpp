@@ -49,6 +49,16 @@ std::pair<geo::vec2, geo::vec2> Renderer::ui_scale_shift() const
 }
 
 
+geo::vec2 Renderer::ui_absolute_scale() const
+{
+    auto [w, h] = window->renderer_output_size();
+
+    geo::vec2 scale = { w / camera.size.x(), h / camera.size.y() };
+
+    return scale;
+}
+
+
 void Renderer::draw(const RenderCtx& ctx, const lib2d::gx::texture& tex, geo::rect dest,
                     geo::rect uv, gx::rgba_t color, gx2d::Crop crop)
 {
@@ -312,8 +322,9 @@ void Renderer::draw_text(const gx::ui_element& elem, double between)
         pos = frog::geo::lerp(prev, pos, value);
     }
 
-    frog::geo::vec2 scale, shift;
-    std::tie(scale, shift) = ui_scale_shift();
+    // frog::geo::vec2 scale, shift;
+    // std::tie(scale, shift) = ui_scale_shift();
+    auto scale = ui_absolute_scale();
 
     float container_height = elem.size().y();
     float height = container_height * label.height;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <utility>
 #include <variant>
 
 namespace frog::lib2d::gx
@@ -74,6 +75,8 @@ public:
 
     int width() const override { return win_width; }
     int height() const override { return win_height; }
+
+    std::pair<int, int> renderer_output_size() const;
 
     void screenshot( const std::string& filename ) const;
 

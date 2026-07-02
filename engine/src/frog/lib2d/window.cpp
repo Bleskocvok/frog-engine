@@ -320,6 +320,14 @@ SDL_Surface* window::create_surface( int width, int height ) const
 }
 
 
+std::pair<int, int> window::renderer_output_size() const
+{
+    int w = 0, h = 0;
+    SDL_GetRendererOutputSize( renderer.get(), &w, &h );
+    return { w, h };
+}
+
+
 }  // namespace frog::lib2d::gx
 
 

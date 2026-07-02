@@ -31,6 +31,7 @@ class Renderer
 
     std::pair<geo::vec2, geo::vec2> scale_shift(geo::rect& cam) const;
     std::pair<geo::vec2, geo::vec2> ui_scale_shift() const;
+    geo::vec2 ui_absolute_scale() const;
 
     // Friends and family.
     friend font::atlas;
