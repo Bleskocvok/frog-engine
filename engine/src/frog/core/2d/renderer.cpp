@@ -145,7 +145,6 @@ void Renderer::draw_ui_sprite(const lib2d::gx::texture& tex, geo::rect dest,
 //     font.draw(*this, label, pos, container_height, crop);
 // }
 
-// TODO: This is not recursive, retard. Fix!
 void Renderer::draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite)
 {
     auto draw_subsprite = [&](const gx2d::ChildSprite& sub)
@@ -209,7 +208,7 @@ void Renderer::draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite)
 
         sub_ctx.color = gx::rgb_multiply(sub_ctx.color, sprite.color);
 
-        draw(sub_ctx, sub.sprite);
+        draw_recursive(sub_ctx, sub.sprite);
     };
 
     for (const auto& sub : sprite.children)
