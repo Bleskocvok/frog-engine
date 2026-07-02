@@ -61,7 +61,6 @@ class Renderer
         bool move_pre_scale = true;
         double between = 0;
 
-        // std::optional<gx2d::Crop> crop;
         std::optional<geo::rect> cropped;
     };
 

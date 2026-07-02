@@ -1,6 +1,5 @@
 #pragma once
 
-#include "frog/debug.hpp"
 #include "frog/geometry/rectangle.hpp"
 #include "frog/geometry/vector.hpp"
 #include "frog/graphics/color.hpp"
@@ -54,6 +53,7 @@ struct Sprite
     std::optional<Crop> crop = std::nullopt;
 
     std::vector<ChildSprite> children;
+    bool crop_children = false;
 };
 
 struct Anchor
@@ -64,7 +64,6 @@ struct Anchor
     Position position = Position::NONE;
     bool rel_size = false;
     Angle rel_angle = Anchor::Angle::NONE;
-    bool inherit_crop = false;
 };
 
 enum class RelLayer { BELOW, ABOVE };
@@ -210,35 +209,8 @@ inline void apply_crop(const gx2d::Sprite& model,
 
     auto crop = max(model_crop(), extra_crop_omg.value_or(Crop{}));
 
-    // auto crop = model_crop();
-
     crop_tex(crop, rect, tex);
     crop_rect(crop, rect);
 }
-
-// inline void apply_crop(const gx2d::Sprite& model, double between, geo::rect& rect, geo::rect& tex, std::optional<Crop> = {})
-// {
-//     if (not model.crop)
-//         return;
-
-//     auto crop = *model.crop;
-
-//     if (model.interpolation != gx2d::Interpolation::NONE)
-//     {
-//         float value = float(between);
-//         if (model.interpolation == gx2d::Interpolation::EXTRAPOLATE)
-//             value += 1;
-
-//         Crop prev = model.prev.crop.value_or(Crop{});
-
-//         crop.top = std::lerp(prev.top, crop.top, value);
-//         crop.bot = std::lerp(prev.bot, crop.bot, value);
-//         crop.left = std::lerp(prev.left, crop.left, value);
-//         crop.right = std::lerp(prev.right, crop.right, value);
-//     }
-
-//     crop_tex(crop, rect, tex);
-//     crop_rect(crop, rect);
-// }
 
 }  // namespace frog::2d

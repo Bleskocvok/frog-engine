@@ -106,14 +106,8 @@ void Renderer::draw(const RenderCtx& ctx, const gx2d::Sprite& model)
 
     std::optional<gx2d::Crop> extra;
     if (ctx.cropped)
-    {
         extra = gx2d::multiply_crop(*ctx.cropped, gx2d::Crop{}, rect);
 
-        if (model.image_tag == ("miner"))
-        {
-            LOGX(*ctx.cropped, rect, model.image_tag, extra);
-        }
-    }
     gx2d::apply_crop(model, ctx.between, rect, tex, extra);
 
     if (ctx.move_pre_scale)
@@ -165,6 +159,13 @@ void Renderer::draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite)
     auto draw_subsprite = [&](const gx2d::ChildSprite& sub)
     {
         RenderCtx sub_ctx = ctx;
+
+        if (sprite.crop_children)
+        {
+            sub_ctx.cropped = sprite.rect;
+            gx2d::crop_rect(sprite.crop.value_or(gx2d::Crop{}), *sub_ctx.cropped);
+        }
+
         switch (sub.anchor.position)
         {
             case gx2d::Anchor::Position::RELATIVE:
@@ -222,15 +223,6 @@ void Renderer::draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite)
         }
 
         sub_ctx.color = gx::rgb_multiply(sub_ctx.color, sprite.color);
-
-        if (sub.anchor.inherit_crop)
-        {
-            sub_ctx.cropped = sprite.rect;
-            gx2d::crop_rect(sprite.crop.value_or(gx2d::Crop{}), *sub_ctx.cropped);
-        }
-        // TODO: There' still some bug
-        // else
-        //     sub_ctx.cropped = std::nullopt;
 
         draw_recursive(sub_ctx, sub.sprite);
     };
