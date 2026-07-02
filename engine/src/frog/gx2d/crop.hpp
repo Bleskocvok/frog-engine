@@ -34,8 +34,7 @@ inline Crop clamp(Crop c)
     return c;
 }
 
-// Source + crop describe the are that should be cut out of dest. Therefore
-// returns the crop to change dest to cropped src.
+// Source + crop describe the area that should be cut out of dest.
 inline frog::gx2d::Crop multiply_crop(const frog::geo::rect& src,
                                       const frog::gx2d::Crop& crop,
                                       const frog::geo::rect& dest)
@@ -47,6 +46,24 @@ inline frog::gx2d::Crop multiply_crop(const frog::geo::rect& src,
     r.left  =  dif.x() + crop.left  - 0.5 * ( src.size.x() - dest.size.x() );
     r.right = -dif.x() + crop.right - 0.5 * ( src.size.x() - dest.size.x() );
     return frog::gx2d::clamp(r);
+}
+
+inline Crop max(Crop a, Crop b)
+{
+    a.top   = std::max(a.top,   b.top);
+    a.bot   = std::max(a.bot,   b.bot);
+    a.left  = std::max(a.left,  b.left);
+    a.right = std::max(a.right, b.right);
+    return a;
+}
+
+inline Crop min(Crop a, Crop b)
+{
+    a.top   = std::min(a.top,   b.top);
+    a.bot   = std::min(a.bot,   b.bot);
+    a.left  = std::min(a.left,  b.left);
+    a.right = std::min(a.right, b.right);
+    return a;
 }
 
 } // namespace frog::gx2d

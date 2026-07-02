@@ -18,6 +18,7 @@
 #include "frog/gx2d/sprite.hpp"
 
 #include <map>
+#include <optional>
 
 namespace frog::r2d
 {
@@ -45,8 +46,13 @@ class Renderer
         geo::vec2 prev_scale;
         geo::vec2 prev_shift;
 
-        geo::vec2 scale_mult = { 1 };
-        geo::vec2 pos_mult = { 1 };
+        struct
+        {
+            geo::vec2 shift;
+            geo::vec2 scale_mult = { 1 };
+            geo::vec2 pos_mult = { 1 };
+
+        } world;
 
         gx::rgba_t color = gx::colors::WHITE;
 
@@ -54,6 +60,9 @@ class Renderer
 
         bool move_pre_scale = true;
         double between = 0;
+
+        // std::optional<gx2d::Crop> crop;
+        std::optional<geo::rect> cropped;
     };
 
     struct Queue

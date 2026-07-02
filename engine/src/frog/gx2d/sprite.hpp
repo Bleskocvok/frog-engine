@@ -64,6 +64,7 @@ struct Anchor
     Position position = Position::NONE;
     bool rel_size = false;
     Angle rel_angle = Anchor::Angle::NONE;
+    bool inherit_crop = false;
 };
 
 enum class RelLayer { BELOW, ABOVE };
@@ -174,30 +175,70 @@ inline void perform_interpolation(const Sprite& s, double between, geo::rect& re
     }
 }
 
-
-inline void apply_crop(const gx2d::Sprite& model, double between, geo::rect& rect, geo::rect& tex)
+inline void apply_crop(const gx2d::Sprite& model,
+                        double between,
+                        geo::rect& rect,
+                        geo::rect& tex,
+                        std::optional<Crop> extra_crop_omg = std::nullopt)
 {
-    if (not model.crop)
+    if (not model.crop && not extra_crop_omg)
         return;
 
-    auto crop = *model.crop;
-
-    if (model.interpolation != gx2d::Interpolation::NONE)
+    auto model_crop = [&model, &between]()
     {
-        float value = float(between);
-        if (model.interpolation == gx2d::Interpolation::EXTRAPOLATE)
-            value += 1;
+        if (not model.crop)
+            return Crop{};
 
-        Crop prev = model.prev.crop.value_or(Crop{});
+        auto crop = *model.crop;
 
-        crop.top = std::lerp(prev.top, crop.top, value);
-        crop.bot = std::lerp(prev.bot, crop.bot, value);
-        crop.left = std::lerp(prev.left, crop.left, value);
-        crop.right = std::lerp(prev.right, crop.right, value);
-    }
+        if (model.interpolation != gx2d::Interpolation::NONE)
+        {
+            float value = float(between);
+            if (model.interpolation == gx2d::Interpolation::EXTRAPOLATE)
+                value += 1;
+
+            Crop prev = model.prev.crop.value_or(Crop{});
+
+            crop.top = std::lerp(prev.top, crop.top, value);
+            crop.bot = std::lerp(prev.bot, crop.bot, value);
+            crop.left = std::lerp(prev.left, crop.left, value);
+            crop.right = std::lerp(prev.right, crop.right, value);
+        }
+
+        return crop;
+    };
+
+    auto crop = max(model_crop(), extra_crop_omg.value_or(Crop{}));
+
+    // auto crop = model_crop();
 
     crop_tex(crop, rect, tex);
     crop_rect(crop, rect);
 }
+
+// inline void apply_crop(const gx2d::Sprite& model, double between, geo::rect& rect, geo::rect& tex, std::optional<Crop> = {})
+// {
+//     if (not model.crop)
+//         return;
+
+//     auto crop = *model.crop;
+
+//     if (model.interpolation != gx2d::Interpolation::NONE)
+//     {
+//         float value = float(between);
+//         if (model.interpolation == gx2d::Interpolation::EXTRAPOLATE)
+//             value += 1;
+
+//         Crop prev = model.prev.crop.value_or(Crop{});
+
+//         crop.top = std::lerp(prev.top, crop.top, value);
+//         crop.bot = std::lerp(prev.bot, crop.bot, value);
+//         crop.left = std::lerp(prev.left, crop.left, value);
+//         crop.right = std::lerp(prev.right, crop.right, value);
+//     }
+
+//     crop_tex(crop, rect, tex);
+//     crop_rect(crop, rect);
+// }
 
 }  // namespace frog::2d

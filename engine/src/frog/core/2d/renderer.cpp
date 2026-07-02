@@ -1,28 +1,22 @@
-#include "frog/geometry/basic.hpp"
-#include "frog/geometry/transform.hpp"
 #ifndef NOT_FROG_BUILD_2D
 
 #include "renderer.hpp"
 
+#include "frog/geometry/basic.hpp"
+#include "frog/geometry/rectangle.hpp"
+#include "frog/geometry/transform.hpp"
+#include "frog/geometry/vector.hpp"
+#include "frog/graphics/color.hpp"
+#include "frog/graphics/ui_element.hpp"
 #include "frog/gx2d/crop.hpp"
 #include "frog/gx2d/sprite.hpp"
 #include "frog/utils/assert.hpp"
-#include "frog/geometry/rectangle.hpp"
-#include "frog/graphics/ui_element.hpp"
-#include "frog/geometry/vector.hpp"
-#include "frog/graphics/color.hpp"
 #include "frog/utils/profiler_guard.hpp"
 
-#include <map>
+#include <optional>
 
 using namespace frog::r2d;
 using namespace frog;
-
-namespace
-{
-
-
-} // namespace
 
 std::pair<geo::vec2, geo::vec2> Renderer::scale_shift(geo::rect& cam) const
 {
@@ -58,7 +52,7 @@ geo::vec2 Renderer::ui_absolute_scale() const
     return scale;
 }
 
-
+// Idk what this draw func is for.
 void Renderer::draw(const RenderCtx& ctx, const lib2d::gx::texture& tex, geo::rect dest,
                     geo::rect uv, gx::rgba_t color, gx2d::Crop crop)
 {
@@ -71,8 +65,8 @@ void Renderer::draw(const RenderCtx& ctx, const lib2d::gx::texture& tex, geo::re
     dest.pos.x() *= ctx.scale.x();
     dest.pos.y() *= ctx.scale.y();
 
-    if (not ctx.move_pre_scale)
-        dest.pos += ctx.shift;
+    // if (not ctx.move_pre_scale)
+    //     dest.pos += ctx.shift;
 
     dest.size.x() *= ctx.scale.x();
     dest.size.y() *= ctx.scale.y();
@@ -93,6 +87,7 @@ void Renderer::draw(const RenderCtx& ctx, const lib2d::gx::texture& tex, geo::re
                                  0);
 }
 
+// This is the main draw func.
 void Renderer::draw(const RenderCtx& ctx, const gx2d::Sprite& model)
 {
     if (model.image_tag.empty())
@@ -104,19 +99,29 @@ void Renderer::draw(const RenderCtx& ctx, const gx2d::Sprite& model)
 
     perform_interpolation(model, ctx.between, rect, angle);
 
-    // TODO: Apply crop here too.
+    rect.pos *= ctx.world.pos_mult;
+    rect.size *= ctx.world.scale_mult;
 
-    gx2d::apply_crop(model, ctx.between, rect, tex);
+    rect.pos += ctx.world.shift;
 
-    rect.pos *= ctx.pos_mult;
-    rect.size *= ctx.scale_mult;
+    std::optional<gx2d::Crop> extra;
+    if (ctx.cropped)
+    {
+        extra = gx2d::multiply_crop(*ctx.cropped, gx2d::Crop{}, rect);
+
+        if (model.image_tag == ("miner"))
+        {
+            LOGX(*ctx.cropped, rect, model.image_tag, extra);
+        }
+    }
+    gx2d::apply_crop(model, ctx.between, rect, tex, extra);
 
     if (ctx.move_pre_scale)
         rect.pos += ctx.shift;
     rect.pos.x() *= ctx.scale.x();
     rect.pos.y() *= ctx.scale.y();
-    if (not ctx.move_pre_scale)
-        rect.pos += ctx.shift;
+    // if (not ctx.move_pre_scale)
+    //     rect.pos += ctx.shift;
 
     rect.size.x() *= ctx.scale.x();
     rect.size.y() *= ctx.scale.y();
@@ -163,20 +168,20 @@ void Renderer::draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite)
         switch (sub.anchor.position)
         {
             case gx2d::Anchor::Position::RELATIVE:
-                sub_ctx.shift      += sprite.rect.pos;
-                sub_ctx.prev_shift += sprite.prev.pos;
+                // TODO: Prev shift for interpolation.
+                sub_ctx.world.shift      += sprite.rect.pos;
                 break;
             case gx2d::Anchor::Position::SIZE_RELATIVE:
-                sub_ctx.shift      += sprite.rect.pos;
-                sub_ctx.prev_shift += sprite.prev.pos;
-                sub_ctx.pos_mult   *= sprite.rect.size;
+                // TODO: Prev shift for interpolation.
+                sub_ctx.world.shift      += sprite.rect.pos;
+                sub_ctx.world.pos_mult   *= sprite.rect.size;
                 break;
             case gx2d::Anchor::Position::NONE:
                 break;
         }
 
         if (sub.anchor.rel_size)
-            sub_ctx.scale_mult *= sprite.rect.size;
+            sub_ctx.world.scale_mult *= sprite.rect.size;
 
         switch (sub.anchor.rel_angle)
         {
@@ -211,16 +216,27 @@ void Renderer::draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite)
                 auto dst = get_dst();
                 auto rotmat = geo::rotate2d_around_origin(sprite.angle * geo::ToRad, { 0 });
                 auto res3 = geo::vec3( dst, 1 ) * rotmat;
-                sub_ctx.shift += res3.xy() - dst;
+                sub_ctx.world.shift += res3.xy() - dst;
 
                 break;
         }
 
         sub_ctx.color = gx::rgb_multiply(sub_ctx.color, sprite.color);
 
+        if (sub.anchor.inherit_crop)
+        {
+            sub_ctx.cropped = sprite.rect;
+            gx2d::crop_rect(sprite.crop.value_or(gx2d::Crop{}), *sub_ctx.cropped);
+        }
+        // TODO: There' still some bug
+        // else
+        //     sub_ctx.cropped = std::nullopt;
+
         draw_recursive(sub_ctx, sub.sprite);
     };
 
+    // TODO: Recursive drawing dangerous due to limited stack.
+    // Fix and make stack-independent.
     for (const auto& sub : sprite.children)
         if (sub.layer == gx2d::RelLayer::BELOW)
             draw_subsprite(sub);
@@ -322,8 +338,6 @@ void Renderer::draw_text(const gx::ui_element& elem, double between)
         pos = frog::geo::lerp(prev, pos, value);
     }
 
-    // frog::geo::vec2 scale, shift;
-    // std::tie(scale, shift) = ui_scale_shift();
     auto scale = ui_absolute_scale();
 
     float container_height = elem.size().y();
