@@ -28,7 +28,7 @@ struct Container
     template<typename... Args>
     idx_t emplace(Args&&... args)
     {
-        if (free.empty() && size() >= limit_)
+        if (free.empty() && limit_ >= 0 && size() >= static_cast<size_t>(limit_))
             throw std::runtime_error("physics container emplace: limit reached");
 
         idx_t i;
