@@ -5,7 +5,9 @@
 #include "frog/utils/ptr.hpp"
 
 #include <exception>
+#include <map>
 #include <memory>
+#include <set>
 #include <string>
 #include <unordered_map>
 #include <optional>
@@ -51,6 +53,9 @@ public:
 
 private:
     std::unordered_map<std::string, ptr<Scene>> scenes;
+
+    std::set<std::string> removed;
+    std::map<std::string, ptr<Scene>> added;
 
     std::string _current{ };
 
@@ -104,11 +109,31 @@ public:
 
     bool empty() const { return _current.empty(); }
 
-    const Scene& current() const { return *scenes.at(_current); }
-          Scene& current()       { return *scenes.at(_current); }
+    const Scene& current() const { return at(_current); }
+          Scene& current()       { return at(_current); }
 
-    const Scene& at(const std::string& tag) const { return *scenes.at(tag); }
-          Scene& at(const std::string& tag)       { return *scenes.at(tag); }
+    const Scene& at(const std::string& tag) const
+    {
+        if (removed.contains(tag))
+            return *added.at(tag);
+
+        auto it = scenes.find(tag);
+        if (it == scenes.end())
+            return *added.at(tag);
+
+        return *it->second;
+    }
+          Scene& at(const std::string& tag)
+    {
+        if (removed.contains(tag))
+            return *added.at(tag);
+
+        auto it = scenes.find(tag);
+        if (it == scenes.end())
+            return *added.at(tag);
+
+        return *it->second;
+    }
 
     template<typename Func>
     void for_each_object(Func func) const { for_each_impl(*this, func); }
@@ -133,15 +158,19 @@ public:
         {
             _current = name;
         }
-        auto* res = scenes.emplace(name, std::move(sc)).first->second.get();
+        auto* res = added.emplace(name, std::move(sc)).first->second.get();
         res->name = std::move(name);
         return res;
     }
 
     bool remove(const std::string& name)
     {
-        frog_assert(not is_inside() || _current != name);
-        return scenes.erase(name) > 0;
+        // frog_assert(not is_inside() || _current != name);
+        // return scenes.erase(name) > 0;
+        bool has = scenes.contains(name);
+        if (has)
+            removed.insert(name);
+        return has;
     }
 
     void cleanup(Engine& eng)
@@ -177,6 +206,21 @@ public:
             return;
 
         detail::SceneGuard g(inside);
+
+        if (not removed.empty())
+        {
+            for (const auto& r : removed)
+                scenes.erase(r);
+
+            removed.clear();
+        }
+        if (not added.empty())
+        {
+            for (auto&& [k, v] : added)
+                scenes.emplace(k, std::move(v));
+
+            added.clear();
+        }
 
         if (_next)
         {
