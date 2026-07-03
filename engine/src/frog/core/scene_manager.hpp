@@ -1,8 +1,11 @@
 #pragma once
 
+#include "frog/utils/assert.hpp"
 #include "scene.hpp"
 #include "frog/utils/ptr.hpp"
 
+#include <exception>
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <optional>
@@ -11,6 +14,33 @@
 
 namespace frog
 {
+
+namespace detail {
+
+struct SceneGuard
+{
+    std::weak_ptr<unsigned> inside;
+
+    SceneGuard(std::weak_ptr<unsigned> inside)
+        : inside(inside)
+    {
+        if (std::shared_ptr<unsigned> b = inside.lock())
+            ( *b )++;
+        else
+            frog_assert(false);
+    }
+
+    ~SceneGuard()
+    {
+        if (std::shared_ptr<unsigned> b = inside.lock())
+            ( *b )--;
+        else
+            // TODO: Idk?
+            std::terminate();
+    }
+};
+
+} // namespace detail
 
 template<typename GameObj>
 class scene_manager
@@ -34,6 +64,8 @@ private:
         if (self.empty())
             return;
 
+        detail::SceneGuard g(self.inside);
+
         self.current().for_each_object(func);
     }
 
@@ -41,6 +73,8 @@ private:
     {
         if (empty())
             return;
+
+        detail::SceneGuard g(inside);
 
         current().activated(eng);
     }
@@ -50,11 +84,23 @@ private:
         if (empty())
             return;
 
+        detail::SceneGuard g(inside);
+
         current().deactivated(eng);
     }
 
+    std::shared_ptr<unsigned> inside;
+
+    bool is_inside() const
+    {
+        frog_assert(inside);
+        return *inside > 0;
+    }
+
 public:
-    scene_manager() = default;
+    scene_manager()
+        : inside(std::make_shared<unsigned>(0))
+    { }
 
     bool empty() const { return _current.empty(); }
 
@@ -94,6 +140,7 @@ public:
 
     bool remove(const std::string& name)
     {
+        frog_assert(not is_inside() || _current != name);
         return scenes.erase(name) > 0;
     }
 
@@ -102,6 +149,8 @@ public:
         if (empty())
             return;
 
+        detail::SceneGuard g(inside);
+
         current().cleanup(eng);
     }
 
@@ -109,6 +158,8 @@ public:
     {
         if (empty())
             return;
+
+        detail::SceneGuard g(inside);
 
         current().init(eng);
 
@@ -124,6 +175,8 @@ public:
     {
         if (empty())
             return;
+
+        detail::SceneGuard g(inside);
 
         if (_next)
         {
@@ -145,6 +198,8 @@ public:
 
     void pre_update(Engine& eng)
     {
+        detail::SceneGuard g(inside);
+
         if (empty())
             return;
 
@@ -153,6 +208,8 @@ public:
 
     void end_update(Engine& eng)
     {
+        detail::SceneGuard g(inside);
+
         if (empty())
             return;
 
@@ -161,6 +218,8 @@ public:
 
     void frame_update(Engine& eng)
     {
+        detail::SceneGuard g(inside);
+
         if (empty())
             return;
 
@@ -169,6 +228,8 @@ public:
 
     void end_frame_update(Engine& eng)
     {
+        detail::SceneGuard g(inside);
+
         if (empty())
             return;
 
