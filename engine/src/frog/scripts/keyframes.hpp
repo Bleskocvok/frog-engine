@@ -150,6 +150,8 @@ class Keyframes : public frog::script2d
 
     Timelines<Scale, Rotation, Position, Color, Loop, End> timelines;
 
+    const uint64_t granularity_ms = 10;
+
     uint64_t accum = 0;
     uint64_t prev_accum = 0;
 
@@ -273,19 +275,47 @@ class Keyframes : public frog::script2d
     }
 
 public:
-    Keyframes(gx2d::Sprite& sprite)
+    Keyframes(gx2d::Sprite& sprite, uint64_t granularity_ms = 10)
         : sprite(&sprite)
+        , granularity_ms(granularity_ms)
     { }
 
     void frame_update(frog::game_object2d&, frog::engine2d& eng) override
     {
-        prev_accum = accum;
-        accum += eng.global->frame_time() * 1000;
+        // // Previous naive solution.
+        // prev_accum = accum;
+        // accum += eng.global->frame_time() * 1000;
+        // solve_transition<Scale>();
+        // solve_transition<Rotation>();
+        // solve_transition<Position>();
+        // solve_transition<Color>();
 
+
+
+        auto start = accum;
+        auto current = accum + eng.global->frame_time() * 1000;
+
+        // TODO: Still not ideal, this could potentially explode.
+        // It would be better for prev_next to return iterators or something.
+        // We need to iterate over completed keyframes between prev_accum and
+        // current accum.
+        prev_accum = start;
+        for (std::uint64_t t = start + granularity_ms; t < current; t += granularity_ms)
+        {
+            accum = t;
+            solve_transition<Scale>();
+            solve_transition<Rotation>();
+            solve_transition<Position>();
+            solve_transition<Color>();
+            prev_accum = t;
+        }
+
+        accum = current;
         solve_transition<Scale>();
         solve_transition<Rotation>();
         solve_transition<Position>();
         solve_transition<Color>();
+
 
         // auto solves = [this]<typename... Ts>()
         // {
@@ -295,7 +325,7 @@ public:
         // solves.template operator()<Scale, Rotation, Position>();
     }
 
-    void stable_update(frog::game_object2d& obj, frog::engine2d&) override
+    void stable_update(frog::game_object2d& obj, frog::engine2d& eng) override
     {
         if (reached<End>())
             obj.remove_script(this);
