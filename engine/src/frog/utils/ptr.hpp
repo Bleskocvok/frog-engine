@@ -86,6 +86,9 @@ struct safe_ptr
         return ptr != nullptr;
     }
 
+    const T* get() const { return ptr; }
+          T* get()       { return ptr; }
+
 private:
     T* ptr = nullptr;
 };
