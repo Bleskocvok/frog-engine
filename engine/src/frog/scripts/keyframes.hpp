@@ -325,7 +325,7 @@ public:
         // solves.template operator()<Scale, Rotation, Position>();
     }
 
-    void stable_update(frog::game_object2d& obj, frog::engine2d& eng) override
+    void stable_update(frog::game_object2d& obj, frog::engine2d&) override
     {
         if (reached<End>())
             obj.remove_script(this);
