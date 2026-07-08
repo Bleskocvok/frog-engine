@@ -1,10 +1,6 @@
 #pragma once
 
-#include "frog/graphics/ui_element.hpp"
 #include "frog/gx2d/sprite.hpp"
-#include "frog/utils/ptr.hpp"
-
-#include <array>
 
 namespace frog {
 
@@ -19,18 +15,11 @@ inline gx2d::Sprite build_frame(frog::geo::rect rect,
     rect.size -= elem_size;
     rect.size += around * elem_size * 2;
 
-    // auto* t  = obj.add_element(frog::mk_ptr<frog::gx::ui_element>());
-    // auto* b  = obj.add_element(frog::mk_ptr<frog::gx::ui_element>());
-    // auto* l  = obj.add_element(frog::mk_ptr<frog::gx::ui_element>());
-    // auto* r  = obj.add_element(frog::mk_ptr<frog::gx::ui_element>());
-    // auto* tl = obj.add_element(frog::mk_ptr<frog::gx::ui_element>());
-    // auto* tr = obj.add_element(frog::mk_ptr<frog::gx::ui_element>());
-    // auto* bl = obj.add_element(frog::mk_ptr<frog::gx::ui_element>());
-    // auto* br = obj.add_element(frog::mk_ptr<frog::gx::ui_element>());
-
     gx2d::Sprite parent;
     parent.children.resize(8);
 
+    // Clockwise: 0 1 2 3 4 5 6 7
+    //            ↑ ↗ → ↘ ↓ ↙ ← ↖
     auto& t  = parent.children.at(0);
     auto& b  = parent.children.at(1);
     auto& l  = parent.children.at(2);
@@ -78,9 +67,6 @@ inline gx2d::Sprite build_frame(frog::geo::rect rect,
     br.sprite.rect.pos = rect.bot_right();
     br.sprite.tex.pos = { 1 - tex_size.x(), 1 - tex_size.y() };
 
-    // // Clockwise: 0 1 2 3 4 5 6 7
-    // //            ↑ ↗ → ↘ ↓ ↙ ← ↖
-    // return std::array<frog::gx::ui_element*, 8>{ t, tr, r, br, b, bl, l, tl };
     return parent;
 }
 
