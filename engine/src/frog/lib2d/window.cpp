@@ -308,6 +308,18 @@ void window::screenshot( const std::string& filename ) const
 }
 
 
+detail::Surface window::load_surface( const char* filename ) const
+{
+    lib2d::detail::Surface img = lib2d::detail::load_img( filename );
+    // NRVO BABY
+    return img;
+}
+
+detail::Surface window::make_surface( int width, int height ) const
+{
+    return detail::Surface( create_surface( width, height ) );
+}
+
 SDL_Surface* window::create_surface( int width, int height ) const
 {
     #if SDL_BYTEORDER == SDL_BIG_ENDIAN

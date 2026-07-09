@@ -94,6 +94,10 @@ public:
 
     texture make_texture( lib2d::detail::Surface& surface ) const;
 
+    detail::Surface make_surface( int width, int height ) const;
+
+    detail::Surface load_surface( const char* filename ) const;
+
     void set_icon( lib2d::detail::Surface& surface );
 
     void draw( const texture& tex, int u, int v, int cut_width, int cut_height,

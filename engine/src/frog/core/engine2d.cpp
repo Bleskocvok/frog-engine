@@ -246,12 +246,14 @@ bool engine2d::add_texture(const std::string& tag, const std::string& path)
     bool has = textures.contains(tag);
     auto full = global->asset_path() + "/" + path;
     textures.add(tag, mk_ptr<lib2d::gx::texture>( win_raw->make_texture(full.c_str()) ));
+    texture_paths.emplace(tag, full);
     // TODO: Omg, I fixed this, I sure hope it didn't break anything else.
     return not has;
 }
 
 bool engine2d::remove_texture(const std::string& tag)
 {
+    texture_paths.erase(tag);
     return textures.remove(tag);
 }
 

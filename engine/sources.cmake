@@ -36,6 +36,7 @@ set(FROG_SRC_FILES
     src/frog/lib2d/window.cpp
     src/frog/lib2d/audio/channel.cpp
     src/frog/lib2d/audio/audio.cpp
+    src/frog/lib2d/utils/surface_editor.cpp
 
     src/frog/os/input.cpp
     src/frog/os/window.cpp

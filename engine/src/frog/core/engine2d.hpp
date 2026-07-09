@@ -1,14 +1,17 @@
 #pragma once
 
+#include "frog/utils/exception.hpp"
 #ifndef NOT_FROG_BUILD_2D
 
 #include "frog/graphics/assets.hpp"
 
 #include "frog/geometry/rectangle.hpp"
+#include "frog/geometry/vector.hpp"
 #include "frog/utils/ptr.hpp"
 #include "frog/gx2d/crop.hpp"
 
 #include "frog/lib2d/structs.hpp"
+#include "frog/lib2d/utils/surface_editor.hpp"
 #include "frog/core/2d/camera.hpp"
 #include "frog/core/audio/audio.hpp"
 #include "frog/os/timer.hpp"
@@ -70,6 +73,8 @@ public:
     gx::assets<lib2d::gx::texture> textures = gx::assets<lib2d::gx::texture>{ "texture" };
     gx::assets<font::base> fonts = gx::assets<font::base>{ "font" };
 
+    std::unordered_map<std::string, std::string> texture_paths;
+
     const camera2d default_camera = { camera2d::DEFAULT_POS, camera2d::DEFAULT_SIZE };
     std::unordered_map<std::string, camera2d> cameras;
 
@@ -125,6 +130,36 @@ public:
 
     bool add_truetype_font(const std::string& tag, std::string path,
                            int size = 64, bool outline = false);
+
+    template<typename F>
+    void read_texture_file(const std::string& tag, F&& f)
+    {
+        // TODO: Sigh...
+        auto path = texture_paths.at( tag );
+        auto surface = win_raw->load_surface( path.c_str() );
+
+        geo::ivec2 size { surface->w, surface->h };
+
+        auto reader = lib2d::utils::SurfaceReader(surface);
+        f(size, reader);
+    }
+
+    template<typename F>
+    void create_texture(std::string tag, frog::geo::ivec2 size, F&& f)
+    {
+        bool has = textures.contains(tag);
+        if (has)
+            throw frog::error("create_texture: tag already exists ", tag);
+
+        auto surface = win_raw->make_surface(size.x(), size.y());
+
+        {
+            auto editor = lib2d::utils::SurfaceEditor(surface);
+            f(editor);
+        }
+
+        textures.add(tag, win_raw->make_texture( surface ) );
+    }
 };
 
 
