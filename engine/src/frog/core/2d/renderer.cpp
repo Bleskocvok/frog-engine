@@ -163,6 +163,10 @@ void Renderer::draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite)
         if (sprite.crop_children)
         {
             sub_ctx.cropped = sprite.rect;
+            sub_ctx.cropped->pos *= ctx.world.pos_mult;
+            sub_ctx.cropped->size *= ctx.world.scale_mult;
+            sub_ctx.cropped->pos += ctx.world.shift;
+
             gx2d::crop_rect(sprite.crop.value_or(gx2d::Crop{}), *sub_ctx.cropped);
         }
 
@@ -174,7 +178,7 @@ void Renderer::draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite)
                 break;
             case gx2d::Anchor::Position::SIZE_RELATIVE:
                 // TODO: Prev shift for interpolation.
-                sub_ctx.world.shift      += sprite.rect.pos;
+                sub_ctx.world.shift      += sprite.rect.pos * sub_ctx.world.pos_mult;
                 sub_ctx.world.pos_mult   *= sprite.rect.size;
                 break;
             case gx2d::Anchor::Position::NONE:
