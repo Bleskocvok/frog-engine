@@ -37,11 +37,17 @@ struct uniform_int
 #pragma GCC diagnostic pop
             return gen();
 
-        T k = max_ - min_ + 1;
-        T mod = (GEN_MAX + 1) % k;
+        using R = decltype(gen());
+
+        R k = max_ - min_ + 1;
+        // TODO: If GEN_MAX == max value of that particular int type, then + 1 is a
+        // problem.
+        R mod = GEN_MAX % k + 1;
+        if (mod == k)
+            mod = 0;
 
         // TODO: Possible UB? T is int, but gen() is uint64_t.
-        T r;
+        R r;
         do
         {
             r = gen();
