@@ -139,6 +139,7 @@ public:
 
             auto frame = timer.reset_duration_us();
             global->frame_time_us = frame;
+            global->global_time_us += frame;
             accum += frame;
 
             double between = std::clamp( accum / static_cast<double>(delta), 0.0, 1.0 );
