@@ -89,6 +89,10 @@ public:
             activated = accum_ / period_;
             accum_ = accum_ % period_;
         }
+        else if (period_ == 0)
+        {
+            activated = 1;
+        }
 
         if (policy == after)
             accum_ += engine.global->stable_frame_time() * SecToUs;
