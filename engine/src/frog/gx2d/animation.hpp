@@ -4,6 +4,7 @@
 #include "frog/utils/exception.hpp"
 #include "sprite.hpp"
 
+#include <cmath>
 #include <string>           // string
 #include <utility>          // move
 #include <unordered_map>    // unordered_map
@@ -76,6 +77,11 @@ public:
     }
 
     void reset_accum() { accum = 0; }
+
+    void reset_accum(double a)
+    {
+        accum = std::fmod(a, length_of(current()));
+    }
 
     void update(float delta)
     {
