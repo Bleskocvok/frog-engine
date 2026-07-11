@@ -43,7 +43,6 @@ public:
         if (count <= 0)
         {
             o.remove_script(this);
-            LOG("Repeat REMOVED!");
             return;
         }
 
