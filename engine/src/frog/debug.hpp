@@ -2,6 +2,7 @@
 
 #include <cstdint>          // uint_least32_t
 #include <iostream>         // clog
+#include <string>
 #include <type_traits>      // is_same_v
 #include <utility>          // forward
 #include <optional>         // optional, nullopt
@@ -157,10 +158,14 @@ void log(Out&)
 }
 
 
+inline int LOG_INDENT = 0;
+
 template<typename ... Args>
 void log_ln(Args&& ... args)
 {
-    log<true, 10>(std::clog, std::forward<Args>(args)...);
+    std::string space;
+    space.resize(LOG_INDENT, ' ');
+    log<true, 10>(std::clog, space, std::forward<Args>(args)...);
     std::clog << "\n" << std::flush;
 }
 
@@ -180,6 +185,9 @@ void log_vars_rec(const char* var, Val&& val, Args&&... args)
 template<typename... Args>
 void log_vars(Args&&... args)
 {
+    std::string space;
+    space.resize(LOG_INDENT, ' ');
+    std::clog << space;
     log_vars_rec(std::forward<Args>(args)...);
     std::clog << "\n" << std::flush;
 }
