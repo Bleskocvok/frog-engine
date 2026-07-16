@@ -103,6 +103,33 @@ private:
         return *inside > 0;
     }
 
+    template<typename S, typename Self>
+    static S& current_impl(Self& self)
+    {
+        try
+        {
+            if (*self.inside > 0)
+                return *self.scenes.at(self._current);
+        }
+        catch (...)
+        { }
+
+        return self.at(self._current);
+    }
+
+    template<typename S, typename Self>
+    static S& at_impl(Self& self, const std::string& tag)
+    {
+        if (self.removed.contains(tag))
+            return *self.added.at(tag);
+
+        auto it = self.scenes.find(tag);
+        if (it == self.scenes.end())
+            return *self.added.at(tag);
+
+        return *it->second;
+    }
+
 public:
     scene_manager()
         : inside(std::make_shared<unsigned>(0))
@@ -110,56 +137,11 @@ public:
 
     bool empty() const { return _current.empty(); }
 
-    // TODO: REFACTOR
-    const Scene& current() const
-    {
-        try
-        {
-            if (*inside > 0)
-                return *scenes.at(_current);
-        }
-        catch (...)
-        { }
+    const Scene& current() const { return current_impl<const Scene&>(*this); }
+          Scene& current()       { return current_impl<     Scene&>(*this); }
 
-        return at(_current);
-    }
-
-    Scene& current()
-    {
-        try
-        {
-            if (*inside > 0)
-                return *scenes.at(_current);
-        }
-        catch (...)
-        { }
-
-        return at(_current);
-    }
-
-    const Scene& at(const std::string& tag) const
-    {
-        if (removed.contains(tag))
-            return *added.at(tag);
-
-        auto it = scenes.find(tag);
-        if (it == scenes.end())
-            return *added.at(tag);
-
-        return *it->second;
-    }
-
-    Scene& at(const std::string& tag)
-    {
-        if (removed.contains(tag))
-            return *added.at(tag);
-
-        auto it = scenes.find(tag);
-        if (it == scenes.end())
-            return *added.at(tag);
-
-        return *it->second;
-    }
+    const Scene& at(const std::string& tag) const { return at_impl<const Scene&>(*this, tag); }
+          Scene& at(const std::string& tag)       { return at_impl<      Scene&>(*this, tag); }
 
     template<typename Func>
     void for_each_object(Func func) const { for_each_impl(*this, func); }
@@ -182,7 +164,6 @@ public:
     {
         if (empty())
         {
-            LOG("add scene ", name);
             _current = name;
         }
         auto* res = added.emplace(name, std::move(sc)).first->second.get();
@@ -235,8 +216,6 @@ public:
         if (_next)
         {
             prev_next.emplace(_current, *_next);
-            // deactivated(eng);
-            LOGX(_current);
 
             if (not empty())
             {
