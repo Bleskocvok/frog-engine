@@ -1,5 +1,6 @@
 #pragma once
 
+#include "frog/debug.hpp"
 #include "frog/utils/assert.hpp"
 #include "scene.hpp"
 #include "frog/utils/ptr.hpp"
@@ -109,8 +110,32 @@ public:
 
     bool empty() const { return _current.empty(); }
 
-    const Scene& current() const { return at(_current); }
-          Scene& current()       { return at(_current); }
+    // TODO: REFACTOR
+    const Scene& current() const
+    {
+        try
+        {
+            if (*inside > 0)
+                return *scenes.at(_current);
+        }
+        catch (...)
+        { }
+
+        return at(_current);
+    }
+
+    Scene& current()
+    {
+        try
+        {
+            if (*inside > 0)
+                return *scenes.at(_current);
+        }
+        catch (...)
+        { }
+
+        return at(_current);
+    }
 
     const Scene& at(const std::string& tag) const
     {
@@ -123,7 +148,8 @@ public:
 
         return *it->second;
     }
-          Scene& at(const std::string& tag)
+
+    Scene& at(const std::string& tag)
     {
         if (removed.contains(tag))
             return *added.at(tag);
@@ -156,6 +182,7 @@ public:
     {
         if (empty())
         {
+            LOG("add scene ", name);
             _current = name;
         }
         auto* res = added.emplace(name, std::move(sc)).first->second.get();
@@ -205,7 +232,23 @@ public:
         if (empty())
             return;
 
-        detail::SceneGuard g(inside);
+        if (_next)
+        {
+            prev_next.emplace(_current, *_next);
+            // deactivated(eng);
+            LOGX(_current);
+
+            if (not empty())
+            {
+                auto it = scenes.find(_current);
+                if (it != scenes.end())
+                {
+                    detail::SceneGuard g(inside);
+
+                    it->second->deactivated(eng);
+                }
+            }
+        }
 
         if (not removed.empty())
         {
@@ -217,16 +260,22 @@ public:
         if (not added.empty())
         {
             for (auto&& [k, v] : added)
-                scenes.emplace(k, std::move(v));
+            {
+                auto [it, ok] = scenes.emplace(k, std::move(v));
+                // frog_assert(ok);
+                // it->init(eng);
+            }
 
             added.clear();
         }
+
+        detail::SceneGuard g(inside);
 
         if (_next)
         {
             prev_next.emplace(_current, *_next);
 
-            deactivated(eng);
+            // deactivated(eng);
 
             _current = std::move(*_next);
             _next.reset();
