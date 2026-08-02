@@ -87,11 +87,12 @@ public:
             << std::setw(one)
             << key.first
 
+            << " |"
             << std::right
             << std::setw(two)
             << std::fixed
             << std::setprecision(3)
-            << ms << " ms "
+            << ms << ""
 
             << " |"
             << std::right
@@ -99,7 +100,7 @@ public:
             << std::fixed
             << std::setprecision(3)
             << item.avg() / 1000.0
-            << " ms avg"
+            << ""
         ;
     }
 

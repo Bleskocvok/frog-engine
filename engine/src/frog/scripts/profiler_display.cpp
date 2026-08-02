@@ -7,7 +7,9 @@
 #include "frog/utils/ptr.hpp"
 
 #include <algorithm>
+#include <iomanip>
 #include <map>
+#include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
@@ -16,6 +18,7 @@ using namespace frog::scripts;
 
 static constexpr float WIDTH = 0.8;
 static constexpr float LEFT_MARGIN = 0.03;
+static constexpr ProfilerScript::Columns COLUMNS = { 30, 8, 8 };
 
 void ProfilerDisplay::mk_bg(frog::game_object2d& obj, frog::scripts::ProfilerScript* profiler)
 {
@@ -46,7 +49,7 @@ struct Node
     { }
 };
 
-void ProfilerDisplay::mk_one(Ctx& ctx, const ProfilerGuard::Key& key, const auto& node)
+void ProfilerDisplay::add_text(Ctx& ctx, std::string str)
 {
     auto* ui = ctx.obj.add_element(frog::mk_ptr<frog::gx::ui_element>());
     elems.push_back(ui);
@@ -58,30 +61,32 @@ void ProfilerDisplay::mk_one(Ctx& ctx, const ProfilerGuard::Key& key, const auto
     // TODO: Fuck.
     ui->sprite.layer = 100000;
 
+    ui->label->str = std::move(str);
 
+    ctx.pos.y() += 0.025;
+}
+
+void ProfilerDisplay::mk_one(Ctx& ctx, const ProfilerGuard::Key& key, const auto& node)
+{
     std::ostringstream o;
     auto bit = std::string("| ");
     for (int i = 0; i < ctx.indent; i++)
         o << bit;
     auto pair = std::pair<ProfilerGuard::Key, ProfilerGuard::Item>( key, node->item );
     // TODO: Better decomposition.
-    auto columns = ProfilerScript::Columns{ 30, 8, 8 };
+    auto columns = COLUMNS;
     std::get<0>(columns) -= ctx.indent * bit.length();
 
     ctx.profiler->out_line(o, pair, columns);
 
-    LOGX(o.str());
-
-    ui->label->str = frog::make_string(std::move(o).str());
-
-    ctx.pos.y() += 0.025;
+    add_text(ctx, std::move(o).str());
 
     ++ctx.indent;
     for (const auto& c : node->children)
         mk_one(ctx, c->key, c);
 
     --ctx.indent;
-};
+}
 
 void ProfilerDisplay::mk_labels(frog::game_object2d& obj, frog::scripts::ProfilerScript* profiler)
 {
@@ -125,6 +130,20 @@ void ProfilerDisplay::mk_labels(frog::game_object2d& obj, frog::scripts::Profile
         .pos = start,
         .profiler = profiler,
     };
+
+    {
+        auto [a, b, c] = COLUMNS;
+
+        std::ostringstream o;
+        o
+            << std::right << std::setw(a) << "id"
+            << " |"
+            << std::right << std::setw(b) << "total ms"
+            << " |"
+            << std::right << std::setw(c) << "avg ms"
+            ;
+        add_text(ctx, std::move(o).str());
+    }
 
     for (const auto& [key, node] : nodes)
     {

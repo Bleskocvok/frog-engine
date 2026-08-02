@@ -39,6 +39,8 @@ class ProfilerDisplay : public frog::script2d
 
     void mk_one(Ctx& ctx, const ProfilerGuard::Key& key, const auto& node);
 
+    void add_text(Ctx& ctx, std::string str);
+
 public:
     explicit ProfilerDisplay(frog::geo::vec2 start = {})
         : start(start)
