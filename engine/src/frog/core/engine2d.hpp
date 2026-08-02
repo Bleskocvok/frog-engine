@@ -1,6 +1,7 @@
 #pragma once
 
 #include "frog/utils/exception.hpp"
+#include "frog/utils/string.hpp"
 #ifndef NOT_FROG_BUILD_2D
 
 #include "frog/graphics/assets.hpp"
@@ -173,7 +174,9 @@ int run_engine2d(settings set, ptr<state> global, InitAssets init_assets,
     {
         if constexpr (requires{ ex.stacktrace; })
         {
-            auto str = ex.what() + std::string("\n\n") + ex.stacktrace;
+            auto stacktrace = cut_lines_copy(ex.stacktrace, 125, "        ");
+
+            auto str = ex.what() + std::string("\n\n") + stacktrace;
             std::cerr << title << "\n" << str << "\n";
             lib2d::os::error_box(title, str);
         }

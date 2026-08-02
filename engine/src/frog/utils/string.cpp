@@ -1,6 +1,7 @@
 #include "string.hpp"
 
 #include <cctype>       // isspace
+#include <string>
 
 std::vector<std::string> frog::split(std::string_view str, std::string_view delim)
 {
@@ -69,4 +70,31 @@ std::string_view frog::between(std::string_view view, char open, char close, boo
         view.remove_prefix(1);
 
     return view;
+}
+
+std::string frog::cut_lines_copy(std::string s, int max_len, const std::string& next_prefix)
+{
+    std::string res;
+    res.reserve(s.length());
+
+    int len = 0;
+
+    for (auto c : s)
+    {
+        if (c == '\n')
+            len = 0;
+        else
+            len++;
+
+        res.push_back(c);
+
+        if (len >= max_len)
+        {
+            res.push_back('\n');
+            res.append(next_prefix);
+            len = 0;
+        }
+    }
+
+    return res;
 }

@@ -33,4 +33,6 @@ void for_each_segment(std::string_view str, std::string_view delim, Func&& func)
 
 std::string_view between(std::string_view view, char open, char close, bool require_start = true);
 
+std::string cut_lines_copy(std::string s, int max_len, const std::string& next_prefix = "");
+
 } // namespace frog
