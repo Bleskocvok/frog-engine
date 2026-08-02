@@ -25,6 +25,20 @@ class ProfilerDisplay : public frog::script2d
 
     std::vector<gx::ui_element*> elems;
 
+    void mk_bg(frog::game_object2d& obj, frog::scripts::ProfilerScript* profiler);
+
+    void mk_labels(frog::game_object2d& obj, frog::scripts::ProfilerScript* profiler);
+
+    struct Ctx
+    {
+        int indent = 0;
+        frog::game_object2d& obj;
+        frog::geo::vec2 pos;
+        frog::scripts::ProfilerScript* profiler;
+    };
+
+    void mk_one(Ctx& ctx, const ProfilerGuard::Key& key, const auto& node);
+
 public:
     explicit ProfilerDisplay(frog::geo::vec2 start = {})
         : start(start)
@@ -47,44 +61,10 @@ public:
         for (auto* elem : elems)
             obj.remove_element(elem);
 
-        auto pos = start;
-
+        // TODO: Optimize this shit out of this crap.
         mk_bg(obj, profiler);
 
-        for (const auto& t : profiler->times())
-        {
-            auto* ui = obj.add_element(frog::mk_ptr<frog::gx::ui_element>());
-            elems.push_back(ui);
-
-            ui->label = { "text:", 1 };
-            ui->label->align = decltype(ui->label->align)::CENTER;
-            ui->pos() = pos;
-            ui->size() = { 0, label_height };
-            // TODO: Fuck.
-            ui->sprite.layer = 100000;
-
-            std::ostringstream o;
-            profiler->out_line(o, t);
-            ui->label->str = frog::make_string(std::move(o).str());
-
-            pos.y() += 0.025;
-        }
-    }
-
-    void mk_bg(frog::game_object2d& obj, frog::scripts::ProfilerScript* profiler)
-    {
-        auto count = profiler ? profiler->times().size() : 5;
-        count = std::max(decltype(count)(5), count);
-
-        auto* bg = obj.add_element(frog::mk_ptr<frog::gx::ui_element>());
-        elems.push_back(bg);
-
-        bg->sprite.image_tag = "box";
-        bg->sprite.color = { 0, 0, 0, 128 };
-
-        bg->sprite.rect.size = { 0.6, label_height * count * 2 };
-        bg->sprite.rect.pos = start;
-        bg->sprite.rect.pos.y() += 0.5 * label_height * count;
+        mk_labels(obj, profiler);
     }
 };
 

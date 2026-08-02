@@ -5,12 +5,13 @@
 #include "frog/os/timer.hpp"
 
 #include <cstdint>
+#include <map>
 #include <optional>
 #include <source_location>
 #include <string>
 #include <string_view>
 #include <unordered_map>
-#include <utility>      // move
+#include <utility>      // move, pair
 #include <vector>
 
 #define FROG_PROFILE_FUNC() auto guard = ::frog::ProfilerGuard()
@@ -54,6 +55,8 @@ private:
 class ProfilerGuard
 {
 public:
+    using Key = std::pair<std::string, std::optional<std::string>>;
+
     struct Item
     {
         std::uint64_t sum = 0;
@@ -100,7 +103,7 @@ public:
 
     ~ProfilerGuard()
     {
-        times_us[name].put( timer.duration_us() );
+        times_us[Key{ name, parent_ }].put( timer.duration_us() );
 
         stack.pop();
     }
@@ -133,7 +136,7 @@ public:
     }
 
 private:
-    static inline std::unordered_map<std::string, Item> times_us;
+    static inline std::map<Key, Item> times_us;
     static inline detail::ProfilerStack stack;
 
     std::string name;
