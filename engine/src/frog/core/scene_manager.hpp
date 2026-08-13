@@ -2,10 +2,12 @@
 
 #include "frog/debug.hpp"
 #include "frog/utils/assert.hpp"
+#include "frog/utils/exception.hpp"
 #include "scene.hpp"
 #include "frog/utils/ptr.hpp"
 
 #include <exception>
+#include <stdexcept>
 #include <map>
 #include <memory>
 #include <set>
@@ -120,14 +122,21 @@ private:
     template<typename S, typename Self>
     static S& at_impl(Self& self, const std::string& tag)
     {
-        if (self.removed.contains(tag))
-            return *self.added.at(tag);
+        try
+        {
+            if (self.removed.contains(tag))
+                return *self.added.at(tag);
 
-        auto it = self.scenes.find(tag);
-        if (it == self.scenes.end())
-            return *self.added.at(tag);
+            auto it = self.scenes.find(tag);
+            if (it == self.scenes.end())
+                return *self.added.at(tag);
 
-        return *it->second;
+            return *it->second;
+        }
+        catch (std::out_of_range& e)
+        {
+            throw frog::error("scene_manager: invalid scene ", tag);
+        }
     }
 
 public:
@@ -179,6 +188,11 @@ public:
         if (has)
             removed.insert(name);
         return has;
+    }
+
+    bool exists(const std::string& name) const
+    {
+        return scenes.contains(name);
     }
 
     void cleanup(Engine& eng)
