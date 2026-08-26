@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef NOT_FROG_BUILD_2D
+
 #include "frog/core/script.hpp"
 #include "frog/core/engine2d.hpp"
 #include "frog/geometry/vector.hpp"
@@ -49,3 +51,5 @@ public:
 };
 
 } // namespace frog::scripts
+
+#endif

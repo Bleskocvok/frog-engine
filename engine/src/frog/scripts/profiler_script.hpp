@@ -1,8 +1,8 @@
+#ifndef NOT_FROG_BUILD_2D
+
 #pragma once
 
 #include "frog/core/script.hpp"
-#include "frog/core/engine2d.hpp"
-#include "frog/core/game_object2d.hpp"
 #include "frog/utils/profiler_guard.hpp"
 
 #include <iomanip>
@@ -100,3 +100,5 @@ public:
 };
 
 } // namespace frog::scripts
+
+#endif

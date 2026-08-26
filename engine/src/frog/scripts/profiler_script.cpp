@@ -1,4 +1,9 @@
+#ifndef NOT_FROG_BUILD_2D
+
 #include "profiler_script.hpp"
+
+#include "frog/core/engine2d.hpp"
+#include "frog/core/game_object2d.hpp"
 
 namespace frog::scripts {
 
@@ -36,3 +41,5 @@ void ProfilerScript::frame_update(frog::game_object2d&, frog::engine2d& e)
 }
 
 } // namespace frog::scripts
+
+#endif

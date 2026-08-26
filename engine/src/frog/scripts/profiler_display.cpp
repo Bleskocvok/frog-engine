@@ -1,3 +1,5 @@
+#ifndef NOT_FROG_BUILD_2D
+
 #include "profiler_display.hpp"
 
 #include "frog/core/engine2d.hpp"
@@ -191,3 +193,5 @@ void ProfilerDisplay::frame_update(frog::game_object2d& obj, frog::engine2d& e)
 
     mk_labels(obj, profiler);
 }
+
+#endif
