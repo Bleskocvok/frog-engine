@@ -2,6 +2,7 @@
 
 #include "frog/core/script.hpp"
 #include "frog/core/engine2d.hpp"
+#include "frog/core/game_object2d.hpp"
 #include "frog/utils/profiler_guard.hpp"
 
 #include <iomanip>
