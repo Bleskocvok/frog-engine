@@ -48,4 +48,5 @@ set(FROG_SRC_FILES
     src/frog/utils/mobile.cpp
 
     src/frog/scripts/profiler_display.cpp
+    src/frog/scripts/profiler_script.cpp
 )

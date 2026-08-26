@@ -40,38 +40,9 @@ public:
     ProfilerScript()
     { }
 
-    void stable_update(frog::game_object2d&, frog::engine2d&) override
-    {
-        changed_announce = false;
+    void stable_update(frog::game_object2d&, frog::engine2d&) override;
 
-        if (emit)
-        {
-            emit = false;
-
-            changed_announce = true;
-        }
-    }
-
-    void frame_update(frog::game_object2d&, frog::engine2d& e) override
-    {
-        accum += e.global->frame_time();
-
-        for (const auto&[key, us] : ProfilerGuard::times())
-            times_us[key] += us;
-
-        ProfilerGuard::reset();
-
-        if (accum >= 1)
-        {
-            accum -= 1;
-
-            // print();
-            snapshot = times_us;
-            emit = true;
-
-            times_us.clear();
-        }
-    }
+    void frame_update(frog::game_object2d&, frog::engine2d& e) override;
 
     using Columns = std::tuple<int, int, int>;
 
