@@ -3,16 +3,10 @@
 #include "frog/core/script.hpp"
 #include "frog/core/engine2d.hpp"
 #include "frog/geometry/vector.hpp"
-#include "frog/graphics/color.hpp"
 #include "frog/graphics/ui_element.hpp"
-#include "frog/gx2d/sprite.hpp"
 #include "frog/scripts/profiler_script.hpp"
-#include "frog/utils/string_builder.hpp"
 
-#include <algorithm>
-#include <sstream>
 #include <string>
-#include <utility>      // move
 #include <vector>
 
 namespace frog::scripts {
@@ -51,23 +45,7 @@ public:
         mk_bg(obj, nullptr);
     }
 
-    void frame_update(frog::game_object2d& obj, frog::engine2d& e) override
-    {
-        auto* profiler = e.scenes->current().get_script<frog::scripts::ProfilerScript>();
-        if (not profiler)
-            return;
-
-        if (not profiler->changed())
-            return;
-
-        for (auto* elem : elems)
-            obj.remove_element(elem);
-
-        // TODO: Optimize this shit out of this crap.
-        mk_bg(obj, profiler);
-
-        mk_labels(obj, profiler);
-    }
+    void frame_update(frog::game_object2d& obj, frog::engine2d& e) override;
 };
 
 } // namespace frog::scripts

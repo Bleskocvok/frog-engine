@@ -1,6 +1,11 @@
 #include "profiler_display.hpp"
 
+#include "frog/core/engine2d.hpp"
+#include "frog/core/script.hpp"
 #include "frog/geometry/vector.hpp"
+#include "frog/graphics/color.hpp"
+#include "frog/graphics/ui_element.hpp"
+#include "frog/gx2d/sprite.hpp"
 #include "frog/scripts/profiler_script.hpp"
 #include "frog/utils/assert.hpp"
 #include "frog/utils/profiler_guard.hpp"
@@ -11,7 +16,7 @@
 #include <map>
 #include <sstream>
 #include <string>
-#include <utility>
+#include <utility>      // move
 #include <vector>
 
 using namespace frog::scripts;
@@ -167,4 +172,22 @@ void ProfilerDisplay::mk_labels(frog::game_object2d& obj, frog::scripts::Profile
     //     pos.y() += 0.025;
     // }
 
+}
+
+void ProfilerDisplay::frame_update(frog::game_object2d& obj, frog::engine2d& e)
+{
+    auto* profiler = e.scenes->current().get_script<frog::scripts::ProfilerScript>();
+    if (not profiler)
+        return;
+
+    if (not profiler->changed())
+        return;
+
+    for (auto* elem : elems)
+        obj.remove_element(elem);
+
+    // TODO: Optimize this shit out of this crap.
+    mk_bg(obj, profiler);
+
+    mk_labels(obj, profiler);
 }
