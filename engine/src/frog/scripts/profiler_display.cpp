@@ -8,7 +8,6 @@
 #include "frog/graphics/color.hpp"
 #include "frog/graphics/ui_element.hpp"
 #include "frog/gx2d/sprite.hpp"
-#include "frog/scripts/profiler_script.hpp"
 #include "frog/utils/assert.hpp"
 #include "frog/utils/profiler_guard.hpp"
 #include "frog/utils/ptr.hpp"

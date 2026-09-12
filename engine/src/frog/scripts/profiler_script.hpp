@@ -1,6 +1,6 @@
-#ifndef NOT_FROG_BUILD_2D
-
 #pragma once
+
+#ifndef NOT_FROG_BUILD_2D
 
 #include "frog/core/script.hpp"
 #include "frog/utils/profiler_guard.hpp"
