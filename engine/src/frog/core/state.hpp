@@ -34,6 +34,8 @@ public:
     unsigned frame_time_us    = 20000;  // default value = 20 ms = 50 fps
     std::uint64_t global_time_us = 0;
 
+    std::uint64_t time_to_first_render_us = 0;
+
     bool quit = false;
 
     bool debug = false;
@@ -49,6 +51,8 @@ public:
     double frame_time() const { return frame_time_us / 1000000.0; }
 
     double global_time() const { return global_time_us / 1000000.0; }
+
+    double time_to_first_render() const { return time_to_first_render_us / 1000000.0; }
 
     double fps() const { return 1.0 / frame_time(); }
 

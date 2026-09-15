@@ -146,6 +146,7 @@ public:
             global->between_ = between;
             end_frame_update();
 
+            global->time_to_first_render_us = global->global_time_us;
             render(between);
         }
     }
