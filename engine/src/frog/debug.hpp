@@ -147,7 +147,7 @@ void log(Out& out, Arg&& arg, Args&& ... args)
     {
         if constexpr (Space)
             out << " ";
-        log<Space, Depth - 1>(out, std::forward<Args>(args)...);
+        log<Space, Depth>(out, std::forward<Args>(args)...);
     }
 }
 
