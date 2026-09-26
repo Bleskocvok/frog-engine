@@ -30,7 +30,7 @@ struct AnimationFrame
 
 class Animation
 {
-    Sprite atlas;
+    Sprite atlas_;
     geo::ivec2 atlas_size;
     std::unordered_map<std::string, AnimationFrame> map;
     std::string current_ = "";
@@ -42,7 +42,7 @@ class Animation
 
 public:
     Animation(Sprite atlas, geo::ivec2 atlas_size, float delay_ = 0.16667, std::string start = "")
-        : atlas(std::move(atlas))
+        : atlas_(std::move(atlas))
         , atlas_size(atlas_size)
         , current_(std::move(start))
         , delay_(delay_)
@@ -52,7 +52,8 @@ public:
         : Animation({}, atlas_size, delay_, start)
     { }
 
-    const Sprite& get_atlas() const { return atlas; }
+    const Sprite& atlas() const { return atlas_; }
+          Sprite& atlas() { return atlas_; }
 
     float  delay() const { return delay_; }
     float& delay()       { return delay_; }
@@ -144,7 +145,7 @@ public:
 
     Sprite frame() const
     {
-        Sprite img = atlas;
+        Sprite img = atlas_;
         img.tex = texture_rect();
         img.flipped = current().flipped;
         return img;
