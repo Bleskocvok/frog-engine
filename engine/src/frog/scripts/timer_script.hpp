@@ -70,10 +70,10 @@ public:
     //     using namespace frog;
     // }
 
-    void stable_update(typename Script::GameObject&, typename Script::Engine& engine) override
+    void direct_update(typename Script::Engine& engine, float mult = 1)
     {
         if (policy == before)
-            accum_ += engine.global->stable_frame_time() * SecToUs;
+            accum_ += mult * engine.global->stable_frame_time() * SecToUs;
 
         activated = 0;
         // TODO: Make this non-exponential, lol.
@@ -95,7 +95,12 @@ public:
         }
 
         if (policy == after)
-            accum_ += engine.global->stable_frame_time() * SecToUs;
+            accum_ += mult * engine.global->stable_frame_time() * SecToUs;
+    }
+
+    void stable_update(typename Script::GameObject&, typename Script::Engine& engine) override
+    {
+        direct_update(engine);
     }
 };
 
