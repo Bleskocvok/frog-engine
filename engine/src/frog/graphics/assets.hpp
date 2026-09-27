@@ -1,5 +1,6 @@
 #pragma once
 
+#include "frog/utils/exception.hpp"
 #include "frog/utils/ptr.hpp"
 
 #include <unordered_map>
@@ -15,6 +16,8 @@ namespace frog::gx
 template <typename T>
 class assets
 {
+    using error = frog::error;
+
     std::unordered_map<std::string, ptr<T>> data;
     std::string name;
 
@@ -28,8 +31,8 @@ class assets
         catch (std::out_of_range&)
         {
             if (t->name.empty())
-                throw std::runtime_error("assets '" + tag + "' not found");
-            throw std::runtime_error("asset " + t->name + " '" + tag + "' not found");
+                throw error("assets '" + tag + "' not found");
+            throw error("asset " + t->name + " '" + tag + "' not found");
         }
     }
 
