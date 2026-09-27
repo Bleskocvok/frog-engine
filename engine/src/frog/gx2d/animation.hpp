@@ -52,6 +52,7 @@ public:
         : Animation({}, atlas_size, delay_, start)
     { }
 
+    // TODO: Destroy this nonsense.
     const Sprite& atlas() const { return atlas_; }
           Sprite& atlas() { return atlas_; }
 
@@ -63,6 +64,11 @@ public:
         map.emplace(name, std::move(frame));
         if (current_.empty())
             set(std::move(name));
+    }
+
+    bool has_frame(const std::string& name) const
+    {
+        return map.contains(name);
     }
 
     void set(std::string name)
