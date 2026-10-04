@@ -254,7 +254,8 @@ public:
         {
             for (auto&& [k, v] : added)
             {
-                auto [it, ok] = scenes.emplace(k, std::move(v));
+                [[maybe_unused]]
+                    auto [it, ok] = scenes.emplace(k, std::move(v));
                 // frog_assert(ok);
                 // it->init(eng);
             }
