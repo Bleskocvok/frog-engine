@@ -44,6 +44,7 @@ using Scene2d = scene<game_object2d>;
 
 class engine2d : public engine_base<engine2d, game_object2d, os::timer>
 {
+protected:
     void draw_objects(double between) override;
     void draw_ui(double between) override;
 
