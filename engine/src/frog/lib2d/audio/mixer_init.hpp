@@ -17,21 +17,9 @@ enum Format : std::uint32_t { OGG = 0x1, WAV = 0x2 };
 class InitSound
 {
 public:
-    InitSound(std::uint32_t flags)
-    {
-        int libflags = 0;
+    InitSound(std::uint32_t flags);
 
-        if (flags & Format::OGG)
-            libflags |= MIX_INIT_OGG;
-
-        if ((Mix_Init(libflags) & libflags) != libflags)
-            throw std::runtime_error(Mix_GetError());
-    }
-
-    ~InitSound()
-    {
-        Mix_Quit();
-    }
+    ~InitSound();
 
     InitSound(const InitSound&) = delete;
     InitSound& operator=(const InitSound&) = delete;
@@ -45,8 +33,8 @@ namespace detail
 
 struct SoundDeleter
 {
-    void operator()(Mix_Chunk* obj) { Mix_FreeChunk(obj); }
-    void operator()(Mix_Music* obj) { Mix_FreeMusic(obj); }
+    void operator()(Mix_Chunk* obj);
+    void operator()(Mix_Music* obj);
 };
 
 using Chunk = std::unique_ptr<Mix_Chunk, SoundDeleter>;
