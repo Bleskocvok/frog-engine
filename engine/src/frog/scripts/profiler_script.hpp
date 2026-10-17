@@ -19,7 +19,7 @@ class ProfilerScript : public frog::script2d
 {
     double accum = 0;
 
-    std::map<ProfilerGuard::Key, ProfilerGuard::Item> times_us;
+    std::map<ProfilerKey, ProfilerItem> times_us;
     decltype(times_us) snapshot;
 
     // void out(std::ostream& o) const
@@ -47,7 +47,7 @@ public:
     using Columns = std::tuple<int, int, int>;
 
     void out_line(std::ostream& o,
-                  const std::pair<ProfilerGuard::Key, ProfilerGuard::Item>& val,
+                  const std::pair<ProfilerKey, ProfilerItem>& val,
                   Columns columns = Columns{ 18, 8, 8 }) const
     {
         auto [one, two, thr] = columns;

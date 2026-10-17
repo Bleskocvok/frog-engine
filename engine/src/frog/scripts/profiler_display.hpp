@@ -33,7 +33,7 @@ class ProfilerDisplay : public frog::script2d
         frog::scripts::ProfilerScript* profiler;
     };
 
-    void mk_one(Ctx& ctx, const ProfilerGuard::Key& key, const auto& node);
+    void mk_one(Ctx& ctx, const ProfilerKey& key, const auto& node);
 
     void add_text(Ctx& ctx, std::string str);
 

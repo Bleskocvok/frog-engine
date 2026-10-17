@@ -44,12 +44,12 @@ void ProfilerDisplay::mk_bg(frog::game_object2d& obj, frog::scripts::ProfilerScr
 
 struct Node
 {
-    frog::ProfilerGuard::Key key;
-    frog::ProfilerGuard::Item item;
+    frog::ProfilerKey key;
+    frog::ProfilerItem item;
 
     std::vector<frog::ptr<Node>> children;
 
-    Node(frog::ProfilerGuard::Key key_, frog::ProfilerGuard::Item item_)
+    Node(frog::ProfilerKey key_, frog::ProfilerItem item_)
         : key(std::move(key_))
         , item(std::move(item_))
     { }
@@ -72,13 +72,13 @@ void ProfilerDisplay::add_text(Ctx& ctx, std::string str)
     ctx.pos.y() += 0.025;
 }
 
-void ProfilerDisplay::mk_one(Ctx& ctx, const ProfilerGuard::Key& key, const auto& node)
+void ProfilerDisplay::mk_one(Ctx& ctx, const ProfilerKey& key, const auto& node)
 {
     std::ostringstream o;
     auto bit = std::string("| ");
     for (int i = 0; i < ctx.indent; i++)
         o << bit;
-    auto pair = std::pair<ProfilerGuard::Key, ProfilerGuard::Item>( key, node->item );
+    auto pair = std::pair<ProfilerKey, ProfilerItem>( key, node->item );
     // TODO: Better decomposition.
     auto columns = COLUMNS;
     std::get<0>(columns) -= ctx.indent * bit.length();
@@ -96,10 +96,10 @@ void ProfilerDisplay::mk_one(Ctx& ctx, const ProfilerGuard::Key& key, const auto
 
 void ProfilerDisplay::mk_labels(frog::game_object2d& obj, frog::scripts::ProfilerScript* profiler)
 {
-    auto nodes = std::map<ProfilerGuard::Key, frog::ptr<Node>>{};
-    auto ptrs = std::map<ProfilerGuard::Key, Node*>{};
+    auto nodes = std::map<ProfilerKey, frog::ptr<Node>>{};
+    auto ptrs = std::map<ProfilerKey, Node*>{};
 
-    using Elem = std::pair<ProfilerGuard::Key, frog::ptr<Node>>;
+    using Elem = std::pair<ProfilerKey, frog::ptr<Node>>;
 
     for (const auto& [key, item] : profiler->times())
     {

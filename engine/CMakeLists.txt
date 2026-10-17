@@ -49,6 +49,8 @@ option(FROG_TEST     "Build engine tests"     ON)
 option(FROG_BUILD_3D "Build engine for 3D game" ON)
 option(FROG_BUILD_2D "Build engine for 2D game" ON)
 
+option(FROG_PROFILE  "Compile profiler sampling" OFF)
+
 message(STATUS "Generate documentation: ${FROG_GEN_DOCS}")
 message(STATUS "Build 3D engine: ${FROG_BUILD_3D}")
 message(STATUS "Build 2D engine: ${FROG_BUILD_2D}")
@@ -322,6 +324,10 @@ if(FROG_BUILD_2D)
 else()
     target_compile_definitions(frog_lib PUBLIC -D NOT_FROG_BUILD_2D=1)
 endif(FROG_BUILD_2D)
+
+if(FROG_PROFILE)
+    target_compile_definitions(frog_lib PUBLIC -D FROG_PROFILE=1)
+endif()
 
 target_compile_definitions(frog_lib PUBLIC -D FROG_USE_STACKTRACE=1)
 
