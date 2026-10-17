@@ -32,6 +32,9 @@ public:
 
     unsigned physics_delta_us = 20000;  // default value = 20 ms = 50 fps
     unsigned frame_time_us    = 20000;  // default value = 20 ms = 50 fps
+
+    unsigned frame_min_delta_us = 2000;
+
     std::uint64_t global_time_us = 0;
 
     std::uint64_t time_to_first_render_us = 0;

@@ -105,6 +105,8 @@ public:
         int accum = 0;
         unsigned delta = global->physics_delta_us;
 
+        int frame_accum = 0;
+
         init();
 
         while (not global->quit && not window->should_close())
@@ -138,9 +140,17 @@ public:
             }
 
             auto frame = timer.reset_duration_us();
-            global->frame_time_us = frame;
             global->global_time_us += frame;
             accum += frame;
+
+            frame_accum += frame;
+            if (frame_accum >= global->frame_min_delta_us)
+            {
+                global->frame_time_us = frame_accum;
+                frame_accum = 0;
+            }
+            else
+                global->frame_time_us = 0;
 
             double between = std::clamp( accum / static_cast<double>(delta), 0.0, 1.0 );
             global->between_ = between;
