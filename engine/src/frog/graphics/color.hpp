@@ -17,7 +17,7 @@ namespace frog::gx
 using rgba_t = geo::vec<std::uint8_t, 4>;
 
 
-inline rgba_t vec_to_rgb(geo::vec4 v)
+constexpr inline rgba_t vec_to_rgb(geo::vec4 v)
 {
     auto clamp = [](auto& x){ x = std::clamp<float>(x, 0, 1); };
     clamp( v.r() );
@@ -29,7 +29,7 @@ inline rgba_t vec_to_rgb(geo::vec4 v)
 }
 
 
-inline geo::vec4 rgb_to_vec( gx::rgba_t rgb )
+inline constexpr geo::vec4 rgb_to_vec( gx::rgba_t rgb )
 {
     geo::vec4 vec = { float(rgb.r()), float(rgb.g()), float(rgb.b()), float(rgb.a()) };
     vec /= 255;
@@ -37,13 +37,13 @@ inline geo::vec4 rgb_to_vec( gx::rgba_t rgb )
 }
 
 
-inline rgba_t rgb_multiply( gx::rgba_t a, gx::rgba_t b )
+inline constexpr rgba_t rgb_multiply( gx::rgba_t a, gx::rgba_t b )
 {
     return vec_to_rgb( rgb_to_vec( a ) * rgb_to_vec( b ) );
 }
 
 
-inline geo::vec4 vec_to_hsv(geo::vec4 vec)
+inline constexpr geo::vec4 vec_to_hsv(geo::vec4 vec)
 {
     auto x_max = geo::max( vec.xyz() );
     auto x_min = geo::min( vec.xyz() );
@@ -77,7 +77,7 @@ inline geo::vec4 vec_to_hsv(geo::vec4 vec)
 }
 
 
-inline geo::vec4 hsv_to_vec(geo::vec4 hsv)
+constexpr inline geo::vec4 hsv_to_vec(geo::vec4 hsv)
 {
     auto hue = hsv.x();         // [0, 360]
     auto saturation = hsv.y();  // [0, 1]
