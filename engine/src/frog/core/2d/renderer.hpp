@@ -19,6 +19,8 @@
 
 #include <map>
 #include <optional>
+#include <utility>
+#include <vector>
 
 namespace frog::r2d
 {
@@ -72,15 +74,38 @@ class Renderer
             const gx::ui_element* elem = nullptr;
         };
         std::map<unsigned, std::vector<Elem>> data;
+        std::vector<std::vector<Elem>> fast_layers;
+
+        static constexpr unsigned FastLayersCount = 2048;
+
+        Queue()
+            : fast_layers(FastLayersCount)
+        { }
+
+        void push(unsigned layer, Elem elem)
+        {
+            if (layer < FastLayersCount)
+                fast_layers[layer].push_back( std::move(elem) );
+            else
+                data[ layer ].push_back( std::move(elem) );
+        }
 
         void push(const gx2d::Sprite& sprite)
         {
-            data[ sprite.layer ].push_back( Elem{ .sprite = &sprite, .elem = nullptr } );
+            // PREV.
+            // data[ sprite.layer ].push_back( Elem{ .sprite = &sprite, .elem = nullptr } );
+
+            // TODO: Attempted optimization.
+            push(sprite.layer, Elem{ .sprite = &sprite, .elem = nullptr });
         }
 
         void push(const gx::ui_element& elem)
         {
-            data[ elem.sprite.layer ].push_back( Elem{ .sprite = nullptr, .elem = &elem } );
+            // PREV.
+            // data[ elem.sprite.layer ].push_back( Elem{ .sprite = nullptr, .elem = &elem } );
+
+            // TODO: Attempted optimization.
+            push(elem.sprite.layer, Elem{ .sprite = nullptr, .elem = &elem });
         }
 
         void draw(Renderer& renderer, const Renderer::RenderCtx& ctx);

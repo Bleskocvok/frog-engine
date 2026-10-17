@@ -246,7 +246,8 @@ void Renderer::draw_recursive(const RenderCtx& ctx, const gx2d::Sprite& sprite)
 
 void Renderer::Queue::draw(Renderer& renderer, const Renderer::RenderCtx& ctx)
 {
-    for (const auto& [idx, layer] : data)
+    auto draw_layer = [&renderer, &ctx](const auto& layer)
+    {
         for (const auto& [model, elem] : layer)
         {
             if (model)
@@ -258,6 +259,14 @@ void Renderer::Queue::draw(Renderer& renderer, const Renderer::RenderCtx& ctx)
                 renderer.draw_text(*elem, ctx.between);
             }
         }
+    };
+
+    // TODO: Attempted optimization.
+    for (const auto& layer : fast_layers)
+        draw_layer(layer);
+
+    for (const auto& [idx, layer] : data)
+        draw_layer(layer);
 }
 
 void Renderer::draw_objects(const frog::scene_manager<frog::game_object2d>& scenes,
