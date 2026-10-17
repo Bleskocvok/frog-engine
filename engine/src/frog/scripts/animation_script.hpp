@@ -45,7 +45,7 @@ public:
 
     void apply(frog::game_object2d& obj)
     {
-        sprite(obj).tex = animation_.frame().tex;
+        sprite(obj).tex = animation_.texture_rect();
     }
 
     const gx2d::Animation& animation() const { return animation_; }
