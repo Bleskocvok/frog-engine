@@ -272,14 +272,26 @@ void window::draw_colored_rotated( const texture& tex,
     auto rnd = [](auto x) -> int { return std::round(x); };
     SDL_Rect src = { rnd(u), rnd(v), rnd(cut_width), rnd(cut_height) };
     SDL_FRect dest = { x, y, tex_width, tex_height };
-    SDL_FPoint center = { pivot_x, pivot_y };
-    SDL_RenderCopyExF( renderer.get(),
-                        tex.src(),
-                        &src,
-                        &dest,
-                        angle,
-                        &center,
-                        flipped ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE );
+
+    // TODO: Attempted optimization. Measure.
+    if (angle == 0 && not flipped)
+    {
+        SDL_RenderCopyF( renderer.get(),
+                            tex.src(),
+                            &src,
+                            &dest );
+    }
+    else
+    {
+        SDL_FPoint center = { pivot_x, pivot_y };
+        SDL_RenderCopyExF( renderer.get(),
+                            tex.src(),
+                            &src,
+                            &dest,
+                            angle,
+                            &center,
+                            flipped ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE );
+    }
 
     SDL_SetTextureAlphaMod( tex.src(), 255 );
     SDL_SetTextureColorMod( tex.src(), 255, 255, 255 );
