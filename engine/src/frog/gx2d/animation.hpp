@@ -61,9 +61,9 @@ public:
 
     void add_frame(std::string name, AnimationFrame frame)
     {
-        map.emplace(name, std::move(frame));
+        auto [it, ok] = map.emplace(std::move(name), std::move(frame));
         if (current_.empty())
-            set(std::move(name));
+            set(it->first);
     }
 
     bool has_frame(const std::string& name) const
