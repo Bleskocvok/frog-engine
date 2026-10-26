@@ -88,10 +88,10 @@ struct ProfilerItem
 class ProfilerGuard
 {
 public:
-    ProfilerGuard(std::string name)
+    ProfilerGuard(const std::string&)
     { }
 
-    ProfilerGuard(const std::source_location& location = std::source_location::current())
+    ProfilerGuard(const std::source_location& = std::source_location::current())
     { }
 
     ProfilerGuard(const ProfilerGuard&) = delete;
