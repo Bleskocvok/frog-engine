@@ -43,11 +43,12 @@ bool soft_physics2d::encapsulate(point& pt, rect rect)
 bool soft_physics2d::solve_collision(point& a, point& b)
 {
     vec2 dif = a.pos - b.pos;
-    float dist = dif.length();
+    float dist = dif.length_squared();
     float radii = a.radius + b.radius;
 
-    if (dist < radii)
+    if (dist < radii * radii)
     {
+        dist = std::sqrt(dist);
         float div = dist * (a.inv_weight + b.inv_weight);
 
         // TODO: Think further about this code and see if it makes sense.
