@@ -42,6 +42,8 @@ public:
           box(box),
           chunk(box.size.x() / dim.x(), box.size.y() / dim.y()) {}
 
+    const auto& dimensions() const { return dim; }
+
     const auto& at(int x, int y) const { return grid.at( x + y * dim.x() ); }
           auto& at(int x, int y)       { return grid.at( x + y * dim.x() ); }
 

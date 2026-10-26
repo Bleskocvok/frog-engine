@@ -9,6 +9,7 @@
 #include "frog/debug.hpp"
 
 #include <cassert>
+#include <cmath>
 #include <utility>          // pair
 #include <algorithm>        // max, min, clamp, find, for_each
 #include <vector>
@@ -123,7 +124,7 @@ void soft_physics2d::solve_angle(angle alpha)
 
 void soft_physics2d::calculate_grid()
 {
-    if (grid)
+    if (grid && settings_.grid_dim == grid->dimensions())
         grid->clear();
     else
         grid.emplace(settings_.grid_dim, settings_.universum);
