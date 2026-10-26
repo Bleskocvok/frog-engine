@@ -160,6 +160,11 @@ public:
             f(editor);
         }
 
+        // // If we ever need to debug images.
+        // static int i = 0;
+        // auto name = std::to_string(i++) + ".bmp";
+        // win_raw->save_image( surface, name.c_str() );
+
         textures.add(tag, win_raw->make_texture( surface ) );
     }
 };

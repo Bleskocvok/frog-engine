@@ -298,6 +298,12 @@ void window::draw_colored_rotated( const texture& tex,
 }
 
 
+void window::save_image( const detail::Surface& s, const std::string& filename ) const
+{
+    SDL_SaveBMP( s.get(), filename.c_str() );
+}
+
+
 void window::screenshot( const std::string& filename ) const
 {
     using namespace std::string_literals;
