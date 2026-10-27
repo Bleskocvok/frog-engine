@@ -159,11 +159,11 @@ inline constexpr rgba_t from_hex(std::string_view str)
 
 namespace colors {
 
-inline const auto WHITE = rgba_t{ 255, 255, 255, 255 };
-inline const auto BLACK = rgba_t{   0,   0,   0, 255 };
-inline const auto RED   = rgba_t{ 255,   0,   0, 255 };
-inline const auto GREEN = rgba_t{   0, 255,   0, 255 };
-inline const auto BLUE  = rgba_t{   0,   0, 255, 255 };
+inline constexpr auto WHITE = rgba_t{ 255, 255, 255, 255 };
+inline constexpr auto BLACK = rgba_t{   0,   0,   0, 255 };
+inline constexpr auto RED   = rgba_t{ 255,   0,   0, 255 };
+inline constexpr auto GREEN = rgba_t{   0, 255,   0, 255 };
+inline constexpr auto BLUE  = rgba_t{   0,   0, 255, 255 };
 
 }  // namespace colors
 

@@ -1,10 +1,13 @@
 #pragma once
 
+#include "frog/debug.hpp"
 #include "frog/geometry/rectangle.hpp"
+#include "frog/utils/assert.hpp"
 #include "frog/utils/exception.hpp"
 #include "sprite.hpp"
 
 #include <cmath>
+#include <optional>
 #include <string>           // string
 #include <utility>          // move
 #include <unordered_map>    // unordered_map
@@ -15,16 +18,32 @@ namespace frog::gx2d {
 
 struct AnimationFrame
 {
-    int index = 0;
+    struct MultiLine
+    {
+        int start = 0;
+        std::optional<int> width;
+    };
+
+    MultiLine indices;
     int length = 1;
     std::string next;
     bool flipped = false;
 
     AnimationFrame(int index, int length, std::string next, bool flipped = false)
-        : index(index)
+        : indices({})
         , length(length)
         , next(std::move(next))
-        , flipped(flipped) {}
+        , flipped(flipped)
+    {
+        indices.start = index;
+    }
+
+    AnimationFrame(MultiLine lines, int length, std::string next, bool flipped = false)
+        : indices(lines)
+        , length(length)
+        , next(std::move(next))
+        , flipped(flipped)
+    { }
 };
 
 
@@ -139,7 +158,16 @@ public:
     {
         geo::vec2 units = { 1.0f / atlas_size.x(),
                             1.0f / atlas_size.y() };
-        geo::ivec2 pos = { frame_, current().index };
+
+        frog_assert(current().indices.width != 0);
+        auto w = current().indices.width.value_or(length_of(current()));
+        int y = current().indices.start + frame_ / w;
+        int x = frame_ % w;
+
+        geo::ivec2 pos = { x, y };
+
+        // if (current().indices.width.has_value())
+        //     LOGX(current().indices.start, frame_, current().indices.width);
 
         frog::geo::rect res;
         res.pos = { pos.x() * units.x(),
