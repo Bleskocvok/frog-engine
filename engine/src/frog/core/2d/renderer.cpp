@@ -77,7 +77,8 @@ void Renderer::draw(const RenderCtx& ctx, const lib2d::gx::texture& tex, geo::re
 
     color = gx::rgb_multiply(color, ctx.color);
 
-    auto guard = ::frog::ProfilerGuard("window->draw");
+    [[maybe_unused]]
+        auto guard = ::frog::ProfilerGuard("window->draw");
     window->draw_colored_rotated(tex, uv.pos.x(), uv.pos.y(),
                                  uv.size.x(), uv.size.y(),
                                  top_left.x(), top_left.y(),
@@ -129,7 +130,8 @@ void Renderer::draw(const RenderCtx& ctx, const gx2d::Sprite& model)
     gx::rgba_t color = model.color;
     color = gx::rgb_multiply(color, ctx.color);
 
-    auto guard = ::frog::ProfilerGuard("window->draw");
+    [[maybe_unused]]
+        auto guard = ::frog::ProfilerGuard("window->draw");
     window->draw_colored_rotated(texture, uv.x(), uv.y(), uv_size.x(), uv_size.y(),
                                   top_left.x(), top_left.y(),
                                   rect.size.x(), rect.size.y(),
@@ -375,7 +377,8 @@ void Renderer::draw_text(const gx::ui_element& elem, double between)
         crop = gx2d::multiply_crop(elem.sprite.rect, *elem.sprite.crop, crop_rect);
     }
 
-    auto guard = ::frog::ProfilerGuard("font_render");
+    [[maybe_unused]]
+        auto guard = ::frog::ProfilerGuard("font_render");
     font.draw(*this, label, pos, height, scale.y(), crop);
 }
 

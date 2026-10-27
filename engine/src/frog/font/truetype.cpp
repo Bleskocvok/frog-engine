@@ -66,9 +66,9 @@ void truetype::draw(frog::r2d::Renderer& engine, const frog::gx::Text& label,
     pos.x() += text_size.x() / 2;
     geo::rect rect = { pos, text_size };
 
-    std::uint64_t total = 0;
-    for (const auto& elem : texture_cache)
-        total += elem.val.bytes;
+    // std::uint64_t total = 0;
+    // for (const auto& elem : texture_cache)
+    //     total += elem.val.bytes;
     // LOGX(texture_cache.size(), total);
 
     unsigned pixels = height * scale;

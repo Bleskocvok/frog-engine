@@ -144,7 +144,7 @@ public:
             accum += frame;
 
             frame_accum += frame;
-            if (frame_accum >= global->frame_min_delta_us)
+            if (frame_accum >= static_cast<int>(global->frame_min_delta_us))
             {
                 global->frame_time_us = frame_accum;
                 frame_accum = 0;

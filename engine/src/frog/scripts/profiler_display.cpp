@@ -99,8 +99,6 @@ void ProfilerDisplay::mk_labels(frog::game_object2d& obj, frog::scripts::Profile
     auto nodes = std::map<ProfilerKey, frog::ptr<Node>>{};
     auto ptrs = std::map<ProfilerKey, Node*>{};
 
-    using Elem = std::pair<ProfilerKey, frog::ptr<Node>>;
-
     for (const auto& [key, item] : profiler->times())
     {
         auto ptr = frog::mk_ptr<Node>(key, item);

@@ -38,7 +38,8 @@ struct Cache
             remove_oldest();
 
         lru.emplace_front(key, std::move(val));
-        auto [it, ok] = map.emplace(std::move(key), lru.begin());
+        [[maybe_unused]]
+            auto [it, ok] = map.emplace(std::move(key), lru.begin());
 
         return lru.begin()->val;
     }
