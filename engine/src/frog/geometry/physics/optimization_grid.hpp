@@ -17,35 +17,48 @@ class optimization_grid
     ivec2 dim;
     rect box;
     vec2 chunk;
+    vec2 inv_chunk;
 
     template<typename Func>
     void for_each_around_impl(circle c, Func f)
     {
         using std::min, std::max;
 
-        auto inside = c.pos - box.top_left();
-        auto minim = ivec2{ int( ( inside.x() - c.radius ) / chunk.x() ),
-                            int( ( inside.y() - c.radius ) / chunk.y() ) };
-        auto maxim = ivec2{ int( ( inside.x() + c.radius ) / chunk.x() ),
-                            int( ( inside.y() + c.radius ) / chunk.y() ) };
+        const auto inside = c.pos - box.top_left();
+        const auto minim = ivec2{ int( ( inside.x() - c.radius ) * inv_chunk.x() ),
+                                  int( ( inside.y() - c.radius ) * inv_chunk.y() ) };
+        const auto maxim = ivec2{ int( ( inside.x() + c.radius ) * inv_chunk.x() ),
+                                  int( ( inside.y() + c.radius ) * inv_chunk.y() ) };
 
-        for     (int y = max( 0, minim.y() ); y <= min( dim.y() - 1, maxim.y() ); ++y)
-            for (int x = max( 0, minim.x() ); x <= min( dim.x() - 1, maxim.x() ); ++x)
-                if (is_collision(c, rect_at(x, y)))
+        const auto start_y = max( 0, minim.y() );
+        const auto end_y = min( dim.y() - 1, maxim.y() );
+        const auto start_x = max( 0, minim.x() );
+        const auto end_x = min( dim.x() - 1, maxim.x() );
+
+        for     (int y = start_y; y <= end_y; ++y)
+            for (int x = start_x; x <= end_x; ++x)
+                // This appears to be slower.
+                // if (is_collision(c, rect_at(x, y)))
                     f(x, y);
     }
+
+    // const auto& at(int x, int y) const { return grid.at( x + y * dim.x() ); }
+    //       auto& at(int x, int y)       { return grid.at( x + y * dim.x() ); }
+
+    const auto& at(int x, int y) const { return grid[ x + y * dim.x() ]; }
+          auto& at(int x, int y)       { return grid[ x + y * dim.x() ]; }
 
 public:
     optimization_grid(ivec2 dim, rect box)
         : grid(dim.x() * dim.y()),
           dim(dim),
           box(box),
-          chunk(box.size.x() / dim.x(), box.size.y() / dim.y()) {}
+          chunk(box.size.x() / dim.x(), box.size.y() / dim.y())
+    {
+        inv_chunk = 1.0 / chunk;
+    }
 
     const auto& dimensions() const { return dim; }
-
-    const auto& at(int x, int y) const { return grid.at( x + y * dim.x() ); }
-          auto& at(int x, int y)       { return grid.at( x + y * dim.x() ); }
 
     rect rect_at(int x, int y) const
     {
