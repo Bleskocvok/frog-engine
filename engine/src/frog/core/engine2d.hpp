@@ -2,6 +2,7 @@
 
 #include "frog/utils/exception.hpp"
 #include "frog/utils/string.hpp"
+#include <concepts>
 #ifndef NOT_FROG_BUILD_2D
 
 #include "frog/graphics/assets.hpp"
@@ -147,6 +148,21 @@ public:
     }
 
     template<typename F>
+    void create_texture(std::string tag, F&& f)
+            requires requires (F f)
+            {
+                { f() } -> std::same_as<lib2d::detail::Surface>;
+            }
+    {
+        bool has = textures.contains(tag);
+        if (has)
+            throw frog::error("create_texture: tag already exists ", tag);
+
+        auto surface = f();
+        textures.add(std::move(tag), win_raw->make_texture( surface ) );
+    }
+
+    template<typename F>
     void create_texture(std::string tag, frog::geo::ivec2 size, F&& f)
     {
         bool has = textures.contains(tag);
@@ -165,7 +181,7 @@ public:
         // auto name = std::to_string(i++) + ".bmp";
         // win_raw->save_image( surface, name.c_str() );
 
-        textures.add(tag, win_raw->make_texture( surface ) );
+        textures.add(std::move(tag), win_raw->make_texture( surface ) );
     }
 };
 

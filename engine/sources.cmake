@@ -25,6 +25,8 @@ set(FROG_SRC_FILES
     src/frog/gx3d/texture.cpp
     src/frog/gx3d/vertex_objects.cpp
 
+    src/frog/gx2d/transform.cpp
+
     src/frog/lib2d/error.cpp
     src/frog/lib2d/events.cpp
     src/frog/lib2d/font.cpp

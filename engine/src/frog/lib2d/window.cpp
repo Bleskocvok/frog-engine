@@ -326,19 +326,19 @@ void window::screenshot( const std::string& filename ) const
 }
 
 
-detail::Surface window::load_surface( const char* filename ) const
+detail::Surface window::load_surface( const char* filename )
 {
     lib2d::detail::Surface img = lib2d::detail::load_img( filename );
     // NRVO BABY
     return img;
 }
 
-detail::Surface window::make_surface( int width, int height ) const
+detail::Surface window::make_surface( int width, int height )
 {
     return detail::Surface( create_surface( width, height ) );
 }
 
-SDL_Surface* window::create_surface( int width, int height ) const
+SDL_Surface* window::create_surface( int width, int height )
 {
     #if SDL_BYTEORDER == SDL_BIG_ENDIAN
         return SDL_CreateRGBSurface( 0, width, height, 32,

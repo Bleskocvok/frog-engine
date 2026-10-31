@@ -2,6 +2,8 @@
 
 #include "surface_editor.hpp"
 
+#include "frog/utils/exception.hpp"
+
 namespace frog::lib2d::utils {
 
 SurfaceEditor::SurfaceEditor(frog::lib2d::detail::Surface& surface_)
@@ -23,15 +25,25 @@ SurfaceEditor::~SurfaceEditor()
 
 std::uint32_t* SurfaceEditor::pixel_pos(frog::geo::ivec2 p)
 {
-    frog_assert(p.x() < w);
-    frog_assert(p.x() >= 0);
-    frog_assert(p.y() < h);
-    frog_assert(p.y() >= 0);
+    // frog_assert(p.x() < w);
+    // frog_assert(p.x() >= 0);
+    // frog_assert(p.y() < h);
+    // frog_assert(p.y() >= 0);
+
+    if (p.x() >= w) throw frog::error("SurfaceEditor::pixel_pos: p.x() >= w ", p.x(), ", ", w);
+    if (p.x() < 0)  throw frog::error("SurfaceEditor::pixel_pos: p.x() < 0  ", p.x());
+    if (p.y() >= h) throw frog::error("SurfaceEditor::pixel_pos: p.y() >= h ", p.y(), ", ", h);
+    if (p.y() < 0)  throw frog::error("SurfaceEditor::pixel_pos: p.y() < 0  ", p.y());
 
     auto* pixels = static_cast<std::uint8_t*>(surface->pixels);
 
     auto* pos = pixels + p.y() * surface->pitch + p.x() * BytesPerPixel;
     return reinterpret_cast<uint32_t*>(pos);
+}
+
+frog::geo::ivec2 SurfaceEditor::size() const
+{
+    return { surface->w, surface->h };
 }
 
 frog::gx::rgba_t SurfaceEditor::read_pixel(frog::geo::ivec2 p)

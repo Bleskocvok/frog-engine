@@ -32,6 +32,8 @@ public:
     frog::gx::rgba_t read_pixel(frog::geo::ivec2 p);
 
     void write_pixel(frog::geo::ivec2 p, frog::gx::rgba_t c);
+
+    frog::geo::ivec2 size() const;
 };
 
 class SurfaceReader
@@ -46,6 +48,11 @@ public:
     frog::gx::rgba_t read_pixel(frog::geo::ivec2 p)
     {
         return editor.read_pixel(p);
+    }
+
+    frog::geo::ivec2 size() const
+    {
+        return editor.size();
     }
 };
 

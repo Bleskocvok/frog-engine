@@ -96,9 +96,9 @@ public:
 
     texture make_texture( lib2d::detail::Surface& surface ) const;
 
-    detail::Surface make_surface( int width, int height ) const;
+    static detail::Surface make_surface( int width, int height );
 
-    detail::Surface load_surface( const char* filename ) const;
+    static detail::Surface load_surface( const char* filename );
 
     void set_icon( lib2d::detail::Surface& surface );
 
@@ -138,7 +138,7 @@ private:
     lib2d::detail::Renderer renderer;
     int win_width, win_height;
 
-    SDL_Surface* create_surface( int width, int height ) const;
+    static SDL_Surface* create_surface( int width, int height );
 };
 
 }  // frog::lib2d::gx
