@@ -57,8 +57,8 @@ inline Surf copy(frog::lib2d::utils::SurfaceReader& r,
                  std::optional<frog::geo::irect> irect = {})
 {
     if (irect)
-        return create(r.size())
-            >> CopyRect(r, *irect);
+        return create(irect->size)
+            >> CopyRect(r, *irect, { 0 });
 
     return create(r.size())
         >> CopyRect(r, { { 0 }, r.size() });
