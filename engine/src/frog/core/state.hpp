@@ -38,6 +38,7 @@ public:
     std::uint64_t global_time_us = 0;
 
     std::uint64_t time_to_first_render_us = 0;
+    std::uint64_t tick = 0;
 
     bool quit = false;
 

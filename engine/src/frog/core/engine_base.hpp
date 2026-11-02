@@ -43,6 +43,8 @@ protected:
         scenes->stable_update(get());
         scenes->end_update(get());
         scenes->cleanup(get());
+
+        global->tick++;
     }
 
     virtual void end_frame_update()
