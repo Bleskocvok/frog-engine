@@ -53,9 +53,10 @@ Surf Outline::operator()(Surf src)
         for (int x = 0; x < size.x(); x++)
         {
             auto c = reader.read_pixel({ x, y });
-            if (c.a() != 0)
-                editor.write_pixel({ x, y }, c);
-            else if (is_around(around, x, y))
+            // if (c.a() != 0)
+            //     editor.write_pixel({ x, y }, c);
+            // else
+                if (is_around(around, x, y))
                 editor.write_pixel({ x, y }, rgb);
         }
 
